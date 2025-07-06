@@ -1,0 +1,48 @@
+[gd_scene load_steps=6 format=3 uid="uid://chi1m41kmmk4j"]
+
+[ext_resource type="Script" uid="uid://ddwmj6ylpifft" path="res://track/track_creator.gd" id="1_o0jg6"]
+[ext_resource type="Script" uid="uid://btyru6q0fevmb" path="res://track/track_segment_data.gd" id="2_a00as"]
+
+[sub_resource type="Resource" id="Resource_up07m"]
+script = ExtResource("2_a00as")
+length = 100.0
+curvature = 0.0
+l_wall_dist = 20.0
+l_wall_curv = 0.0
+r_wall_dist = 20.0
+r_wall_curv = 0.0
+metadata/_custom_type_script = "uid://btyru6q0fevmb"
+
+[sub_resource type="Resource" id="Resource_vhgqb"]
+script = ExtResource("2_a00as")
+length = 200.0
+curvature = 0.8
+l_wall_dist = 0.0
+l_wall_curv = 0.0
+r_wall_dist = 0.0
+r_wall_curv = 0.0
+metadata/_custom_type_script = "uid://btyru6q0fevmb"
+
+[sub_resource type="Resource" id="Resource_a00as"]
+script = ExtResource("2_a00as")
+length = 150.0
+curvature = 0.0
+l_wall_dist = 50.0
+l_wall_curv = 0.0
+r_wall_dist = 30.0
+r_wall_curv = 0.0
+metadata/_custom_type_script = "uid://btyru6q0fevmb"
+
+[node name="TrackCreator" type="Node2D"]
+script = ExtResource("1_o0jg6")
+track_data = Array[ExtResource("2_a00as")]([SubResource("Resource_up07m"), SubResource("Resource_vhgqb"), SubResource("Resource_a00as")])
+
+[node name="Track" type="Node2D" parent="."]
+
+[node name="Core" type="Line2D" parent="Track"]
+
+[node name="LeftWall" type="Line2D" parent="Track"]
+
+[node name="RightWall" type="Line2D" parent="Track"]
+
+[node name="Camera" type="Camera2D" parent="."]

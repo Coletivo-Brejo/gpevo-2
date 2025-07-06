@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+data/
+.env
+
+# Godot 4+ specific ignores
+.godot/
+/android/
+.vscode/

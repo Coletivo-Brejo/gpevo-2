@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 from fastapi import FastAPI
+from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 import json
 import os
@@ -57,5 +58,7 @@ def update_track(track_id: str, track: Track):
         os.makedirs(TRACKS_PATH)
     track_file: str = f"{TRACKS_PATH}/{track_id}.json"
     with open(track_file, "w", encoding="utf-8") as f:
-        json.dump(track, f, ensure_ascii=False)
+        track_json = jsonable_encoder(track)
+        json.dump(track_json, f, ensure_ascii=False)
+    return JSONResponse("Pista salva")
     

@@ -5,7 +5,7 @@
 ### Prova de conceito
 
 - [x] Criar pistas no Godot [2025-07-07]
-- [ ] Carregar e salvar pistas pela API
+- [x] Carregar e salvar pistas pela API [2025-07-07]
 - [ ] Exibir pistas no Streamlit
 
 ## Instruções
@@ -30,12 +30,12 @@ Para executar a API:
 
 ```
 cd api
-PYTHON -m fastapi dev api.py
+$PYTHON -m fastapi dev api.py
 ```
 
 Para executar a aplicação:
 
 ```
 cd app
-PYTHON -m streamlit run app.py
+$PYTHON -m streamlit run app.py
 ```

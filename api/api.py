@@ -42,6 +42,16 @@ def read_root():
 def read_item(item_id: int, q: Union[str, None] = None):
     return {"item_id": item_id, "q": q}
 
+@app.get("/tracks")
+def read_tracks():
+    tracks: list[dict] = []
+    for file in os.listdir(TRACKS_PATH):
+        track_file: str = f"{TRACKS_PATH}/{file}"
+        with open(track_file) as f:
+            track_dict: dict = json.load(f)
+            tracks.append(track_dict)
+    return JSONResponse(tracks)
+
 @app.get("/tracks/{track_id}")
 def read_track(track_id: str):
     track_file = f"{TRACKS_PATH}/{track_id}.json"

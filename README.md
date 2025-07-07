@@ -6,7 +6,12 @@
 
 - [x] Criar pistas no Godot [2025-07-07]
 - [x] Carregar e salvar pistas pela API [2025-07-07]
-- [ ] Exibir pistas no Streamlit
+- [x] Exibir pistas no Streamlit [2025-07-07]
+- [ ] Instanciar pista com colisão
+- [ ] Criar nave com propulsores
+- [ ] Criar cérebro e neurônios básicos
+- [ ] Persistir corredor (nave + cérebro)
+- [x] Adicionar autenticação ao Streamlit [2025-07-07]
 
 ## Instruções
 

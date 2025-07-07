@@ -7,3 +7,6 @@ data/
 .godot/
 /android/
 .vscode/
+
+# Streamlit ignores
+.streamlit/

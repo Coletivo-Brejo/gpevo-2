@@ -4,7 +4,7 @@
 
 ### Prova de conceito
 
-- [ ] Criar pistas no Godot
+- [x] Criar pistas no Godot [2025-07-07]
 - [ ] Carregar e salvar pistas pela API
 - [ ] Exibir pistas no Streamlit
 

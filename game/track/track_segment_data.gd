@@ -1,21 +1,28 @@
+@tool
 extends Resource
 class_name TrackSegmentData
 
-@export var length: float
-@export var curvature: float
-@export var l_wall_dist: float
-@export var l_wall_curv: float
-@export var r_wall_dist: float
-@export var r_wall_curv: float
+@export_range(0., 1000., 50.) var length: float:
+    set(value): length = value; emit_changed()
+@export_range(-1., 1., .1) var curvature: float:
+    set(value): curvature = value; emit_changed()
+@export_range(0., 200., 10.) var l_wall_dist: float:
+    set(value): l_wall_dist = value; emit_changed()
+@export_range(0., 2., .05) var l_wall_curv: float:
+    set(value): l_wall_curv = value; emit_changed()
+@export_range(0., 200., 10.) var r_wall_dist: float:
+    set(value): r_wall_dist = value; emit_changed()
+@export_range(0., 2., .05) var r_wall_curv: float:
+    set(value): r_wall_curv = value; emit_changed()
 
 
 static func create(
         _length: float = 0.,
         _curvature: float = 0.,
         _l_wall_dist: float = 0.,
-        _l_wall_curv: float = 0.,
+        _l_wall_curv: float = 1.,
         _r_wall_dist: float = 0.,
-        _r_wall_curv: float = 0.,
+        _r_wall_curv: float = 1.,
     ) -> TrackSegmentData:
     
     var segment = TrackSegmentData.new()

@@ -1,6 +1,8 @@
+@tool
 extends Resource
 class_name TrackData
 
+@export var track_id: String
 @export var name: String
 @export var segments: Array[TrackSegmentData]
 var core: Curve2D
@@ -9,10 +11,12 @@ var r_wall: Curve2D
 
 
 static func create(
+        _track_id: String = "",
         _name: String = "",
         _segments: Array[TrackSegmentData] = [],
     ) -> TrackData:
     var track = TrackData.new()
+    track.track_id = _track_id
     track.name = _name
     track.segments = _segments
     track.compile_curves()
@@ -23,6 +27,7 @@ static func from_dict(dict: Dictionary) -> TrackData:
     for s in dict["segments"]:
         _segments.append(TrackSegmentData.from_dict(s))
     var track = TrackData.create(
+        dict["track_id"],
         dict["name"],
         _segments,
     )
@@ -30,6 +35,7 @@ static func from_dict(dict: Dictionary) -> TrackData:
 
 func to_dict() -> Dictionary:
     return {
+        "track_id": track_id,
         "name": name,
         "segments": Serializer.from_list(segments),
         "core": Serializer.from_list(core.get_baked_points()),
@@ -62,6 +68,9 @@ func compile_curves() -> void:
 
     for i in segments.size():
         var s:TrackSegmentData = segments[i]
+        if s == null:
+            continue
+
         if s.l_wall_dist > 0. and s.r_wall_dist > 0.:
             curr_width_l = s.l_wall_dist
             curr_width_r = s.r_wall_dist
@@ -95,8 +104,8 @@ func compile_curves() -> void:
 
         var normal:Vector2 = get_current_tangent().orthogonal()
         var left_p:Vector2 = p1+normal*curr_width_l
-        l_wall.set_point_out(l_wall.point_count-1, p0_out)
+        l_wall.set_point_out(l_wall.point_count-1, p0_out*s.l_wall_curv)
         l_wall.add_point(left_p, p1_in)
         var right_p:Vector2 = p1-normal*curr_width_r
-        r_wall.set_point_out(r_wall.point_count-1, p0_out)
+        r_wall.set_point_out(r_wall.point_count-1, p0_out*s.r_wall_curv)
         r_wall.add_point(right_p, p1_in)

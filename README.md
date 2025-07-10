@@ -10,7 +10,7 @@
 - [x] Streamlit com autenticação [2025-07-07]
 - [ ] Instanciar pista com colisão
 - [x] Criar nave com chassi, sensores e propulsores [2025-07-09]
-- [ ] Carregar e salvar naves pela API
+- [x] Carregar e salvar naves pela API [2025-07-09]
 - [ ] Decals para naves
 - [ ] Neurônios de input (e.g. sensores, telemetria)
 - [ ] Neurônios de output (propulsores)
@@ -22,6 +22,11 @@
 - [ ] Métricas de desempenho na corrida
 - [ ] Treinamento iterativo (execução, avaliação, mutação)
 - [ ] Configuração de treinamento no Streamlit
+
+### Dívida técnica
+
+- [ ] Os nodes TrackAPI e ShipAPI são cópia um do outro. Cabe um node genérico.
+- [ ] Os endpoints para ler e escrever pistas e naves são cópia um do outro. Cabe funções genéricas chamadas por ambos.
 
 ## Instruções
 

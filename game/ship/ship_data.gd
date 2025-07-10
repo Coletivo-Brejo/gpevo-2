@@ -13,6 +13,8 @@ class_name ShipData
 
 
 static func create(
+        _ship_id: String,
+        _name: String,
         _mass: float,
         _chassis_texture: Texture2D,
         _thrusters: Array[ThrusterData],
@@ -20,6 +22,8 @@ static func create(
     ) -> ShipData:
 
     var ship = ShipData.new()
+    ship.ship_id = _ship_id
+    ship.name = _name
     ship.mass = _mass
     ship.chassis_texture = _chassis_texture
     ship.thrusters = _thrusters
@@ -34,6 +38,8 @@ static func from_dict(dict: Dictionary) -> ShipData:
     for s in dict["sensors"]:
         _sensors.append(SensorSetData.from_dict(s))
     var ship = ShipData.create(
+        dict["ship_id"],
+        dict["name"],
         dict["mass"],
         Serializer.to_texture(dict["chassis_texture"]),
         _thrusters,
@@ -43,6 +49,8 @@ static func from_dict(dict: Dictionary) -> ShipData:
 
 func to_dict() -> Dictionary:
     return {
+        "ship_id": ship_id,
+        "name": name,
         "mass": mass,
         "chassis_texture": Serializer.from_texture(chassis_texture),
         "thrusters": Serializer.from_list(thrusters),

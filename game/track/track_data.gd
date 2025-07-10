@@ -105,7 +105,7 @@ func compile_curves() -> void:
         var normal:Vector2 = get_current_tangent().orthogonal()
         var left_p:Vector2 = p1+normal*curr_width_l
         l_wall.set_point_out(l_wall.point_count-1, p0_out*s.l_wall_curv)
-        l_wall.add_point(left_p, p1_in)
+        l_wall.add_point(left_p, p1_in*s.l_wall_curv)
         var right_p:Vector2 = p1-normal*curr_width_r
         r_wall.set_point_out(r_wall.point_count-1, p0_out*s.r_wall_curv)
-        r_wall.add_point(right_p, p1_in)
+        r_wall.add_point(right_p, p1_in*s.r_wall_curv)

@@ -7,11 +7,21 @@
 - [x] Criar pistas no Godot [2025-07-07]
 - [x] Carregar e salvar pistas pela API [2025-07-07]
 - [x] Exibir pistas no Streamlit [2025-07-07]
+- [x] Streamlit com autenticação [2025-07-07]
 - [ ] Instanciar pista com colisão
-- [ ] Criar nave com propulsores
-- [ ] Criar cérebro e neurônios básicos
-- [ ] Persistir corredor (nave + cérebro)
-- [x] Adicionar autenticação ao Streamlit [2025-07-07]
+- [x] Criar nave com chassi, sensores e propulsores [2025-07-09]
+- [ ] Carregar e salvar naves pela API
+- [ ] Decals para naves
+- [ ] Neurônios de input (e.g. sensores, telemetria)
+- [ ] Neurônios de output (propulsores)
+- [ ] Neurônios centrais (e.g. perceptrons)
+- [ ] Corredor persistido (nave + cérebro)
+- [ ] Corredor operacional (input + output)
+- [ ] Visualização do cérebro (Streamlit + Godot)
+- [ ] Pistas com loop e voltas
+- [ ] Métricas de desempenho na corrida
+- [ ] Treinamento iterativo (execução, avaliação, mutação)
+- [ ] Configuração de treinamento no Streamlit
 
 ## Instruções
 

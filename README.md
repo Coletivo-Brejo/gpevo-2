@@ -27,6 +27,9 @@
 
 - [ ] Os nodes TrackAPI e ShipAPI são cópia um do outro. Cabe um node genérico.
 - [ ] Os endpoints para ler e escrever pistas e naves são cópia um do outro. Cabe funções genéricas chamadas por ambos.
+- [ ] O editor de naves reprocessa tudo a cada frame. Cabe uma detecção menos burra de quando há mudanças para processar.
+
+### Bugs
 
 ## Instruções
 

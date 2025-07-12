@@ -7,7 +7,7 @@ static func get_type() -> String:
     return "linear_combination"
 
 func run(input: Array[float]) -> Array[float]:
-    var a: float = 0.
+    var a: float = params[0]
     for i in input.size():
-        a += input[i]*params[i]
+        a += input[i]*params[i+1]
     return [a]

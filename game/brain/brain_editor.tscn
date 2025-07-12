@@ -1,29 +1,72 @@
-[gd_scene load_steps=9 format=3 uid="uid://v42v2f6ts0bp"]
+[gd_scene load_steps=12 format=3 uid="uid://v42v2f6ts0bp"]
 
 [ext_resource type="Script" uid="uid://cyxgvvsm8a888" path="res://brain/brain_editor.gd" id="1_l33br"]
 [ext_resource type="Script" uid="uid://7dpqjn1jm6th" path="res://brain/operation/operation.gd" id="2_qw34s"]
 [ext_resource type="Script" uid="uid://k4swttddxh8h" path="res://brain/operation/linear_combination.gd" id="3_v4m34"]
-[ext_resource type="Script" uid="uid://e433emj5lx1e" path="res://brain/operation/normalized_atan.gd" id="4_pj61e"]
 [ext_resource type="Script" uid="uid://bbulmksfk3cbx" path="res://brain/neuron_data.gd" id="5_ac68s"]
+[ext_resource type="Script" uid="uid://e433emj5lx1e" path="res://brain/operation/normalized_atan.gd" id="5_l33br"]
 
-[sub_resource type="Resource" id="Resource_juve6"]
+[sub_resource type="Resource" id="Resource_rqkg2"]
+script = ExtResource("5_ac68s")
+neuron_id = "n0"
+max_inputs = 0
+input_ids = Array[String]([])
+operations = Array[ExtResource("2_qw34s")]([])
+metadata/_custom_type_script = "uid://bbulmksfk3cbx"
+
+[sub_resource type="Resource" id="Resource_l33br"]
 script = ExtResource("3_v4m34")
-params = Array[float]([])
+params = Array[float]([1.0, 2.0])
 metadata/_custom_type_script = "uid://k4swttddxh8h"
 
-[sub_resource type="Resource" id="Resource_etfyp"]
-script = ExtResource("4_pj61e")
-params = Array[float]([])
+[sub_resource type="Resource" id="Resource_qw34s"]
+script = ExtResource("5_ac68s")
+neuron_id = "n1"
+max_inputs = 0
+input_ids = Array[String](["n0"])
+operations = Array[ExtResource("2_qw34s")]([SubResource("Resource_l33br")])
+metadata/_custom_type_script = "uid://bbulmksfk3cbx"
+
+[sub_resource type="Resource" id="Resource_v4m34"]
+script = ExtResource("3_v4m34")
+params = Array[float]([-5.0, 0.5, 1.0])
+metadata/_custom_type_script = "uid://k4swttddxh8h"
+
+[sub_resource type="Resource" id="Resource_pj61e"]
+script = ExtResource("5_l33br")
+params = Array[float]([0.0, 1.0])
 metadata/_custom_type_script = "uid://e433emj5lx1e"
 
-[sub_resource type="Resource" id="Resource_q8e0x"]
+[sub_resource type="Resource" id="Resource_ac68s"]
 script = ExtResource("5_ac68s")
-neuron_id = ""
+neuron_id = "n2"
 max_inputs = 0
-input_neurons = Array[String]([])
-operations = Array[ExtResource("2_qw34s")]([SubResource("Resource_juve6"), SubResource("Resource_etfyp")])
+input_ids = Array[String](["n0", "n1"])
+operations = Array[ExtResource("2_qw34s")]([SubResource("Resource_v4m34"), SubResource("Resource_pj61e")])
 metadata/_custom_type_script = "uid://bbulmksfk3cbx"
 
 [node name="BrainEditor" type="Node2D"]
 script = ExtResource("1_l33br")
-neuron = SubResource("Resource_q8e0x")
+neurons = Array[ExtResource("5_ac68s")]([SubResource("Resource_rqkg2"), SubResource("Resource_qw34s"), SubResource("Resource_ac68s")])
+neuron_to_activate = "n2"
+manual_value = 10.0
+
+[node name="Report" type="Label" parent="."]
+offset_right = 40.0
+offset_bottom = 23.0
+text = "
+            ---
+            id: n0
+            activated: true
+            activation: 10.00
+            
+            ---
+            id: n1
+            activated: true
+            activation: 21.00
+            
+            ---
+            id: n2
+            activated: true
+            activation: 0.98
+            "

@@ -28,7 +28,7 @@
 ### Dívida técnica
 
 - [x] Os nodes TrackAPI e ShipAPI são cópia um do outro. Cabe um node genérico. [2025-07-13]
-- [ ] Os endpoints para ler e escrever pistas e naves são cópia um do outro. Cabe funções genéricas chamadas por ambos.
+- [x] Os endpoints para ler e escrever pistas e naves são cópia um do outro. Cabe funções genéricas chamadas por ambos. [2025-07-13]
 - [ ] O editor de naves reprocessa tudo a cada frame. Cabe uma detecção menos burra de quando há mudanças para processar.
 - [ ] A nave não tem informação de colisão. Precisa de um novo atributo com os pontos do polígono do chassi.
 

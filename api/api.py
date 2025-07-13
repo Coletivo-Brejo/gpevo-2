@@ -12,6 +12,7 @@ load_dotenv()
 DATA_PATH = os.environ.get("DATA_PATH")
 TRACKS_PATH = f"{DATA_PATH}/tracks"
 SHIPS_PATH = f"{DATA_PATH}/ships"
+RACERS_PATH = f"{DATA_PATH}/racers"
 
 class Point(BaseModel):
     x: float
@@ -55,6 +56,42 @@ class Ship(BaseModel):
     thrusters: list[Thruster]
     sensors: list[SensorSet]
 
+def read_resource(
+        dir: str,
+        resource_id: str
+    ) -> JSONResponse:
+    resource_file = f"{dir}/{resource_id}.json"
+    try:
+        with open(resource_file) as f:
+            resource_dict: dict = json.load(f)
+            return JSONResponse(resource_dict)
+    except:
+        return JSONResponse("Recurso não encontrado", status_code=404)
+
+def read_all_resources(
+        dir: str,
+    ) -> JSONResponse:
+    resources: list[dict] = []
+    for file in os.listdir(dir):
+        resource_file: str = f"{dir}/{file}"
+        with open(resource_file) as f:
+            resource_dict: dict = json.load(f)
+            resources.append(resource_dict)
+    return JSONResponse(resources)
+
+def update_resource(
+        dir: str,
+        resource_id: str,
+        resource: BaseModel
+    ) -> JSONResponse:
+    if not os.path.exists(dir):
+        os.makedirs(dir)
+    resource_file: str = f"{dir}/{resource_id}.json"
+    with open(resource_file, "w", encoding="utf-8") as f:
+        resource_json = jsonable_encoder(resource)
+        json.dump(resource_json, f, ensure_ascii=False)
+    return JSONResponse("Recurso atualizado")
+
 app = FastAPI()
 
 @app.get("/")
@@ -63,60 +100,24 @@ def read_root():
 
 @app.get("/tracks")
 def read_tracks():
-    tracks: list[dict] = []
-    for file in os.listdir(TRACKS_PATH):
-        track_file: str = f"{TRACKS_PATH}/{file}"
-        with open(track_file) as f:
-            track_dict: dict = json.load(f)
-            tracks.append(track_dict)
-    return JSONResponse(tracks)
+    return read_all_resources(TRACKS_PATH)
 
 @app.get("/tracks/{track_id}")
 def read_track(track_id: str):
-    track_file = f"{TRACKS_PATH}/{track_id}.json"
-    try:
-        with open(track_file) as f:
-            track_dict: dict = json.load(f)
-            return JSONResponse(track_dict)
-    except:
-        return JSONResponse("Pista não encontrada", status_code=404)
+    return read_resource(TRACKS_PATH, track_id)
 
 @app.put("/tracks/{track_id}")
 def update_track(track_id: str, track: Track):
-    if not os.path.exists(TRACKS_PATH):
-        os.makedirs(TRACKS_PATH)
-    track_file: str = f"{TRACKS_PATH}/{track_id}.json"
-    with open(track_file, "w", encoding="utf-8") as f:
-        track_json = jsonable_encoder(track)
-        json.dump(track_json, f, ensure_ascii=False)
-    return JSONResponse("Pista salva")
+    return update_resource(TRACKS_PATH, track_id, track)
 
 @app.get("/ships")
 def read_ships():
-    ships: list[dict] = []
-    for file in os.listdir(SHIPS_PATH):
-        ship_file: str = f"{SHIPS_PATH}/{file}"
-        with open(ship_file) as f:
-            ship_dict: dict = json.load(f)
-            ships.append(ship_dict)
-    return JSONResponse(ships)
+    return read_all_resources(SHIPS_PATH)
 
 @app.get("/ships/{ship_id}")
 def read_ship(ship_id: str):
-    ship_file = f"{SHIPS_PATH}/{ship_id}.json"
-    try:
-        with open(ship_file) as f:
-            ship_dict: dict = json.load(f)
-            return JSONResponse(ship_dict)
-    except:
-        return JSONResponse("Nave não encontrada", status_code=404)
+    return read_resource(SHIPS_PATH, ship_id)
 
 @app.put("/ships/{ship_id}")
 def update_ship(ship_id: str, ship: Ship):
-    if not os.path.exists(SHIPS_PATH):
-        os.makedirs(SHIPS_PATH)
-    ship_file: str = f"{SHIPS_PATH}/{ship_id}.json"
-    with open(ship_file, "w", encoding="utf-8") as f:
-        ship_json = jsonable_encoder(ship)
-        json.dump(ship_json, f, ensure_ascii=False)
-    return JSONResponse("Nave salva")
+    return update_resource(SHIPS_PATH, ship_id, ship)

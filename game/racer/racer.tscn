@@ -7,5 +7,3 @@ collision_layer = 2
 motion_mode = 1
 slide_on_ceiling = false
 script = ExtResource("1_7in7g")
-
-[node name="RayCast2D" type="RayCast2D" parent="."]

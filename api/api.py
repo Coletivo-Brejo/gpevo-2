@@ -82,7 +82,7 @@ def read_track(track_id: str):
         return JSONResponse("Pista não encontrada", status_code=404)
 
 @app.put("/tracks/{track_id}")
-def update_track(track_id: str, track: Ship):
+def update_track(track_id: str, track: Track):
     if not os.path.exists(TRACKS_PATH):
         os.makedirs(TRACKS_PATH)
     track_file: str = f"{TRACKS_PATH}/{track_id}.json"

@@ -4,7 +4,7 @@ extends Node2D
 @onready var core_line: Line2D = $EditorTrack/Core
 @onready var left_line: Line2D = $EditorTrack/LeftWall
 @onready var right_line: Line2D = $EditorTrack/RightWall
-@onready var track_api: TrackAPI = $TrackAPI
+@onready var api: API = $API
 @onready var camera: Camera2D = $Camera
 @onready var dummy: CharacterBody2D = $Dummy
 
@@ -16,7 +16,7 @@ extends Node2D
 
 func _ready() -> void:
     if Engine.is_editor_hint():
-        track_api.track_loaded.connect(_on_track_loaded)
+        api.resource_loaded.connect(_on_track_loaded)
     else:
         clear_lines()
         if track != null:
@@ -45,11 +45,11 @@ func clear_lines() -> void:
     right_line.set_points([])
 
 func save_track() -> void:
-    track_api.save(track)
+    api.save("/tracks", track.track_id, track)
 
 func load_track() -> void:
-    track_api.load(track_id)
+    api.load("/tracks", track_id)
 
-func _on_track_loaded(_track:TrackData) -> void:
-    if _track != null:
-        track = _track
+func _on_track_loaded(track_dict: Dictionary) -> void:
+    if track_dict != null:
+        track = TrackData.from_dict(track_dict)

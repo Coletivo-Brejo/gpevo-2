@@ -1,7 +1,7 @@
 @tool
 extends Node2D
 
-@onready var ship_api: ShipAPI = $ShipAPI
+@onready var api: API = $API
 
 @export var transparent_sprite: bool:
     set(value):
@@ -16,7 +16,7 @@ var modulate_color: Color
 
 
 func _ready() -> void:
-    ship_api.ship_loaded.connect(_on_ship_loaded)
+    api.resource_loaded.connect(_on_ship_loaded)
     transparent_sprite = false
 
 func _process(_delta: float) -> void:
@@ -66,11 +66,11 @@ func clear() -> void:
         ship_sprite = null
 
 func save_ship() -> void:
-    ship_api.save(ship)
+    api.save("/ships", ship.ship_id, ship)
 
 func load_ship() -> void:
-    ship_api.load(ship_id)
+    api.load("/ships", ship_id)
 
-func _on_ship_loaded(_ship:ShipData) -> void:
-    if _ship != null:
-        ship = _ship
+func _on_ship_loaded(ship_dict: Dictionary) -> void:
+    if ship_dict != null:
+        ship = ShipData.from_dict(ship_dict)

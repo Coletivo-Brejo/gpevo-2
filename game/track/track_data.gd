@@ -57,7 +57,7 @@ func get_current_angle() -> float:
     if tangent == Vector2.ZERO:
         return 0.
     else:
-        return tangent.angle()
+        return tangent.angle()+PI/2.
 
 func compile_curves() -> void:
     core = Curve2D.new()
@@ -77,8 +77,8 @@ func compile_curves() -> void:
         
         if i == 0:
             core.add_point(Vector2.ZERO)
-            l_wall.add_point(Vector2(0., -curr_width_l))
-            r_wall.add_point(Vector2(0., curr_width_r))
+            l_wall.add_point(Vector2.LEFT*curr_width_l)
+            r_wall.add_point(Vector2.RIGHT*curr_width_r)
         
         var pos:Vector2 = core.get_point_position(core.point_count-1)
         var angle:float = get_current_angle()
@@ -88,15 +88,15 @@ func compile_curves() -> void:
         var p1_in:Vector2
 
         if s.l_wall_dist > 0. and s.r_wall_dist > 0.:
-            p0_out = Vector2(s.length*.5, 0.).rotated(angle)
-            p1 = pos + Vector2(s.length, 0.).rotated(angle)
-            p1_in = Vector2(-s.length*.5, 0.).rotated(angle)
+            p0_out = (Vector2.UP*s.length*.5).rotated(angle)
+            p1 = pos + (Vector2.UP*s.length).rotated(angle)
+            p1_in = (Vector2.DOWN*s.length*.5).rotated(angle)
         else:
-            p0_out = Vector2(abs(s.curvature)*s.length*.5, 0.)
+            p0_out = (Vector2.UP*abs(s.curvature)*s.length*.5)
             p0_out = p0_out.rotated(angle)
-            p1 = Vector2(s.length*(1-abs(s.curvature/5.)), 0.).rotated(s.curvature*PI/4.)
+            p1 = (Vector2.UP*s.length*(1-abs(s.curvature/5.))).rotated(s.curvature*PI/4.)
             p1 = p1.rotated(angle) + pos
-            p1_in = Vector2(-abs(s.curvature)*s.length*.5, 0.).rotated(s.curvature*PI/2.)
+            p1_in = (Vector2.DOWN*abs(s.curvature)*s.length*.5).rotated(s.curvature*PI/2.)
             p1_in = p1_in.rotated(angle)
 
         core.set_point_out(core.point_count-1, p0_out)

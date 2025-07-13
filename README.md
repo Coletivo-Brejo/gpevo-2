@@ -8,10 +8,12 @@
 - [x] Carregar e salvar pistas pela API [2025-07-07]
 - [x] Exibir pistas no Streamlit [2025-07-07]
 - [x] Streamlit com autenticação [2025-07-07]
-- [ ] Instanciar pista com colisão
+- [x] Instanciar pista com colisão [2025-07-13]
+- [ ] Possibilidade de espelhar a pista
 - [x] Criar nave com chassi, sensores e propulsores [2025-07-09]
 - [x] Carregar e salvar naves pela API [2025-07-09]
 - [ ] Decals para naves
+- [x] Neurônios e operações básicas (e.g. linear, relu, atan) [2025-07-11]
 - [ ] Neurônios de input (e.g. sensores, telemetria)
 - [ ] Neurônios de output (propulsores)
 - [ ] Neurônios centrais (e.g. perceptrons)

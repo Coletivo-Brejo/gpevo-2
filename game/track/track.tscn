@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=3 uid="uid://dain05ly5jg6x"]
+
+[ext_resource type="Script" uid="uid://ban14f1kqubnb" path="res://track/track.gd" id="1_t76p0"]
+
+[node name="Track" type="StaticBody2D"]
+collision_mask = 0
+script = ExtResource("1_t76p0")
+
+[node name="Core" type="Line2D" parent="."]
+width = 3.0
+default_color = Color(1, 1, 1, 0.12549)
+
+[node name="LeftWall" type="Line2D" parent="."]
+width = 3.0
+
+[node name="RightWall" type="Line2D" parent="."]
+width = 3.0

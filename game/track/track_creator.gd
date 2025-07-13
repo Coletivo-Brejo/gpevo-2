@@ -1,10 +1,12 @@
 @tool
 extends Node2D
 
-@onready var core_line: Line2D = $Track/Core
-@onready var left_line: Line2D = $Track/LeftWall
-@onready var right_line: Line2D = $Track/RightWall
+@onready var core_line: Line2D = $EditorTrack/Core
+@onready var left_line: Line2D = $EditorTrack/LeftWall
+@onready var right_line: Line2D = $EditorTrack/RightWall
 @onready var track_api: TrackAPI = $TrackAPI
+@onready var camera: Camera2D = $Camera
+@onready var dummy: CharacterBody2D = $Dummy
 
 @export var track_id: String = ""
 @export_tool_button("Load track") var load_bt: Callable = load_track
@@ -13,14 +15,24 @@ extends Node2D
 
 
 func _ready() -> void:
-    track_api.track_loaded.connect(_on_track_loaded)
-
-func _process(_delta: float) -> void:
-    if track != null:
-        track.compile_curves()
-        update_lines()
+    if Engine.is_editor_hint():
+        track_api.track_loaded.connect(_on_track_loaded)
     else:
         clear_lines()
+        if track != null:
+            track.compile_curves()
+        var game_track = Track.create(track)
+        add_child(game_track)
+
+func _process(_delta: float) -> void:
+    if Engine.is_editor_hint():
+        if track != null:
+            track.compile_curves()
+            update_lines()
+        else:
+            clear_lines()
+    else:
+        camera.set_position(dummy.position)
 
 func update_lines() -> void:
     core_line.set_points(track.core.get_baked_points())

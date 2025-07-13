@@ -21,9 +21,12 @@ static func create(
     return operation
 
 static func from_dict(dict: Dictionary) -> Operation:
+    var _params: Array[float] = []
+    for p in dict["params"]:
+        _params.append(p)
     var operation = Operation.create(
         dict["type"],
-        dict["params"],
+        _params,
     )
     return operation
 

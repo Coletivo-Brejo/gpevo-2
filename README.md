@@ -14,9 +14,9 @@
 - [ ] Decals para naves
 - [x] Neurônios e operações básicas (e.g. linear, relu, atan) [2025-07-11]
 - [ ] Neurônios de input (e.g. sensores, telemetria)
-- [ ] Neurônios de output (propulsores)
+- [x] Neurônios de output (propulsores) [2025-07-13]
 - [ ] Neurônios centrais (e.g. perceptrons)
-- [ ] Corredor persistido (nave + cérebro)
+- [x] Corredor persistido (nave + cérebro) [2025-07-13]
 - [ ] Corredor operacional (input + output)
 - [ ] Visualização do cérebro (Streamlit + Godot)
 - [ ] Pistas com loop e voltas
@@ -31,6 +31,7 @@
 - [x] Os endpoints para ler e escrever pistas e naves são cópia um do outro. Cabe funções genéricas chamadas por ambos. [2025-07-13]
 - [ ] O editor de naves reprocessa tudo a cada frame. Cabe uma detecção menos burra de quando há mudanças para processar.
 - [ ] A nave não tem informação de colisão. Precisa de um novo atributo com os pontos do polígono do chassi.
+- [ ] A propulsão da nave está errada, aparentemente cravada no espaço local quando deveria ser global
 
 ### Bugs
 

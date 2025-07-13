@@ -56,13 +56,33 @@ class Ship(BaseModel):
     thrusters: list[Thruster]
     sensors: list[SensorSet]
 
+class Operation(BaseModel):
+    type: str
+    params: list[float]
+
+class Neuron(BaseModel):
+    neuron_id: str
+    max_inputs: int
+    input_ids: list[str]
+    operations: list[Operation]
+
+class Brain(BaseModel):
+    neurons: list[Neuron]
+    current_id: int
+
+class Racer(BaseModel):
+    racer_id: str
+    name: str
+    brain: Brain
+    ship: Ship
+
 def read_resource(
         dir: str,
         resource_id: str
     ) -> JSONResponse:
     resource_file = f"{dir}/{resource_id}.json"
     try:
-        with open(resource_file) as f:
+        with open(resource_file, encoding="utf-8") as f:
             resource_dict: dict = json.load(f)
             return JSONResponse(resource_dict)
     except:
@@ -121,3 +141,15 @@ def read_ship(ship_id: str):
 @app.put("/ships/{ship_id}")
 def update_ship(ship_id: str, ship: Ship):
     return update_resource(SHIPS_PATH, ship_id, ship)
+
+@app.get("/racers")
+def read_racers():
+    return read_all_resources(RACERS_PATH)
+
+@app.get("/racers/{racer_id}")
+def read_racer(racer_id: str):
+    return read_resource(RACERS_PATH, racer_id)
+
+@app.put("/racers/{racer_id}")
+def update_racer(racer_id: str, racer: Racer):
+    return update_resource(RACERS_PATH, racer_id, racer)

@@ -1,0 +1,15 @@
+[gd_scene load_steps=4 format=3 uid="uid://c74jp3mk67rev"]
+
+[ext_resource type="Script" uid="uid://cld7tk4unax7b" path="res://racer/racer_editor.gd" id="1_4r4hs"]
+[ext_resource type="Resource" uid="uid://ikeeggsqlwdv" path="res://racer/antonio.tres" id="2_4o4xy"]
+[ext_resource type="Script" uid="uid://dbcj37ky1n81f" path="res://api/api.gd" id="2_qqe7u"]
+
+[node name="RacerEditor" type="Node2D"]
+script = ExtResource("1_4r4hs")
+racer_id = "antonio_perfeicao"
+ship_id = "shipperson"
+racer = ExtResource("2_4o4xy")
+
+[node name="API" type="HTTPRequest" parent="."]
+script = ExtResource("2_qqe7u")
+metadata/_custom_type_script = "uid://dbcj37ky1n81f"

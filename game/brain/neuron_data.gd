@@ -25,17 +25,20 @@ static func create(
     neuron.operations = _operations
     neuron.activation = 0.
     neuron.activated = false
-    neuron.input = []
+    #neuron.input = []
     return neuron
 
 static func from_dict(dict: Dictionary) -> NeuronData:
+    var _input_ids: Array[String] = []
+    for i in dict["input_ids"]:
+        _input_ids.append(i)
     var _operations: Array[Operation] = []
     for op in dict["operations"]:
         _operations.append(Operation.from_dict(op))
     var neuron = NeuronData.create(
         dict["neuron_id"],
         dict["max_inputs"],
-        dict["input_ids"],
+        _input_ids,
         _operations,
     )
     return neuron

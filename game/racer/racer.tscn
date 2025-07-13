@@ -1,9 +1,13 @@
-[gd_scene load_steps=2 format=3 uid="uid://cy2ry4e8ya1j"]
+[gd_scene load_steps=3 format=3 uid="uid://cy2ry4e8ya1j"]
 
 [ext_resource type="Script" uid="uid://dl37a350up1hv" path="res://racer/racer.gd" id="1_7in7g"]
+[ext_resource type="Resource" uid="uid://ikeeggsqlwdv" path="res://racer/antonio.tres" id="2_02jsv"]
 
 [node name="Racer" type="CharacterBody2D"]
 collision_layer = 2
 motion_mode = 1
 slide_on_ceiling = false
 script = ExtResource("1_7in7g")
+data = ExtResource("2_02jsv")
+
+[node name="Camera2D" type="Camera2D" parent="."]

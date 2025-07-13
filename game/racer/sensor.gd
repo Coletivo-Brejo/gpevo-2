@@ -14,7 +14,7 @@ static func create(
     return sensor
 
 func _ready() -> void:
-    pass
+    line.set_points([Vector2.ZERO, target_position])
 
 func _process(_delta: float) -> void:
     if enabled and is_colliding():
@@ -22,7 +22,7 @@ func _process(_delta: float) -> void:
         line.set_point_position(1, to_local(get_collision_point()))
     else:
         set_modulate(Color("#ffffff33"))
-        line.set_visible(false)
+        line.set_point_position(1, target_position)
 
 func get_reading() -> float:
     var reading: float = 0.

@@ -23,8 +23,11 @@ static func create(
     return brain
 
 static func from_dict(dict: Dictionary) -> BrainData:
+    var _neurons: Array[NeuronData] = []
+    for s in dict["neurons"]:
+        _neurons.append(NeuronData.from_dict(s))
     var brain = BrainData.create(
-        dict["neurons"],
+        _neurons,
         dict["current_id"],
     )
     return brain
@@ -42,3 +45,8 @@ func refresh() -> void:
     for n in neurons:
         var neuron: NeuronData = neurons[n]
         neuron.activated = false
+
+func get_next_id() -> String:
+    var next_id: String = "n%d" % current_id
+    current_id += 1
+    return next_id

@@ -1,12 +1,13 @@
-[gd_scene load_steps=11 format=3 uid="uid://chi1m41kmmk4j"]
+[gd_scene load_steps=12 format=3 uid="uid://chi1m41kmmk4j"]
 
 [ext_resource type="Script" uid="uid://ddwmj6ylpifft" path="res://track/track_creator.gd" id="1_o0jg6"]
 [ext_resource type="Script" uid="uid://dyi663rgn5n4j" path="res://track/track_data.gd" id="2_x4txj"]
 [ext_resource type="Script" uid="uid://btyru6q0fevmb" path="res://track/track_segment_data.gd" id="3_lqlpf"]
+[ext_resource type="Resource" uid="uid://ikeeggsqlwdv" path="res://racer/antonio.tres" id="4_1e7eu"]
 [ext_resource type="Script" uid="uid://dbcj37ky1n81f" path="res://api/api.gd" id="5_1e7eu"]
 [ext_resource type="Script" uid="uid://r3jld7fr3qtm" path="res://track/dummy.gd" id="5_lqlpf"]
 
-[sub_resource type="Resource" id="Resource_x4txj"]
+[sub_resource type="Resource" id="Resource_1e7eu"]
 script = ExtResource("3_lqlpf")
 length = 250.0
 curvature = 0.0
@@ -14,9 +15,8 @@ l_wall_dist = 50.0
 l_wall_curv = 0.0
 r_wall_dist = 90.0
 r_wall_curv = 0.0
-metadata/_custom_type_script = "uid://btyru6q0fevmb"
 
-[sub_resource type="Resource" id="Resource_lqlpf"]
+[sub_resource type="Resource" id="Resource_w5abi"]
 script = ExtResource("3_lqlpf")
 length = 350.0
 curvature = -0.7
@@ -24,9 +24,8 @@ l_wall_dist = 0.0
 l_wall_curv = 0.95
 r_wall_dist = 0.0
 r_wall_curv = 0.95
-metadata/_custom_type_script = "uid://btyru6q0fevmb"
 
-[sub_resource type="Resource" id="Resource_1e7eu"]
+[sub_resource type="Resource" id="Resource_5yi5b"]
 script = ExtResource("3_lqlpf")
 length = 300.0
 curvature = 1.0
@@ -34,21 +33,20 @@ l_wall_dist = 0.0
 l_wall_curv = 0.95
 r_wall_dist = 0.0
 r_wall_curv = 0.45
-metadata/_custom_type_script = "uid://btyru6q0fevmb"
 
-[sub_resource type="Resource" id="Resource_w5abi"]
+[sub_resource type="Resource" id="Resource_nfxc8"]
 script = ExtResource("2_x4txj")
 track_id = "teste_novo"
 name = "Teste de API"
-segments = Array[ExtResource("3_lqlpf")]([SubResource("Resource_x4txj"), SubResource("Resource_lqlpf"), SubResource("Resource_1e7eu")])
-metadata/_custom_type_script = "uid://dyi663rgn5n4j"
+segments = Array[ExtResource("3_lqlpf")]([SubResource("Resource_1e7eu"), SubResource("Resource_w5abi"), SubResource("Resource_5yi5b")])
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_x4txj"]
 
 [node name="TrackCreator" type="Node2D"]
 script = ExtResource("1_o0jg6")
-track_id = "pista_teste"
-track = SubResource("Resource_w5abi")
+track_id = "teste_novo"
+track = SubResource("Resource_nfxc8")
+racer_data = ExtResource("4_1e7eu")
 
 [node name="EditorTrack" type="Node2D" parent="."]
 

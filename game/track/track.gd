@@ -13,7 +13,7 @@ const scene_path: String = "res://track/track.tscn"
 static func create(
 		_data: TrackData,
 	) -> Track:
-	var track = load(scene_path).instantiate()
+	var track: Track = load(scene_path).instantiate()
 	track.data = _data
 	return track
 

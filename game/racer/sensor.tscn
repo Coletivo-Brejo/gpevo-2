@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://dj0j8msfj4fmq"]
+
+[ext_resource type="Script" uid="uid://bo6iomjrvkgyx" path="res://racer/sensor.gd" id="1_5roki"]
+
+[node name="Sensor" type="RayCast2D"]
+script = ExtResource("1_5roki")
+
+[node name="Line" type="Line2D" parent="."]
+width = 2.0
+end_cap_mode = 2

@@ -9,7 +9,6 @@
 - [x] Exibir pistas no Streamlit [2025-07-07]
 - [x] Streamlit com autenticação [2025-07-07]
 - [x] Instanciar pista com colisão [2025-07-13]
-- [ ] Possibilidade de espelhar a pista
 - [x] Criar nave com chassi, sensores e propulsores [2025-07-09]
 - [x] Carregar e salvar naves pela API [2025-07-09]
 - [ ] Decals para naves
@@ -21,6 +20,7 @@
 - [ ] Corredor operacional (input + output)
 - [ ] Visualização do cérebro (Streamlit + Godot)
 - [ ] Pistas com loop e voltas
+- [ ] Pistas espelhadas
 - [ ] Métricas de desempenho na corrida
 - [ ] Treinamento iterativo (execução, avaliação, mutação)
 - [ ] Configuração de treinamento no Streamlit
@@ -30,6 +30,7 @@
 - [ ] Os nodes TrackAPI e ShipAPI são cópia um do outro. Cabe um node genérico.
 - [ ] Os endpoints para ler e escrever pistas e naves são cópia um do outro. Cabe funções genéricas chamadas por ambos.
 - [ ] O editor de naves reprocessa tudo a cada frame. Cabe uma detecção menos burra de quando há mudanças para processar.
+- [ ] A nave não tem informação de colisão. Precisa de um novo atributo com os pontos do polígono do chassi.
 
 ### Bugs
 

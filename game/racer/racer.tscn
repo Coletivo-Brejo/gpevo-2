@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://cy2ry4e8ya1j"]
+
+[ext_resource type="Script" uid="uid://dl37a350up1hv" path="res://racer/racer.gd" id="1_7in7g"]
+
+[node name="Racer" type="CharacterBody2D"]
+collision_layer = 2
+motion_mode = 1
+slide_on_ceiling = false
+script = ExtResource("1_7in7g")
+
+[node name="RayCast2D" type="RayCast2D" parent="."]

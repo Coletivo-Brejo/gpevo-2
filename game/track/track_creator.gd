@@ -50,6 +50,8 @@ func _process(_delta: float) -> void:
             Angular acceleration: %.2f
             t0: %.2f
             t1: %.2f
+            s1: %.2f
+            s3: %.2f
             """ % [
                 racer.velocity.x,
                 racer.velocity.y,
@@ -59,6 +61,8 @@ func _process(_delta: float) -> void:
                 racer.angular_accel,
                 racer.data.brain.neurons["t0"].activation,
                 racer.data.brain.neurons["t1"].activation,
+                racer.data.brain.neurons["s1"].activation,
+                racer.data.brain.neurons["s3"].activation,
             ]
             racer_label.set_text(racer_report)
 

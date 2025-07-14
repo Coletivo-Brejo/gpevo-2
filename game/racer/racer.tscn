@@ -10,4 +10,4 @@ slide_on_ceiling = false
 script = ExtResource("1_7in7g")
 data = ExtResource("2_02jsv")
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="Collision" type="CollisionPolygon2D" parent="."]

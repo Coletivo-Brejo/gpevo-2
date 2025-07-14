@@ -8,6 +8,18 @@ static func from_color(color:Color) -> Dictionary[String, float]:
 static func to_color(dict:Dictionary) -> Color:
     return Color(dict["r"], dict["g"], dict["b"], dict["a"])
 
+static func from_packed_v2(array: PackedVector2Array) -> Array[Dictionary]:
+    var dict_array: Array[Dictionary] = []
+    for v in array:
+        dict_array.append(from_vector2(v))
+    return dict_array
+
+static func to_packed_v2(array: Array) -> PackedVector2Array:
+    var vec_array: PackedVector2Array = []
+    for v_dict in array:
+        vec_array.append(to_vector2(v_dict))
+    return vec_array
+
 static func from_rect(rect:Rect2) -> Dictionary[String, float]:
     return {"x":rect.position.x, "y":rect.position.y, "w":rect.size.x, "h":rect.size.y}
 

@@ -2,6 +2,10 @@ extends CharacterBody2D
 class_name Racer
 
 const scene_path: String = "res://racer/racer.tscn"
+const LINEAR_DAMP: float = .1
+const ANGULAR_DAMP: float = .1
+
+@onready var collision: CollisionPolygon2D = $Collision
 
 @export var data: RacerData
 var thrusters: Array[Thruster]
@@ -20,11 +24,15 @@ static func create(
     return racer
 
 func _ready() -> void:
+    collision.set_polygon(data.ship.chassis_collision)
     calculate_inertia()
     build_ship()
     draw_ship()
+    data.brain.create_connections()
 
 func _physics_process(delta: float) -> void:
+    velocity *= (1. - LINEAR_DAMP*delta)
+    angular_velocity *= (1. - ANGULAR_DAMP*delta)
     data.brain.refresh()
     sense()
     thrust()
@@ -106,7 +114,7 @@ func thrust() -> void:
         var force: Vector2 = direction * thruster_data.power * intensity
         total_force += force
         tau += thruster.position.cross(force)
-    linear_accel = total_force / data.ship.mass
+    linear_accel = (total_force / data.ship.mass).rotated(rotation)
     velocity += linear_accel
     angular_accel = tau / inertia
     angular_velocity += angular_accel

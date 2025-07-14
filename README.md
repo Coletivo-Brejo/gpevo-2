@@ -13,11 +13,11 @@
 - [x] Carregar e salvar naves pela API [2025-07-09]
 - [ ] Decals para naves
 - [x] Neurônios e operações básicas (e.g. linear, relu, atan) [2025-07-11]
-- [ ] Neurônios de input (e.g. sensores, telemetria)
+- [x] Neurônios de input (e.g. sensores, telemetria) [2025-07-14]
 - [x] Neurônios de output (propulsores) [2025-07-13]
 - [ ] Neurônios centrais (e.g. perceptrons)
 - [x] Corredor persistido (nave + cérebro) [2025-07-13]
-- [ ] Corredor operacional (input + output)
+- [x] Corredor operacional (input + output) [2025-07-14]
 - [ ] Visualização do cérebro (Streamlit + Godot)
 - [ ] Pistas com loop e voltas
 - [ ] Pistas espelhadas
@@ -30,8 +30,7 @@
 - [x] Os nodes TrackAPI e ShipAPI são cópia um do outro. Cabe um node genérico. [2025-07-13]
 - [x] Os endpoints para ler e escrever pistas e naves são cópia um do outro. Cabe funções genéricas chamadas por ambos. [2025-07-13]
 - [ ] O editor de naves reprocessa tudo a cada frame. Cabe uma detecção menos burra de quando há mudanças para processar.
-- [ ] A nave não tem informação de colisão. Precisa de um novo atributo com os pontos do polígono do chassi.
-- [ ] A propulsão da nave está errada, aparentemente cravada no espaço local quando deveria ser global
+- [x] A nave não tem informação de colisão. Precisa de um novo atributo com os pontos do polígono do chassi. [2025-07-14]
 
 ### Bugs
 

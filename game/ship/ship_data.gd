@@ -8,6 +8,7 @@ class_name ShipData
     set(value): mass = value; emit_changed()
 @export var chassis_texture: Texture2D:
     set(value): chassis_texture = value; emit_changed()
+@export var chassis_collision: PackedVector2Array
 @export var thrusters: Array[ThrusterData]
 @export var sensors: Array[SensorSetData]
 
@@ -17,6 +18,7 @@ static func create(
         _name: String,
         _mass: float,
         _chassis_texture: Texture2D,
+        _chassis_collision: PackedVector2Array,
         _thrusters: Array[ThrusterData],
         _sensors: Array[SensorSetData],
     ) -> ShipData:
@@ -26,6 +28,7 @@ static func create(
     ship.name = _name
     ship.mass = _mass
     ship.chassis_texture = _chassis_texture
+    ship.chassis_collision = _chassis_collision
     ship.thrusters = _thrusters
     ship.sensors = _sensors
     return ship
@@ -42,6 +45,7 @@ static func from_dict(dict: Dictionary) -> ShipData:
         dict["name"],
         dict["mass"],
         Serializer.to_texture(dict["chassis_texture"]),
+        Serializer.to_packed_v2(dict["chassis_collision"]),
         _thrusters,
         _sensors,
     )
@@ -53,6 +57,7 @@ func to_dict() -> Dictionary:
         "name": name,
         "mass": mass,
         "chassis_texture": Serializer.from_texture(chassis_texture),
+        "chassis_collision": Serializer.from_packed_v2(chassis_collision),
         "thrusters": Serializer.from_list(thrusters),
         "sensors": Serializer.from_list(sensors),
     }

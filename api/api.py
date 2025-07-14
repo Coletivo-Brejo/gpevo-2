@@ -53,6 +53,7 @@ class Ship(BaseModel):
     name: str
     mass: float
     chassis_texture: str
+    chassis_collision: list[Point]
     thrusters: list[Thruster]
     sensors: list[SensorSet]
 

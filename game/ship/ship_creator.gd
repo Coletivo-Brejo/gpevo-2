@@ -1,6 +1,7 @@
 @tool
 extends Node2D
 
+@onready var collision_editor: CollisionPolygon2D = $Collision
 @onready var api: API = $API
 
 @export var transparent_sprite: bool:
@@ -10,6 +11,7 @@ extends Node2D
 @export var ship_id: String = ""
 @export_tool_button("Load ship") var load_bt: Callable = load_ship
 @export var ship: ShipData
+@export_tool_button("Set collision polygon") var collision_bt: Callable = set_collision
 @export_tool_button("Save ship") var save_bt: Callable = save_ship
 var ship_sprite: Sprite2D
 var modulate_color: Color
@@ -64,6 +66,10 @@ func clear() -> void:
         remove_child(ship_sprite)
         ship_sprite.queue_free()
         ship_sprite = null
+
+func set_collision() -> void:
+    if ship != null:
+        ship.chassis_collision = collision_editor.polygon
 
 func save_ship() -> void:
     api.save("/ships", ship.ship_id, ship)

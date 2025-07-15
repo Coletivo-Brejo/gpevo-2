@@ -39,6 +39,10 @@ func _physics_process(delta: float) -> void:
     rotation += angular_velocity * delta
     move_and_slide()
 
+func set_pause(paused: bool) -> void:
+    set_process(!paused)
+    set_physics_process(!paused)
+
 func calculate_inertia() -> void:
     var w: float = data.ship.chassis_texture.get_width()
     var h: float = data.ship.chassis_texture.get_height()

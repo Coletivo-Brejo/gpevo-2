@@ -8,6 +8,7 @@ class_name TrackData
 var core: Curve2D
 var l_wall: Curve2D
 var r_wall: Curve2D
+var length: float
 
 
 static func create(
@@ -41,6 +42,7 @@ func to_dict() -> Dictionary:
         "core": Serializer.from_list(core.get_baked_points()),
         "l_wall": Serializer.from_list(l_wall.get_baked_points()),
         "r_wall": Serializer.from_list(r_wall.get_baked_points()),
+        "length": length,
     }
 
 func get_current_tangent() -> Vector2:
@@ -109,3 +111,5 @@ func compile_curves() -> void:
         var right_p:Vector2 = p1-normal*curr_width_r
         r_wall.set_point_out(r_wall.point_count-1, p0_out*s.r_wall_curv)
         r_wall.add_point(right_p, p1_in*s.r_wall_curv)
+
+        length = core.get_baked_length()

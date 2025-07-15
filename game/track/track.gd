@@ -18,6 +18,7 @@ static func create(
 	return track
 
 func _ready() -> void:
+	data.compile_curves()
 	create_walls()
 
 func create_walls() -> void:

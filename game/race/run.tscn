@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3 uid="uid://b3vatuiulqgkg"]
+
+[ext_resource type="Script" uid="uid://c7q5lgnq37ul6" path="res://race/run.gd" id="1_w8wjl"]
+
+[node name="Run" type="Node2D"]
+script = ExtResource("1_w8wjl")
+
+[node name="Camera" type="Camera2D" parent="."]
+
+[node name="StatCollectionTimer" type="Timer" parent="."]
+
+[node name="BeginTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="EndTimer" type="Timer" parent="."]
+one_shot = true

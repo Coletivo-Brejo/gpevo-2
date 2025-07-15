@@ -23,8 +23,6 @@ func _ready() -> void:
         api.resource_loaded.connect(_on_track_loaded)
     else:
         clear_lines()
-        if track != null:
-            track.compile_curves()
         var game_track = Track.create(track)
         add_child(game_track)
         if racer_data != null:

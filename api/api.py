@@ -13,6 +13,7 @@ DATA_PATH = os.environ.get("DATA_PATH")
 TRACKS_PATH = f"{DATA_PATH}/tracks"
 SHIPS_PATH = f"{DATA_PATH}/ships"
 RACERS_PATH = f"{DATA_PATH}/racers"
+RUNS_PATH = f"{DATA_PATH}/runs"
 
 class Point(BaseModel):
     x: float
@@ -33,6 +34,7 @@ class Track(BaseModel):
     core: list[Point]
     l_wall: list[Point]
     r_wall: list[Point]
+    length: float
 
 class Thruster(BaseModel):
     power: float
@@ -76,6 +78,22 @@ class Racer(BaseModel):
     name: str
     brain: Brain
     ship: Ship
+
+class RunStats(BaseModel):
+    racer_id: str
+    track_id: str
+    max_progress: float
+    finished: bool
+    time_history: list[float]
+    progress_history: list[float]
+    position_history: list[Point]
+
+class Run(BaseModel):
+    run_id: str
+    track_id: str
+    racer_ids: list[str]
+    elapsed_time: float
+    stats: list[RunStats]
 
 def read_resource(
         dir: str,
@@ -154,3 +172,15 @@ def read_racer(racer_id: str):
 @app.put("/racers/{racer_id}")
 def update_racer(racer_id: str, racer: Racer):
     return update_resource(RACERS_PATH, racer_id, racer)
+
+@app.get("/runs")
+def read_runs():
+    return read_all_resources(RUNS_PATH)
+
+@app.get("/runs/{run_id}")
+def read_run(run_id: str):
+    return read_resource(RUNS_PATH, run_id)
+
+@app.put("/runs/{run_id}")
+def update_run(run_id: str, run: Run):
+    return update_resource(RUNS_PATH, run_id, run)

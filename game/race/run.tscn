@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://b3vatuiulqgkg"]
+[gd_scene load_steps=3 format=3 uid="uid://b3vatuiulqgkg"]
 
 [ext_resource type="Script" uid="uid://c7q5lgnq37ul6" path="res://race/run.gd" id="1_w8wjl"]
+[ext_resource type="Script" uid="uid://dbcj37ky1n81f" path="res://api/api.gd" id="2_i1sj6"]
 
 [node name="Run" type="Node2D"]
 script = ExtResource("1_w8wjl")
@@ -12,5 +13,12 @@ script = ExtResource("1_w8wjl")
 [node name="BeginTimer" type="Timer" parent="."]
 one_shot = true
 
+[node name="RunTimer" type="Timer" parent="."]
+one_shot = true
+
 [node name="EndTimer" type="Timer" parent="."]
 one_shot = true
+
+[node name="API" type="HTTPRequest" parent="."]
+script = ExtResource("2_i1sj6")
+metadata/_custom_type_script = "uid://dbcj37ky1n81f"

@@ -9,15 +9,19 @@ signal resource_loaded(resource_dict: Dictionary)
 
 
 func save(route: String, resource_id: String, resource: Resource) -> void:
+    if resource.has_method("to_dict"):
+        var resource_dict: Dictionary = resource.to_dict()
+        save_from_dict(route, resource_id, resource_dict)
+    else:
+        print("Recurso não pode ser serializado")
+
+func save_from_dict(route: String, resource_id: String, resource_dict: Dictionary) -> void:
     disconnect_all()
     request_completed.connect(_on_resource_saved)
     var endpoint: String = "%s%s/%s" % [url, route, resource_id]
     print(endpoint)
-    if resource.has_method("to_dict"):
-        var resource_json: String = JSON.stringify(resource.to_dict())
-        request(endpoint, [], HTTPClient.METHOD_PUT, resource_json)
-    else:
-        print("Recurso não pode ser serializado")
+    var resource_json: String = JSON.stringify(resource_dict)
+    request(endpoint, [], HTTPClient.METHOD_PUT, resource_json)
 
 func load(route: String, resource_id: String) -> void:
     disconnect_all()

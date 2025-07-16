@@ -21,9 +21,9 @@
 - [ ] Visualização do cérebro (Streamlit + Godot)
 - [ ] Pistas com loop e voltas
 - [ ] Pistas espelhadas
-- [ ] Execução (pista + corredores) com começo e fim
-- [ ] Métricas de desempenho na corrida
-- [ ] Visualização dos resultados da corrida do Streamlit
+- [x] Execução (pista + corredores) com começo e fim [2025-07-16]
+- [x] Métricas de desempenho na corrida [2025-07-16]
+- [x] Visualização dos resultados da corrida do Streamlit [2025-07-16]
 - [ ] Treinamento iterativo (execução, avaliação, mutação)
 - [ ] Configuração de treinamento no Streamlit
 

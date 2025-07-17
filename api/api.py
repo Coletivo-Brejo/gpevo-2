@@ -31,6 +31,7 @@ class Track(BaseModel):
     track_id: str
     name: str
     segments: list[TrackSegment]
+    loops: bool
     core: list[Point]
     l_wall: list[Point]
     r_wall: list[Point]
@@ -82,8 +83,10 @@ class Racer(BaseModel):
 class RunStats(BaseModel):
     racer_id: str
     track_id: str
+    lap: int
     max_progress: float
     finished: bool
+    stuck: bool
     time_history: list[float]
     progress_history: list[float]
     position_history: list[Point]
@@ -92,6 +95,14 @@ class Run(BaseModel):
     run_id: str
     track_id: str
     racer_ids: list[str]
+    begin_countdown: float
+    end_countdown: float
+    stuck_timeout: float
+    run_timeout: float
+    end_on_first_finish: bool
+    stat_collection_frequency: float
+    mirrored: bool
+    laps: int
     elapsed_time: float
     stats: list[RunStats]
 

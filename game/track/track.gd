@@ -8,6 +8,7 @@ const scene_path: String = "res://track/track.tscn"
 @onready var r_wall: Line2D = $RightWall
 
 @export var data: TrackData
+var length: float
 
 
 static func create(

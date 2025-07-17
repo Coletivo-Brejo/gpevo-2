@@ -55,5 +55,5 @@ func _on_track_loaded(track_dict: Dictionary) -> void:
         track = TrackData.from_dict(track_dict)
 
 func setup_test() -> void:
-    test_run.track_data = track
-    test_run.racers_data = [racer_data]
+    test_run.data.track_data = track
+    test_run.data.racers_data = [racer_data]

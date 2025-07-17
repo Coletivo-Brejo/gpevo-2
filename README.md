@@ -11,7 +11,6 @@
 - [x] Instanciar pista com colisão [2025-07-13]
 - [x] Criar nave com chassi, sensores e propulsores [2025-07-09]
 - [x] Carregar e salvar naves pela API [2025-07-09]
-- [ ] Decals para naves
 - [x] Neurônios e operações básicas (e.g. linear, relu, atan) [2025-07-11]
 - [x] Neurônios de input (e.g. sensores, telemetria) [2025-07-14]
 - [x] Neurônios de output (propulsores) [2025-07-13]
@@ -19,13 +18,22 @@
 - [x] Corredor persistido (nave + cérebro) [2025-07-13]
 - [x] Corredor operacional (input + output) [2025-07-14]
 - [ ] Visualização do cérebro (Streamlit + Godot)
-- [ ] Pistas com loop e voltas
+- [x] Pistas com loop e voltas [2025-07-17]
 - [ ] Pistas espelhadas
 - [x] Execução (pista + corredores) com começo e fim [2025-07-16]
 - [x] Métricas de desempenho na corrida [2025-07-16]
 - [x] Visualização dos resultados da corrida do Streamlit [2025-07-16]
 - [ ] Treinamento iterativo (execução, avaliação, mutação)
 - [ ] Configuração de treinamento no Streamlit
+- [ ] Visualização dos resultados do treinamento no Streamlit
+
+### Jogo de fato
+
+- [ ] Decals para naves
+- [ ] Perfis de acesso (sem login, público, gestor de equipe, administrador)
+- [ ] Calendário de eventos
+- [ ] Estrutura de equipe (gestores, corredores, verba, pontuação, cor, etc.)
+- [ ] Precificação de treinamentos
 
 ### Dívida técnica
 

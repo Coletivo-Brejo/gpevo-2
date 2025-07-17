@@ -98,7 +98,7 @@ if selected_run is not None:
     percent_progress: bool = st.checkbox("Porcentagem")
     progress: list[float] = stats["progress_history"]
     if percent_progress:
-        progress = [p/track["length"] for p in progress]
+        progress = [p/track["length"]/selected_run["laps"] for p in progress]
 
     traces: list[dict] = [
         {
@@ -154,6 +154,9 @@ if selected_run is not None:
             "mode": "markers",
             "x": history_xs,
             "y": history_ys,
+            "marker": {
+                "opacity": .5,
+            },
         }
     ]
     layout: dict = {

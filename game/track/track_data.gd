@@ -5,6 +5,7 @@ class_name TrackData
 @export var track_id: String
 @export var name: String
 @export var segments: Array[TrackSegmentData]
+@export var loops: bool
 var core: Curve2D
 var l_wall: Curve2D
 var r_wall: Curve2D
@@ -15,11 +16,13 @@ static func create(
         _track_id: String = "",
         _name: String = "",
         _segments: Array[TrackSegmentData] = [],
+        _loops: bool = false,
     ) -> TrackData:
     var track = TrackData.new()
     track.track_id = _track_id
     track.name = _name
     track.segments = _segments
+    track.loops = _loops
     track.compile_curves()
     return track
 
@@ -31,6 +34,7 @@ static func from_dict(dict: Dictionary) -> TrackData:
         dict["track_id"],
         dict["name"],
         _segments,
+        dict["loops"],
     )
     return track
 
@@ -39,6 +43,7 @@ func to_dict() -> Dictionary:
         "track_id": track_id,
         "name": name,
         "segments": Serializer.from_list(segments),
+        "loops": loops,
         "core": Serializer.from_list(core.get_baked_points()),
         "l_wall": Serializer.from_list(l_wall.get_baked_points()),
         "r_wall": Serializer.from_list(r_wall.get_baked_points()),
@@ -112,4 +117,9 @@ func compile_curves() -> void:
         r_wall.set_point_out(r_wall.point_count-1, p0_out*s.r_wall_curv)
         r_wall.add_point(right_p, p1_in*s.r_wall_curv)
 
-        length = core.get_baked_length()
+    if loops:
+        core.add_point(core.get_point_position(0))
+        l_wall.add_point(l_wall.get_point_position(0))
+        r_wall.add_point(r_wall.get_point_position(0))
+    
+    length = core.get_baked_length()

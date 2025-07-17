@@ -124,9 +124,12 @@ if selected_run is not None:
         use_container_width = True,
     )
 
-    l_xs: list[float] = [p["x"] for p in track["l_wall"]]
+    x_scale: float = 1.
+    if selected_run["mirrored"]:
+        x_scale = -1.
+    l_xs: list[float] = [p["x"]*x_scale for p in track["l_wall"]]
     l_ys: list[float] = [p["y"] for p in track["l_wall"]]
-    r_xs: list[float] = [p["x"] for p in track["r_wall"]]
+    r_xs: list[float] = [p["x"]*x_scale for p in track["r_wall"]]
     r_ys: list[float] = [p["y"] for p in track["r_wall"]]
     history_xs: list[float] = [p["x"] for p in stats["position_history"]]
     history_ys: list[float] = [p["y"] for p in stats["position_history"]]
@@ -145,6 +148,24 @@ if selected_run is not None:
             "mode": "lines",
             "x": r_xs,
             "y": r_ys,
+            "line": {
+                "color": "grey",
+            },
+        },
+        {
+            "type": "scatter",
+            "mode": "lines",
+            "x": [l_xs[0], r_xs[0]],
+            "y": [l_ys[0], r_ys[0]],
+            "line": {
+                "color": "grey",
+            },
+        },
+        {
+            "type": "scatter",
+            "mode": "lines",
+            "x": [l_xs[-1], r_xs[-1]],
+            "y": [l_ys[-1], r_ys[-1]],
             "line": {
                 "color": "grey",
             },

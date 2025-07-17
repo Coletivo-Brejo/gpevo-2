@@ -33,6 +33,8 @@ func _ready() -> void:
 	running = false
 	elapsed_time = 0.
 	track = Track.create(data.track_data)
+	if data.mirrored:
+		track.set_scale(Vector2(-1., 1.))
 	add_child(track)
 	for r in data.racers_data:
 		var racer = Racer.create(r)

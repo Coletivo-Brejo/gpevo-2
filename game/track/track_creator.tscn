@@ -91,7 +91,7 @@ stuck_timeout = 5.0
 run_timeout = 0.0
 end_on_first_finish = false
 stat_collection_frequency = 1.0
-mirrored = false
+mirrored = true
 laps = 2
 metadata/_custom_type_script = "uid://cwlrb25ewiqrk"
 

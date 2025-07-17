@@ -19,7 +19,7 @@
 - [x] Corredor operacional (input + output) [2025-07-14]
 - [ ] Visualização do cérebro (Streamlit + Godot)
 - [x] Pistas com loop e voltas [2025-07-17]
-- [ ] Pistas espelhadas
+- [x] Pistas espelhadas [2025-07-17]
 - [x] Execução (pista + corredores) com começo e fim [2025-07-16]
 - [x] Métricas de desempenho na corrida [2025-07-16]
 - [x] Visualização dos resultados da corrida do Streamlit [2025-07-16]

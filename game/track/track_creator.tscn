@@ -92,7 +92,7 @@ run_timeout = 0.0
 end_on_first_finish = false
 stat_collection_frequency = 1.0
 mirrored = true
-laps = 2
+laps = 1
 metadata/_custom_type_script = "uid://cwlrb25ewiqrk"
 
 [node name="TrackCreator" type="Node2D"]

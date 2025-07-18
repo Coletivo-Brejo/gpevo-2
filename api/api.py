@@ -84,6 +84,7 @@ class RunStats(BaseModel):
     racer_id: str
     track_id: str
     lap: int
+    time: float
     max_progress: float
     finished: bool
     stuck: bool
@@ -104,6 +105,7 @@ class Run(BaseModel):
     mirrored: bool
     laps: int
     elapsed_time: float
+    end_reason: str
     stats: list[RunStats]
 
 def read_resource(

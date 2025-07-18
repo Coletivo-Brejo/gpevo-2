@@ -50,6 +50,8 @@ func _ready() -> void:
 		)
 		stats.append(stat)
 		data.stats.append(stat)
+		stat.racer_finished.connect(_on_racer_finished.bind(racer, stat))
+		stat.racer_stuck.connect(_on_racer_stuck.bind(racer, stat))
 	if data.end_countdown > 0.:
 		end_timer.set_wait_time(data.end_countdown)
 		end_timer.timeout.connect(finish)
@@ -58,7 +60,7 @@ func _ready() -> void:
 		stat_collection_timer.timeout.connect(_on_stat_collection)
 	if data.run_timeout > 0.:
 		run_timer.set_wait_time(data.run_timeout)
-		run_timer.timeout.connect(end_run)
+		run_timer.timeout.connect(end_run.bind("timeout"))
 	if data.begin_countdown > 0.:
 		begin_timer.set_wait_time(data.begin_countdown)
 		begin_timer.timeout.connect(begin_run)
@@ -73,17 +75,21 @@ func _process(delta: float) -> void:
 		var max_progress: float = stats[0].progress
 		var any_finished: bool = false
 		var all_finished: bool = true
+		var all_stuck: bool = true
 		for stat in stats:
 			stat.check_progress(delta)
 			any_finished = any_finished or stat.finished
 			all_finished = all_finished and stat.finished
+			all_stuck = all_stuck and stat.stuck
 			if stat.progress > max_progress:
 				first_place = stat.racer
 				max_progress = stat.progress
 		if any_finished and data.end_on_first_finish:
-			end_run()
+			end_run("first finished")
 		elif all_finished:
-			end_run()
+			end_run("all finished")
+		elif all_stuck:
+			end_run("all stuck")
 		if follow_first:
 			camera.set_position(first_place.position)
 
@@ -96,12 +102,13 @@ func begin_run() -> void:
 		run_timer.start()
 	running = true
 
-func end_run() -> void:
+func end_run(reason: String) -> void:
+	data.end_reason = reason
+	data.elapsed_time = elapsed_time
 	running = false
 	stat_collection_timer.stop()
 	run_timer.stop()
 	for stat in stats:
-		stat.check_progress(0.)
 		stat.record_history(elapsed_time)
 	save()
 	for racer in racers:
@@ -117,6 +124,14 @@ func finish() -> void:
 func _on_stat_collection() -> void:
 	for stat in stats:
 		stat.record_history(elapsed_time)
+
+func _on_racer_finished(racer: Racer, stat: RunStats) -> void:
+	stat.record_history(elapsed_time)
+	racer.set_paused(true)
+
+func _on_racer_stuck(racer: Racer, stat: RunStats) -> void:
+	stat.record_history(elapsed_time)
+	racer.set_paused(true)
 
 func save() -> void:
 	api.save("/runs", data.run_id, data)

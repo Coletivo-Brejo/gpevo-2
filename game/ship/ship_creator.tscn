@@ -13,21 +13,21 @@
 script = ExtResource("4_uy4in")
 amount = 5
 aperture = 1.93732
-reach = 190.0
+reach = 300.0
 texture = ExtResource("5_obldy")
 position = Vector2(0, -34)
 rotation = 0.0
 
 [sub_resource type="Resource" id="Resource_tangj"]
 script = ExtResource("6_6fogv")
-power = 10.0
+power = 20.0
 texture = ExtResource("7_jfx4e")
 position = Vector2(-33, 24)
 rotation = -0.349066
 
 [sub_resource type="Resource" id="Resource_500aw"]
 script = ExtResource("6_6fogv")
-power = 10.0
+power = 20.0
 texture = ExtResource("7_jfx4e")
 position = Vector2(34, 24)
 rotation = 0.279253

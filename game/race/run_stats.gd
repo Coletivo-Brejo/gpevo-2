@@ -7,6 +7,7 @@ signal racer_stuck()
 var racer: Racer
 var track: Track
 var lap: int = 0
+var time: float = 0.
 var progress: float = 0.
 var max_progress: float = 0.
 var finished: bool = false
@@ -41,6 +42,7 @@ func to_dict() -> Dictionary:
         "racer_id": racer.data.racer_id,
         "track_id": track.data.track_id,
         "lap": lap,
+        "time": time,
         "max_progress": max_progress,
         "finished": finished,
         "stuck": stuck,
@@ -59,8 +61,8 @@ func check_progress(delta: float) -> void:
             checkpoint = new_checkpoint
             progress = lap*track_length + lap_progress
             if lap >= laps:
-                finished = true
                 racer_finished.emit()
+                finished = true
             if progress <= max_progress:
                 update_stuck_time(delta)
             else:
@@ -82,14 +84,13 @@ func assert_lap_progress(lap_progress: float) -> bool:
 func update_stuck_time(delta: float) -> void:
     time_stuck += delta
     if stuck_timeout > 0. and time_stuck > stuck_timeout:
-        stuck = true
         racer_stuck.emit()
+        stuck = true
 
-func record_history(time: float) -> void:
-    print("Lap: %d" % lap)
-    print("Checkpoint: %d" % checkpoint)
+func record_history(_time: float) -> void:
     if not finished and not stuck and not racer.paused:
-        time_history.append(time)
+        time = _time
+        time_history.append(_time)
         progress_history.append(max_progress)
         position_history.append(racer.position)
 

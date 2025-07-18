@@ -18,42 +18,42 @@ extends Node2D
 
 
 func _ready() -> void:
-    if Engine.is_editor_hint():
-        api.resource_loaded.connect(_on_track_loaded)
-    else:
-        clear_lines()
+	if Engine.is_editor_hint():
+		api.resource_loaded.connect(_on_track_loaded)
+	else:
+		clear_lines()
 
 func _process(_delta: float) -> void:
-    if Engine.is_editor_hint():
-        if track != null:
-            track.compile_curves()
-            update_lines()
-        else:
-            clear_lines()
-    else:
-        if Input.is_action_just_pressed("escape"):
-            test_run.end_run()
+	if Engine.is_editor_hint():
+		if track != null:
+			track.compile_curves()
+			update_lines()
+		else:
+			clear_lines()
+	else:
+		if Input.is_action_just_pressed("escape"):
+			test_run.end_run("manual abort")
 
 func update_lines() -> void:
-    core_line.set_points(track.core.get_baked_points())
-    left_line.set_points(track.l_wall.get_baked_points())
-    right_line.set_points(track.r_wall.get_baked_points())
+	core_line.set_points(track.core.get_baked_points())
+	left_line.set_points(track.l_wall.get_baked_points())
+	right_line.set_points(track.r_wall.get_baked_points())
 
 func clear_lines() -> void:
-    core_line.set_points([])
-    left_line.set_points([])
-    right_line.set_points([])
+	core_line.set_points([])
+	left_line.set_points([])
+	right_line.set_points([])
 
 func save_track() -> void:
-    api.save("/tracks", track.track_id, track)
+	api.save("/tracks", track.track_id, track)
 
 func load_track() -> void:
-    api.load("/tracks", track_id)
+	api.load("/tracks", track_id)
 
 func _on_track_loaded(track_dict: Dictionary) -> void:
-    if track_dict != null:
-        track = TrackData.from_dict(track_dict)
+	if track_dict != null:
+		track = TrackData.from_dict(track_dict)
 
 func setup_test() -> void:
-    test_run.data.track_data = track
-    test_run.data.racers_data = [racer_data]
+	test_run.data.track_data = track
+	test_run.data.racers_data = [racer_data]

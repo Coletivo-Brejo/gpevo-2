@@ -13,6 +13,7 @@ class_name RunData
 @export var mirrored: bool = false
 @export var laps: int = 1
 var elapsed_time: float
+var end_reason: String
 var stats: Array[RunStats]
 
 
@@ -81,5 +82,6 @@ func to_dict() -> Dictionary:
         "mirrored": mirrored,
         "laps": laps,
         "elapsed_time": elapsed_time,
+        "end_reason": end_reason,
         "stats": Serializer.from_list(stats)
     }

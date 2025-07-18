@@ -1,14 +1,166 @@
-[gd_scene load_steps=4 format=3 uid="uid://c74jp3mk67rev"]
+[gd_scene load_steps=35 format=3 uid="uid://c74jp3mk67rev"]
 
 [ext_resource type="Script" uid="uid://cld7tk4unax7b" path="res://racer/racer_editor.gd" id="1_4r4hs"]
-[ext_resource type="Resource" uid="uid://ikeeggsqlwdv" path="res://racer/antonio.tres" id="2_4o4xy"]
+[ext_resource type="Script" uid="uid://7dpqjn1jm6th" path="res://brain/operation/operation.gd" id="2_im158"]
 [ext_resource type="Script" uid="uid://dbcj37ky1n81f" path="res://api/api.gd" id="2_qqe7u"]
+[ext_resource type="Script" uid="uid://bbulmksfk3cbx" path="res://brain/neuron_data.gd" id="3_ih6k7"]
+[ext_resource type="Script" uid="uid://k4swttddxh8h" path="res://brain/operation/linear_combination.gd" id="4_f6645"]
+[ext_resource type="Script" uid="uid://e433emj5lx1e" path="res://brain/operation/normalized_atan.gd" id="5_ygl37"]
+[ext_resource type="Script" uid="uid://bb7vsw2sy8wth" path="res://brain/brain_data.gd" id="6_7srsy"]
+[ext_resource type="Script" uid="uid://065kpbfkmvvp" path="res://racer/racer_data.gd" id="7_rjl4q"]
+[ext_resource type="Texture2D" uid="uid://dlhyn6cpeg6i2" path="res://ship/chassis/chassis_1.png" id="8_jofde"]
+[ext_resource type="Script" uid="uid://dn10k375jpym7" path="res://ship/ship_data.gd" id="9_t5bqw"]
+[ext_resource type="Script" uid="uid://cwdn7evjl16fj" path="res://ship/sensor_set_data.gd" id="10_16lrr"]
+[ext_resource type="Texture2D" uid="uid://c40jstihuul8" path="res://ship/sensor/sensor.png" id="11_uhk15"]
+[ext_resource type="Script" uid="uid://bh6pj46y84upq" path="res://ship/thruster_data.gd" id="12_pifa5"]
+[ext_resource type="Texture2D" uid="uid://dnku6chaguo8a" path="res://ship/thruster/thruster_2.png" id="13_lobrp"]
+
+[sub_resource type="Resource" id="Resource_75eaw"]
+script = ExtResource("3_ih6k7")
+neuron_id = "s0"
+max_inputs = 0
+input_ids = Array[String]([])
+operations = Array[ExtResource("2_im158")]([])
+
+[sub_resource type="Resource" id="Resource_iyg5f"]
+script = ExtResource("3_ih6k7")
+neuron_id = "s1"
+max_inputs = 0
+input_ids = Array[String]([])
+operations = Array[ExtResource("2_im158")]([])
+
+[sub_resource type="Resource" id="Resource_3cyca"]
+script = ExtResource("3_ih6k7")
+neuron_id = "s2"
+max_inputs = 0
+input_ids = Array[String]([])
+operations = Array[ExtResource("2_im158")]([])
+
+[sub_resource type="Resource" id="Resource_afqmj"]
+script = ExtResource("3_ih6k7")
+neuron_id = "s3"
+max_inputs = 0
+input_ids = Array[String]([])
+operations = Array[ExtResource("2_im158")]([])
+
+[sub_resource type="Resource" id="Resource_j6x5v"]
+script = ExtResource("3_ih6k7")
+neuron_id = "s4"
+max_inputs = 0
+input_ids = Array[String]([])
+operations = Array[ExtResource("2_im158")]([])
+
+[sub_resource type="Resource" id="Resource_iu7oc"]
+script = ExtResource("4_f6645")
+params = Array[float]([0.0, 5.0, -10.0])
+
+[sub_resource type="Resource" id="Resource_jqlg2"]
+script = ExtResource("5_ygl37")
+params = Array[float]([0.0, 1.0])
+
+[sub_resource type="Resource" id="Resource_rtdml"]
+script = ExtResource("3_ih6k7")
+neuron_id = "t0"
+max_inputs = -1
+input_ids = Array[String](["s1", "s3"])
+operations = Array[ExtResource("2_im158")]([SubResource("Resource_iu7oc"), SubResource("Resource_jqlg2")])
+
+[sub_resource type="Resource" id="Resource_laekt"]
+script = ExtResource("4_f6645")
+params = Array[float]([0.0, 5.0, -10.0])
+
+[sub_resource type="Resource" id="Resource_johig"]
+script = ExtResource("5_ygl37")
+params = Array[float]([0.0, 1.0])
+
+[sub_resource type="Resource" id="Resource_84nnb"]
+script = ExtResource("3_ih6k7")
+neuron_id = "t1"
+max_inputs = -1
+input_ids = Array[String](["s3", "s1"])
+operations = Array[ExtResource("2_im158")]([SubResource("Resource_laekt"), SubResource("Resource_johig")])
+
+[sub_resource type="Resource" id="Resource_2yogn"]
+script = ExtResource("3_ih6k7")
+neuron_id = "v0"
+max_inputs = 0
+input_ids = Array[String]([])
+operations = Array[ExtResource("2_im158")]([])
+
+[sub_resource type="Resource" id="Resource_uoxuh"]
+script = ExtResource("3_ih6k7")
+neuron_id = "v1"
+max_inputs = 0
+input_ids = Array[String]([])
+operations = Array[ExtResource("2_im158")]([])
+
+[sub_resource type="Resource" id="Resource_4nf68"]
+script = ExtResource("3_ih6k7")
+neuron_id = "v2"
+max_inputs = 0
+input_ids = Array[String]([])
+operations = Array[ExtResource("2_im158")]([])
+
+[sub_resource type="Resource" id="Resource_esrl2"]
+script = ExtResource("6_7srsy")
+neurons = {
+"s0": SubResource("Resource_75eaw"),
+"s1": SubResource("Resource_iyg5f"),
+"s2": SubResource("Resource_3cyca"),
+"s3": SubResource("Resource_afqmj"),
+"s4": SubResource("Resource_j6x5v"),
+"t0": SubResource("Resource_rtdml"),
+"t1": SubResource("Resource_84nnb"),
+"v0": SubResource("Resource_2yogn"),
+"v1": SubResource("Resource_uoxuh"),
+"v2": SubResource("Resource_4nf68")
+}
+
+[sub_resource type="Resource" id="Resource_l04ku"]
+script = ExtResource("10_16lrr")
+amount = 5
+aperture = 1.93732
+reach = 300.0
+texture = ExtResource("11_uhk15")
+position = Vector2(0, -34)
+rotation = 0.0
+
+[sub_resource type="Resource" id="Resource_4vmxy"]
+script = ExtResource("12_pifa5")
+power = 20.0
+texture = ExtResource("13_lobrp")
+position = Vector2(-33, 24)
+rotation = -0.349066
+
+[sub_resource type="Resource" id="Resource_kccgp"]
+script = ExtResource("12_pifa5")
+power = 20.0
+texture = ExtResource("13_lobrp")
+position = Vector2(34, 24)
+rotation = 0.279253
+
+[sub_resource type="Resource" id="Resource_vld5o"]
+script = ExtResource("9_t5bqw")
+ship_id = "shipperson"
+name = "Asa Delta"
+mass = 100.0
+chassis_texture = ExtResource("8_jofde")
+chassis_collision = PackedVector2Array(0, -50, 55, 0, 54, 30, 11, 48, -11, 48, -52, 33, -51, -4)
+thrusters = Array[ExtResource("12_pifa5")]([SubResource("Resource_4vmxy"), SubResource("Resource_kccgp")])
+sensors = Array[ExtResource("10_16lrr")]([SubResource("Resource_l04ku")])
+
+[sub_resource type="Resource" id="Resource_im158"]
+script = ExtResource("7_rjl4q")
+racer_id = "antonio_perfeicao"
+name = "Antônio Perfeição"
+brain = SubResource("Resource_esrl2")
+ship = SubResource("Resource_vld5o")
 
 [node name="RacerEditor" type="Node2D"]
 script = ExtResource("1_4r4hs")
 racer_id = "antonio_perfeicao"
 ship_id = "shipperson"
-racer = ExtResource("2_4o4xy")
+racer = SubResource("Resource_im158")
 
 [node name="API" type="HTTPRequest" parent="."]
 script = ExtResource("2_qqe7u")

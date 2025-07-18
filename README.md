@@ -23,6 +23,11 @@
 - [x] Execução (pista + corredores) com começo e fim [2025-07-16]
 - [x] Métricas de desempenho na corrida [2025-07-16]
 - [x] Visualização dos resultados da corrida do Streamlit [2025-07-16]
+- [x] Encerrar corrida se corredores ficarem presos [2025-07-18]
+- [x] Persistir motivo da conclusão da corrida [2025-07-18]
+- [ ] Mutação: criar/destruir neurônio
+- [ ] Mutação: criar/destruir conexão neuronal
+- [ ] Mutação: alterar pesos de conexão neuronal
 - [ ] Treinamento iterativo (execução, avaliação, mutação)
 - [ ] Configuração de treinamento no Streamlit
 - [ ] Visualização dos resultados do treinamento no Streamlit

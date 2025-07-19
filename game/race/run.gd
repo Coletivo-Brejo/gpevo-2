@@ -1,6 +1,9 @@
 extends Node2D
 class_name Run
 
+signal run_ended()
+signal run_finished()
+
 const scene_path: String = "res://race/run.tscn"
 
 @onready var camera: Camera2D = $Camera
@@ -16,7 +19,6 @@ var track: Track
 var racers: Array[Racer]
 var stats: Array[RunStats]
 var running: bool
-var elapsed_time: float
 
 
 static func create(
@@ -30,8 +32,8 @@ static func create(
 	return run
 
 func _ready() -> void:
+	data.elapsed_time = 0.
 	running = false
-	elapsed_time = 0.
 	track = Track.create(data.track_data)
 	if data.mirrored:
 		track.set_scale(Vector2(-1., 1.))
@@ -70,7 +72,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	if running:
-		elapsed_time += delta
+		data.elapsed_time += delta
 		var first_place: Racer = racers[0]
 		var max_progress: float = stats[0].progress
 		var any_finished: bool = false
@@ -104,33 +106,32 @@ func begin_run() -> void:
 
 func end_run(reason: String) -> void:
 	data.end_reason = reason
-	data.elapsed_time = elapsed_time
 	running = false
 	stat_collection_timer.stop()
 	run_timer.stop()
 	for stat in stats:
-		stat.record_history(elapsed_time)
-	save()
+		stat.record_history(data.elapsed_time)
 	for racer in racers:
 		racer.set_paused(true)
+	run_ended.emit()
 	if data.end_countdown > 0.:
 		end_timer.start()
 	else:
 		finish()
 
 func finish() -> void:
-	get_tree().quit()
+	run_finished.emit()
 
 func _on_stat_collection() -> void:
 	for stat in stats:
-		stat.record_history(elapsed_time)
+		stat.record_history(data.elapsed_time)
 
 func _on_racer_finished(racer: Racer, stat: RunStats) -> void:
-	stat.record_history(elapsed_time)
+	stat.record_history(data.elapsed_time)
 	racer.set_paused(true)
 
 func _on_racer_stuck(racer: Racer, stat: RunStats) -> void:
-	stat.record_history(elapsed_time)
+	stat.record_history(data.elapsed_time)
 	racer.set_paused(true)
 
 func save() -> void:

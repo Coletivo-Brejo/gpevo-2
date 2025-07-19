@@ -38,3 +38,6 @@ func to_dict() -> Dictionary:
         "brain": brain.to_dict(),
         "ship": ship.to_dict(),
     }
+
+func clone() -> RacerData:
+    return from_dict(to_dict())

@@ -27,8 +27,8 @@
 - [x] Persistir motivo da conclusão da corrida [2025-07-18]
 - [ ] Mutação: criar/destruir neurônio
 - [ ] Mutação: criar/destruir conexão neuronal
-- [ ] Mutação: alterar pesos de conexão neuronal
-- [ ] Treinamento iterativo (execução, avaliação, mutação)
+- [x] Mutação: alterar pesos de conexão neuronal [2025-07-18]
+- [x] Treinamento iterativo (execução, avaliação, mutação) [2025-07-18]
 - [ ] Configuração de treinamento no Streamlit
 - [ ] Visualização dos resultados do treinamento no Streamlit
 

@@ -4,7 +4,7 @@ class_name Racer
 const scene_path: String = "res://racer/racer.tscn"
 const LINEAR_DAMP: float = .1
 const ANGULAR_DAMP: float = .1
-const WALL_FRICTION: float = .5
+const WALL_FRICTION: float = .2
 
 @onready var collision: CollisionPolygon2D = $Collision
 
@@ -39,11 +39,10 @@ func _physics_process(delta: float) -> void:
     sense()
     thrust()
     rotation += angular_velocity * delta
-    var collided: bool = move_and_slide()
-    if collided:
-        var coll: KinematicCollision2D = get_last_slide_collision()
-        linear_accel = linear_accel.slide(coll.get_normal())
-        linear_accel *= (1. - WALL_FRICTION)
+    var coll: KinematicCollision2D = get_last_slide_collision()
+    if coll != null:
+        velocity *= (1. - WALL_FRICTION)
+    move_and_slide()
 
 func set_paused(_paused: bool) -> void:
     set_process(!_paused)

@@ -78,11 +78,13 @@ func _process(delta: float) -> void:
 		var any_finished: bool = false
 		var all_finished: bool = true
 		var all_stuck: bool = true
+		var all_finished_or_stuck: bool = true
 		for stat in stats:
 			stat.check_progress(delta)
 			any_finished = any_finished or stat.finished
 			all_finished = all_finished and stat.finished
 			all_stuck = all_stuck and stat.stuck
+			all_finished_or_stuck = all_finished_or_stuck and (stat.finished or stat.stuck)
 			if stat.progress > max_progress:
 				first_place = stat.racer
 				max_progress = stat.progress
@@ -92,6 +94,8 @@ func _process(delta: float) -> void:
 			end_run("all finished")
 		elif all_stuck:
 			end_run("all stuck")
+		elif all_finished_or_stuck:
+			end_run("all finished or stuck")
 		if follow_first:
 			camera.set_position(first_place.position)
 

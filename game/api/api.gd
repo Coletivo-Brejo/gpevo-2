@@ -44,6 +44,7 @@ func _on_resource_saved(
     ) -> void:
     if result != HTTPRequest.RESULT_SUCCESS:
         push_error("Falha ao salvar recurso")
+    print(_body.get_string_from_utf8())
     print("Recurso salvo")
     disconnect_all()
     resource_saved.emit()

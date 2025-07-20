@@ -5,7 +5,14 @@ from fastapi.responses import JSONResponse
 import json
 import os
 from pydantic import BaseModel
-from typing import Union
+
+from models import (
+    Racer,
+    Run,
+    Ship,
+    Track,
+    Training,
+)
 
 
 load_dotenv()
@@ -14,99 +21,7 @@ TRACKS_PATH = f"{DATA_PATH}/tracks"
 SHIPS_PATH = f"{DATA_PATH}/ships"
 RACERS_PATH = f"{DATA_PATH}/racers"
 RUNS_PATH = f"{DATA_PATH}/runs"
-
-class Point(BaseModel):
-    x: float
-    y: float
-
-class TrackSegment(BaseModel):
-    length: float
-    curvature: float
-    l_wall_dist: float
-    l_wall_curv: float
-    r_wall_dist: float
-    r_wall_curv: float
-
-class Track(BaseModel):
-    track_id: str
-    name: str
-    segments: list[TrackSegment]
-    loops: bool
-    core: list[Point]
-    l_wall: list[Point]
-    r_wall: list[Point]
-    length: float
-
-class Thruster(BaseModel):
-    power: float
-    texture: str
-    position: Point
-    rotation: float
-
-class SensorSet(BaseModel):
-    amount: int
-    aperture: float
-    reach: float
-    texture: str
-    position: Point
-    rotation: float
-
-class Ship(BaseModel):
-    ship_id: str
-    name: str
-    mass: float
-    chassis_texture: str
-    chassis_collision: list[Point]
-    thrusters: list[Thruster]
-    sensors: list[SensorSet]
-
-class Operation(BaseModel):
-    type: str
-    params: list[float]
-
-class Neuron(BaseModel):
-    neuron_id: str
-    max_inputs: int
-    input_ids: list[str]
-    operations: list[Operation]
-
-class Brain(BaseModel):
-    neurons: list[Neuron]
-    current_id: int
-
-class Racer(BaseModel):
-    racer_id: str
-    name: str
-    brain: Brain
-    ship: Ship
-
-class RunStats(BaseModel):
-    racer_id: str
-    track_id: str
-    lap: int
-    time: float
-    max_progress: float
-    finished: bool
-    stuck: bool
-    time_history: list[float]
-    progress_history: list[float]
-    position_history: list[Point]
-
-class Run(BaseModel):
-    run_id: str
-    track_id: str
-    racer_ids: list[str]
-    begin_countdown: float
-    end_countdown: float
-    stuck_timeout: float
-    run_timeout: float
-    end_on_first_finish: bool
-    stat_collection_frequency: float
-    mirrored: bool
-    laps: int
-    elapsed_time: float
-    end_reason: str
-    stats: list[RunStats]
+TRAININGS_PATH = f"{DATA_PATH}/trainings"
 
 def read_resource(
         dir: str,
@@ -197,3 +112,15 @@ def read_run(run_id: str):
 @app.put("/runs/{run_id}")
 def update_run(run_id: str, run: Run):
     return update_resource(RUNS_PATH, run_id, run)
+
+@app.get("/trainings")
+def read_trainings():
+    return read_all_resources(TRAININGS_PATH)
+
+@app.get("/trainings/{training_id}")
+def read_training(training_id: str):
+    return read_resource(TRAININGS_PATH, training_id)
+
+@app.put("/trainings/{training_id}")
+def update_training(training_id: str, training: Training):
+    return update_resource(TRAININGS_PATH, training_id, training)

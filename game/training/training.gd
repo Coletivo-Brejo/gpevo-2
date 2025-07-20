@@ -1,6 +1,8 @@
 extends Node2D
 class_name Training
 
+signal training_finished
+
 @onready var api: API = $API
 
 @export var data: TrainingData
@@ -51,10 +53,6 @@ func start_run() -> void:
 	run.run_ended.connect(_on_run_finished)
 	add_child(run)
 
-func end_training(reason: String) -> void:
-	data.end_reason = reason
-	print(reason)
-
 func _on_track_loaded(track_dict: Dictionary) -> void:
 	api.resource_loaded.disconnect(_on_track_loaded)
 	if track_dict != null:
@@ -82,10 +80,9 @@ func _on_run_finished() -> void:
 		convergence_iteration += 1
 	else:
 		convergence_iteration = 0
-	if convergence_iteration >= data.convergence_iterations:
-		end_training("improvement converged")
-	elif iteration >= data.n_iterations-1:
-		end_training("max iteration reached")
+	var end_reason: String = get_ending_reason()
+	if end_reason != "":
+		end_training(end_reason)
 	else:
 		temperature *= (1. - data.cooling_rate)
 		iteration += 1
@@ -123,3 +120,41 @@ func set_new_racer(stat: RunStats) -> void:
 	current_racer.racer_id = data.racer_id
 	data.racer_history.append(stat)
 	print("Progress: %.0f - Finished: %s - Time: %.1f" % [stat.progress, stat.finished, stat.time])
+
+func get_ending_reason() -> String:
+	var stat: RunStats = data.racer_history[-1]
+	if data.progress_objective > 0. and stat.progress > data.progress_objective:
+			return "progress objetive met"
+	elif data.time_objective > 0. and stat.finished and stat.time < data.time_objective:
+		return "time objetive met"
+	elif data.convergence_iterations > 0 and convergence_iteration >= data.convergence_iterations:
+		return "improvement converged"
+	elif data.max_training_time > 0. and data.elapsed_time > data.max_training_time:
+		return "max training time reached"
+	elif iteration >= data.n_iterations-1:
+		return "max iteration reached"
+	else:
+		return ""
+
+func end_training(reason: String) -> void:
+	data.end_reason = reason
+	print(reason)
+	if data.save_results:
+		save_results()
+	else:
+		finish_training()
+
+func finish_training() -> void:
+	training_finished.emit()
+
+func save_results() -> void:
+	api.resource_saved.connect(_on_results_saved)
+	api.save("/trainings", data.training_id, data)
+
+func _on_results_saved() -> void:
+	api.resource_saved.disconnect(_on_results_saved)
+	api.save("/racers", data.racer_id, current_racer)
+
+func _on_racer_updated() -> void:
+	api.resource_saved.disconnect(_on_racer_updated)
+	finish_training()

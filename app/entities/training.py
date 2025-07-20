@@ -27,6 +27,7 @@ class Training():
     progress_objective: float
     time_objective: float
     max_training_time: float
+    greedy: bool
     run_history: list[Run]
     racer_history: list[RunStats]
     elapsed_time: float
@@ -50,6 +51,7 @@ class Training():
             _progress_objective: float,
             _time_objective: float,
             _max_training_time: float,
+            _greedy: bool,
             _run_history: list[Run],
             _racer_history: list[RunStats],
             _elapsed_time: float,
@@ -69,6 +71,7 @@ class Training():
         self.progress_objective = _progress_objective
         self.time_objective = _time_objective
         self.max_training_time = _max_training_time
+        self.greedy = _greedy
         self.run_history = _run_history
         self.racer_history = _racer_history
         self.elapsed_time = _elapsed_time
@@ -93,6 +96,7 @@ class Training():
             _dict["progress_objective"],
             _dict["time_objective"],
             _dict["max_training_time"],
+            _dict["greedy"],
             [Run.from_dict(r) for r in _dict["run_history"]],
             [RunStats.from_dict(r) for r in _dict["racer_history"]],
             _dict["elapsed_time"],

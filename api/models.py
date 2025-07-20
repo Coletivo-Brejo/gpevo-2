@@ -109,6 +109,7 @@ class Training(BaseModel):
     progress_objective: float
     time_objective: float
     max_training_time: float
+    greedy: bool
     run_history: list[Run]
     racer_history: list[RunStats]
     elapsed_time: float

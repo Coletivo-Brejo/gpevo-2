@@ -13,7 +13,7 @@ racers_data = Array[ExtResource("2_bcpnu")]([])
 begin_countdown = 0.0
 end_countdown = 0.0
 stuck_timeout = 5.0
-run_timeout = 30.0
+run_timeout = 60.0
 end_on_first_finish = true
 stat_collection_frequency = 1.0
 mirrored = false
@@ -32,10 +32,11 @@ initial_temperature = 100.0
 cooling_rate = 0.1
 convergence_threshold = 0.0
 convergence_iterations = 0
-n_iterations = 1
+n_iterations = 10
 progress_objective = 0.0
 time_objective = 0.0
 max_training_time = 0.0
+greedy = true
 metadata/_custom_type_script = "uid://ria0ktc8qguv"
 
 [node name="Training" type="Node2D"]

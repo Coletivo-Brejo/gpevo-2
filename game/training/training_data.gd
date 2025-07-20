@@ -15,6 +15,7 @@ class_name TrainingData
 @export var progress_objective: float
 @export var time_objective: float
 @export var max_training_time: float
+@export var greedy: bool
 var run_history: Array[RunData]
 var racer_history: Array[RunStats]
 var elapsed_time: float
@@ -36,6 +37,7 @@ static func create(
         _progress_objective: float,
         _time_objective: float,
         _max_training_time: float,
+        _greedy: bool,
     ) -> TrainingData:
 
     var training = TrainingData.new()
@@ -53,6 +55,7 @@ static func create(
     training.progress_objecive = _progress_objective
     training.time_objective = _time_objective
     training.max_training_time = _max_training_time
+    training.greedy = _greedy
     return training
 
 static func from_dict(dict: Dictionary) -> TrainingData:
@@ -71,6 +74,7 @@ static func from_dict(dict: Dictionary) -> TrainingData:
         dict["progress_objective"],
         dict["time_objective"],
         dict["max_training_time"],
+        dict["greedy"],
     )
     return training
 
@@ -90,6 +94,7 @@ func to_dict() -> Dictionary:
         "progress_objective": progress_objective,
         "time_objective": time_objective,
         "max_training_time": max_training_time,
+        "greedy": greedy,
         "run_history": Serializer.from_list(run_history),
         "racer_history": Serializer.from_list(racer_history),
         "elapsed_time": elapsed_time,

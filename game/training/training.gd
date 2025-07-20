@@ -47,9 +47,10 @@ func create_neighbors() -> void:
 func start_run() -> void:
 	if run != null:
 		run.queue_free()
-	data.run_data.run_id = "%s_it%d" % [data.training_id, iteration]
-	data.run_data.racers_data = neighbors
-	run = Run.create(data.run_data, true)
+	var run_data: RunData = data.run_data.clone()
+	run_data.run_id = "%s_it%d" % [data.training_id, iteration]
+	run_data.racers_data = neighbors
+	run = Run.create(run_data, true)
 	run.run_ended.connect(_on_run_finished)
 	add_child(run)
 
@@ -94,10 +95,11 @@ func evaluate_and_select() -> void:
 	var best_progress: float = stats[0].progress
 	var best_stat: RunStats = null
 	for s in stats.slice(1):
-		progress_deltas.append(best_progress - s.progress)
-		if s.progress > best_progress:
+		progress_deltas.append(stats[0].progress - s.progress)
+		if data.greedy and s.progress > best_progress:
 			best_stat = s
 			best_progress = s.progress
+	print(progress_deltas)
 	if best_stat != null:
 		set_new_racer(best_stat)
 	else:
@@ -108,12 +110,15 @@ func evaluate_and_select() -> void:
 				accum_probs.append(prob)
 			else:
 				accum_probs.append(prob+accum_probs[i-1])
-		for p in accum_probs:
-			p /= accum_probs[-1]
+		for i in accum_probs.size():
+			accum_probs[i] /= accum_probs[-1]
 		var rng: float = randf()
+		print(accum_probs)
+		print(rng)
 		for i in range(accum_probs.size()):
 			if accum_probs[i] >= rng:
 				set_new_racer(stats[i+1])
+				break
 
 func set_new_racer(stat: RunStats) -> void:
 	current_racer = stat.racer_data

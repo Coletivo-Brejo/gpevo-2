@@ -30,7 +30,7 @@
 - [x] Mutação: alterar pesos de conexão neuronal [2025-07-18]
 - [x] Treinamento iterativo (execução, avaliação, mutação) [2025-07-18]
 - [ ] Configuração de treinamento no Streamlit
-- [ ] Visualização dos resultados do treinamento no Streamlit
+- [x] Visualização dos resultados do treinamento no Streamlit [2025-07-20]
 
 ### Jogo de fato
 

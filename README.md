@@ -26,7 +26,7 @@
 - [x] Encerrar corrida se corredores ficarem presos [2025-07-18]
 - [x] Persistir motivo da conclusão da corrida [2025-07-18]
 - [ ] Mutação: criar/destruir neurônio
-- [ ] Mutação: criar/destruir conexão neuronal
+- [x] Mutação: criar/destruir conexão neuronal [2025-07-21]
 - [x] Mutação: alterar pesos de conexão neuronal [2025-07-18]
 - [x] Treinamento iterativo (execução, avaliação, mutação) [2025-07-18]
 - [ ] Configuração de treinamento no Streamlit
@@ -39,6 +39,9 @@
 - [ ] Calendário de eventos
 - [ ] Estrutura de equipe (gestores, corredores, verba, pontuação, cor, etc.)
 - [ ] Precificação de treinamentos
+- [ ] Treinamento com alternância de pista espelhada entre iterações
+- [ ] Fantasmas durante uma execução
+- [ ] Equipamentos embaralhadores de sinal
 
 ### Dívida técnica
 

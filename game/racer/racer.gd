@@ -4,7 +4,7 @@ class_name Racer
 const scene_path: String = "res://racer/racer.tscn"
 const LINEAR_DAMP: float = .1
 const ANGULAR_DAMP: float = .1
-const WALL_FRICTION: float = .5
+const WALL_FRICTION: float = 1.
 
 @onready var collision: CollisionPolygon2D = $Collision
 

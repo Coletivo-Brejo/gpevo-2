@@ -121,6 +121,18 @@ class Training():
         ]
         return traces
 
+    def generate_time_evolution_traces(self) -> list[dict]:
+        time: np.ndarray = np.array([r.time if r.finished else None for r in self.racer_history ])
+        traces: list[dict] = [
+            {
+                "type": "scatter",
+                "mode": "markers+lines",
+                "x": [i for i in range(len(time))],
+                "y": time,
+            }
+        ]
+        return traces
+
     def generate_progress_traces(
             self,
             iteration: int = 0,
@@ -135,8 +147,6 @@ class Training():
         traces.extend(
             self.track.generate_traces(self.run_data.mirrored))
         traces.extend(
-            self.racer_history[iteration].generate_history_traces(
-                self.run_data.mirrored,
-            )
+            self.racer_history[iteration].generate_history_traces()
         )
         return traces

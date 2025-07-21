@@ -58,19 +58,14 @@ class RunStats():
 
     def generate_history_traces(
             self,
-            mirrored: bool = False,
         ) -> list[dict]:
-
-        x_scale: float = -1. if mirrored else 1.
-        history_xs: np.ndarray = self.position_history.xs() * x_scale
-        history_ys: np.ndarray = self.position_history.ys()
 
         traces: list[dict] = [
             {
                 "type": "scatter",
                 "mode": "markers",
-                "x": history_xs,
-                "y": history_ys,
+                "x": self.position_history.xs(),
+                "y": self.position_history.ys(),
                 "line": {
                     "color": "grey",
                 },

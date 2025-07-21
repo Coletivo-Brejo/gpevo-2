@@ -1,54 +1,73 @@
-[gd_scene load_steps=13 format=3 uid="uid://cgeibfb8r2hxs"]
+[gd_scene load_steps=16 format=3 uid="uid://cgeibfb8r2hxs"]
 
 [ext_resource type="Script" uid="uid://bbqjm1xm18lvb" path="res://ship/ship_creator.gd" id="1_owk5e"]
-[ext_resource type="Texture2D" uid="uid://dlhyn6cpeg6i2" path="res://ship/chassis/chassis_1.png" id="2_5oxdw"]
 [ext_resource type="Script" uid="uid://dbcj37ky1n81f" path="res://api/api.gd" id="2_fgh14"]
+[ext_resource type="Texture2D" uid="uid://drtrbtgfh8qot" path="res://ship/chassis/chassis_2.png" id="2_mnd43"]
 [ext_resource type="Script" uid="uid://dn10k375jpym7" path="res://ship/ship_data.gd" id="3_mnd43"]
 [ext_resource type="Script" uid="uid://cwdn7evjl16fj" path="res://ship/sensor_set_data.gd" id="4_uy4in"]
 [ext_resource type="Texture2D" uid="uid://c40jstihuul8" path="res://ship/sensor/sensor.png" id="5_obldy"]
 [ext_resource type="Script" uid="uid://bh6pj46y84upq" path="res://ship/thruster_data.gd" id="6_6fogv"]
 [ext_resource type="Texture2D" uid="uid://dnku6chaguo8a" path="res://ship/thruster/thruster_2.png" id="7_jfx4e"]
+[ext_resource type="Texture2D" uid="uid://cckruyv6dtjfc" path="res://ship/thruster/thruster_1.png" id="8_uy4in"]
 
 [sub_resource type="Resource" id="Resource_ivb5m"]
 script = ExtResource("4_uy4in")
-amount = 5
-aperture = 1.93732
+amount = 3
+aperture = 1.0472
 reach = 300.0
 texture = ExtResource("5_obldy")
-position = Vector2(0, -34)
-rotation = 0.0
+position = Vector2(-41, -27)
+rotation = -0.471239
+
+[sub_resource type="Resource" id="Resource_obldy"]
+script = ExtResource("4_uy4in")
+amount = 3
+aperture = 1.0472
+reach = 300.0
+texture = ExtResource("5_obldy")
+position = Vector2(41, -27)
+rotation = 0.471239
+metadata/_custom_type_script = "uid://cwdn7evjl16fj"
 
 [sub_resource type="Resource" id="Resource_tangj"]
 script = ExtResource("6_6fogv")
 power = 20.0
 texture = ExtResource("7_jfx4e")
-position = Vector2(-33, 24)
-rotation = -0.349066
+position = Vector2(-48, 29)
+rotation = 0.0
 
 [sub_resource type="Resource" id="Resource_500aw"]
 script = ExtResource("6_6fogv")
 power = 20.0
 texture = ExtResource("7_jfx4e")
-position = Vector2(34, 24)
-rotation = 0.279253
+position = Vector2(48, 29)
+rotation = 0.0
+
+[sub_resource type="Resource" id="Resource_6fogv"]
+script = ExtResource("6_6fogv")
+power = 50.0
+texture = ExtResource("8_uy4in")
+position = Vector2(0, 54)
+rotation = 0.0
+metadata/_custom_type_script = "uid://bh6pj46y84upq"
 
 [sub_resource type="Resource" id="Resource_lsw86"]
 script = ExtResource("3_mnd43")
-ship_id = "shipperson"
-name = "Asa Delta"
+ship_id = "chosen_one"
+name = "O Escolhido"
 mass = 100.0
-chassis_texture = ExtResource("2_5oxdw")
-chassis_collision = PackedVector2Array(0, -50, 55, 0, 54, 30, 11, 48, -11, 48, -52, 33, -51, -4)
-thrusters = Array[ExtResource("6_6fogv")]([SubResource("Resource_tangj"), SubResource("Resource_500aw")])
-sensors = Array[ExtResource("4_uy4in")]([SubResource("Resource_ivb5m")])
+chassis_texture = ExtResource("2_mnd43")
+chassis_collision = PackedVector2Array(-31, -59, -6, -43, 10, -44, 35, -60, 52, -47, 58, -9, 58, 25, 13, 54, -13, 55, -57, 28, -57, -8, -51, -46)
+thrusters = Array[ExtResource("6_6fogv")]([SubResource("Resource_tangj"), SubResource("Resource_500aw"), SubResource("Resource_6fogv")])
+sensors = Array[ExtResource("4_uy4in")]([SubResource("Resource_ivb5m"), SubResource("Resource_obldy")])
 
 [node name="ShipCreator" type="Node2D"]
 script = ExtResource("1_owk5e")
-ship_id = "shipperson"
+transparent_sprite = true
 ship = SubResource("Resource_lsw86")
 
 [node name="Collision" type="CollisionPolygon2D" parent="."]
-polygon = PackedVector2Array(0, -50, 55, 0, 54, 30, 11, 48, -11, 48, -52, 33, -51, -4)
+polygon = PackedVector2Array(-31, -59, -6, -43, 10, -44, 35, -60, 52, -47, 58, -9, 58, 25, 13, 54, -13, 55, -57, 28, -57, -8, -51, -46)
 
 [node name="API" type="HTTPRequest" parent="."]
 script = ExtResource("2_fgh14")

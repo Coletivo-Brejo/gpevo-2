@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3 uid="uid://c74jp3mk67rev"]
+[gd_scene load_steps=42 format=3 uid="uid://c74jp3mk67rev"]
 
 [ext_resource type="Script" uid="uid://cld7tk4unax7b" path="res://racer/racer_editor.gd" id="1_4r4hs"]
 [ext_resource type="Script" uid="uid://7dpqjn1jm6th" path="res://brain/operation/operation.gd" id="2_im158"]
@@ -8,159 +8,201 @@
 [ext_resource type="Script" uid="uid://e433emj5lx1e" path="res://brain/operation/normalized_atan.gd" id="5_ygl37"]
 [ext_resource type="Script" uid="uid://bb7vsw2sy8wth" path="res://brain/brain_data.gd" id="6_7srsy"]
 [ext_resource type="Script" uid="uid://065kpbfkmvvp" path="res://racer/racer_data.gd" id="7_rjl4q"]
-[ext_resource type="Texture2D" uid="uid://dlhyn6cpeg6i2" path="res://ship/chassis/chassis_1.png" id="8_jofde"]
+[ext_resource type="Texture2D" uid="uid://drtrbtgfh8qot" path="res://ship/chassis/chassis_2.png" id="8_ih6k7"]
 [ext_resource type="Script" uid="uid://dn10k375jpym7" path="res://ship/ship_data.gd" id="9_t5bqw"]
 [ext_resource type="Script" uid="uid://cwdn7evjl16fj" path="res://ship/sensor_set_data.gd" id="10_16lrr"]
 [ext_resource type="Texture2D" uid="uid://c40jstihuul8" path="res://ship/sensor/sensor.png" id="11_uhk15"]
 [ext_resource type="Script" uid="uid://bh6pj46y84upq" path="res://ship/thruster_data.gd" id="12_pifa5"]
 [ext_resource type="Texture2D" uid="uid://dnku6chaguo8a" path="res://ship/thruster/thruster_2.png" id="13_lobrp"]
+[ext_resource type="Texture2D" uid="uid://cckruyv6dtjfc" path="res://ship/thruster/thruster_1.png" id="14_f6645"]
 
-[sub_resource type="Resource" id="Resource_75eaw"]
+[sub_resource type="Resource" id="Resource_ygl37"]
 script = ExtResource("3_ih6k7")
 neuron_id = "s0"
 max_inputs = 0
 input_ids = Array[String]([])
 operations = Array[ExtResource("2_im158")]([])
 
-[sub_resource type="Resource" id="Resource_iyg5f"]
+[sub_resource type="Resource" id="Resource_7srsy"]
 script = ExtResource("3_ih6k7")
 neuron_id = "s1"
 max_inputs = 0
 input_ids = Array[String]([])
 operations = Array[ExtResource("2_im158")]([])
 
-[sub_resource type="Resource" id="Resource_3cyca"]
+[sub_resource type="Resource" id="Resource_rjl4q"]
 script = ExtResource("3_ih6k7")
 neuron_id = "s2"
 max_inputs = 0
 input_ids = Array[String]([])
 operations = Array[ExtResource("2_im158")]([])
 
-[sub_resource type="Resource" id="Resource_afqmj"]
+[sub_resource type="Resource" id="Resource_jofde"]
 script = ExtResource("3_ih6k7")
 neuron_id = "s3"
 max_inputs = 0
 input_ids = Array[String]([])
 operations = Array[ExtResource("2_im158")]([])
 
-[sub_resource type="Resource" id="Resource_j6x5v"]
+[sub_resource type="Resource" id="Resource_t5bqw"]
 script = ExtResource("3_ih6k7")
 neuron_id = "s4"
 max_inputs = 0
 input_ids = Array[String]([])
 operations = Array[ExtResource("2_im158")]([])
 
-[sub_resource type="Resource" id="Resource_iu7oc"]
-script = ExtResource("4_f6645")
-params = Array[float]([0.0, 5.0, -10.0])
+[sub_resource type="Resource" id="Resource_16lrr"]
+script = ExtResource("3_ih6k7")
+neuron_id = "s5"
+max_inputs = 0
+input_ids = Array[String]([])
+operations = Array[ExtResource("2_im158")]([])
 
-[sub_resource type="Resource" id="Resource_jqlg2"]
+[sub_resource type="Resource" id="Resource_4g7om"]
+script = ExtResource("4_f6645")
+params = Array[float]([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+
+[sub_resource type="Resource" id="Resource_qywyu"]
 script = ExtResource("5_ygl37")
 params = Array[float]([0.0, 1.0])
 
-[sub_resource type="Resource" id="Resource_rtdml"]
+[sub_resource type="Resource" id="Resource_14ia8"]
 script = ExtResource("3_ih6k7")
 neuron_id = "t0"
 max_inputs = -1
-input_ids = Array[String](["s1", "s3"])
-operations = Array[ExtResource("2_im158")]([SubResource("Resource_iu7oc"), SubResource("Resource_jqlg2")])
+input_ids = Array[String](["s0", "s1", "s2", "s3", "s4", "s5", "v0", "v1", "v2"])
+operations = Array[ExtResource("2_im158")]([SubResource("Resource_4g7om"), SubResource("Resource_qywyu")])
 
-[sub_resource type="Resource" id="Resource_laekt"]
+[sub_resource type="Resource" id="Resource_q37d0"]
 script = ExtResource("4_f6645")
-params = Array[float]([0.0, 5.0, -10.0])
+params = Array[float]([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
 
-[sub_resource type="Resource" id="Resource_johig"]
+[sub_resource type="Resource" id="Resource_vy4w5"]
 script = ExtResource("5_ygl37")
 params = Array[float]([0.0, 1.0])
 
-[sub_resource type="Resource" id="Resource_84nnb"]
+[sub_resource type="Resource" id="Resource_xiyaq"]
 script = ExtResource("3_ih6k7")
 neuron_id = "t1"
 max_inputs = -1
-input_ids = Array[String](["s3", "s1"])
-operations = Array[ExtResource("2_im158")]([SubResource("Resource_laekt"), SubResource("Resource_johig")])
+input_ids = Array[String](["s0", "s1", "s2", "s3", "s4", "s5", "v0", "v1", "v2"])
+operations = Array[ExtResource("2_im158")]([SubResource("Resource_q37d0"), SubResource("Resource_vy4w5")])
 
-[sub_resource type="Resource" id="Resource_2yogn"]
+[sub_resource type="Resource" id="Resource_jy3kx"]
+script = ExtResource("4_f6645")
+params = Array[float]([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+
+[sub_resource type="Resource" id="Resource_6cyow"]
+script = ExtResource("5_ygl37")
+params = Array[float]([0.0, 1.0])
+
+[sub_resource type="Resource" id="Resource_dga57"]
+script = ExtResource("3_ih6k7")
+neuron_id = "t2"
+max_inputs = -1
+input_ids = Array[String](["s0", "s1", "s2", "s3", "s4", "s5", "v0", "v1", "v2"])
+operations = Array[ExtResource("2_im158")]([SubResource("Resource_jy3kx"), SubResource("Resource_6cyow")])
+
+[sub_resource type="Resource" id="Resource_uhk15"]
 script = ExtResource("3_ih6k7")
 neuron_id = "v0"
 max_inputs = 0
 input_ids = Array[String]([])
 operations = Array[ExtResource("2_im158")]([])
 
-[sub_resource type="Resource" id="Resource_uoxuh"]
+[sub_resource type="Resource" id="Resource_pifa5"]
 script = ExtResource("3_ih6k7")
 neuron_id = "v1"
 max_inputs = 0
 input_ids = Array[String]([])
 operations = Array[ExtResource("2_im158")]([])
 
-[sub_resource type="Resource" id="Resource_4nf68"]
+[sub_resource type="Resource" id="Resource_lobrp"]
 script = ExtResource("3_ih6k7")
 neuron_id = "v2"
 max_inputs = 0
 input_ids = Array[String]([])
 operations = Array[ExtResource("2_im158")]([])
 
-[sub_resource type="Resource" id="Resource_esrl2"]
+[sub_resource type="Resource" id="Resource_6lcwe"]
 script = ExtResource("6_7srsy")
 neurons = {
-"s0": SubResource("Resource_75eaw"),
-"s1": SubResource("Resource_iyg5f"),
-"s2": SubResource("Resource_3cyca"),
-"s3": SubResource("Resource_afqmj"),
-"s4": SubResource("Resource_j6x5v"),
-"t0": SubResource("Resource_rtdml"),
-"t1": SubResource("Resource_84nnb"),
-"v0": SubResource("Resource_2yogn"),
-"v1": SubResource("Resource_uoxuh"),
-"v2": SubResource("Resource_4nf68")
+"s0": SubResource("Resource_ygl37"),
+"s1": SubResource("Resource_7srsy"),
+"s2": SubResource("Resource_rjl4q"),
+"s3": SubResource("Resource_jofde"),
+"s4": SubResource("Resource_t5bqw"),
+"s5": SubResource("Resource_16lrr"),
+"t0": SubResource("Resource_14ia8"),
+"t1": SubResource("Resource_xiyaq"),
+"t2": SubResource("Resource_dga57"),
+"v0": SubResource("Resource_uhk15"),
+"v1": SubResource("Resource_pifa5"),
+"v2": SubResource("Resource_lobrp")
 }
 
-[sub_resource type="Resource" id="Resource_l04ku"]
+[sub_resource type="Resource" id="Resource_tevdl"]
 script = ExtResource("10_16lrr")
-amount = 5
-aperture = 1.93732
+amount = 3
+aperture = 1.0472
 reach = 300.0
 texture = ExtResource("11_uhk15")
-position = Vector2(0, -34)
+position = Vector2(-41, -27)
+rotation = -0.471239
+
+[sub_resource type="Resource" id="Resource_8jech"]
+script = ExtResource("10_16lrr")
+amount = 3
+aperture = 1.0472
+reach = 300.0
+texture = ExtResource("11_uhk15")
+position = Vector2(41, -27)
+rotation = 0.471239
+
+[sub_resource type="Resource" id="Resource_shql6"]
+script = ExtResource("12_pifa5")
+power = 20.0
+texture = ExtResource("13_lobrp")
+position = Vector2(-48, 29)
 rotation = 0.0
 
-[sub_resource type="Resource" id="Resource_4vmxy"]
+[sub_resource type="Resource" id="Resource_y32hk"]
 script = ExtResource("12_pifa5")
 power = 20.0
 texture = ExtResource("13_lobrp")
-position = Vector2(-33, 24)
-rotation = -0.349066
+position = Vector2(48, 29)
+rotation = 0.0
 
-[sub_resource type="Resource" id="Resource_kccgp"]
+[sub_resource type="Resource" id="Resource_3wvjf"]
 script = ExtResource("12_pifa5")
-power = 20.0
-texture = ExtResource("13_lobrp")
-position = Vector2(34, 24)
-rotation = 0.279253
+power = 50.0
+texture = ExtResource("14_f6645")
+position = Vector2(0, 54)
+rotation = 0.0
 
-[sub_resource type="Resource" id="Resource_vld5o"]
+[sub_resource type="Resource" id="Resource_k8wcr"]
 script = ExtResource("9_t5bqw")
-ship_id = "shipperson"
-name = "Asa Delta"
+ship_id = "chosen_one"
+name = "O Escolhido"
 mass = 100.0
-chassis_texture = ExtResource("8_jofde")
-chassis_collision = PackedVector2Array(0, -50, 55, 0, 54, 30, 11, 48, -11, 48, -52, 33, -51, -4)
-thrusters = Array[ExtResource("12_pifa5")]([SubResource("Resource_4vmxy"), SubResource("Resource_kccgp")])
-sensors = Array[ExtResource("10_16lrr")]([SubResource("Resource_l04ku")])
+chassis_texture = ExtResource("8_ih6k7")
+chassis_collision = PackedVector2Array(-31, -59, -6, -43, 10, -44, 35, -60, 52, -47, 58, -9, 58, 25, 13, 54, -13, 55, -57, 28, -57, -8, -51, -46)
+thrusters = Array[ExtResource("12_pifa5")]([SubResource("Resource_shql6"), SubResource("Resource_y32hk"), SubResource("Resource_3wvjf")])
+sensors = Array[ExtResource("10_16lrr")]([SubResource("Resource_tevdl"), SubResource("Resource_8jech")])
 
-[sub_resource type="Resource" id="Resource_im158"]
+[sub_resource type="Resource" id="Resource_gtwyn"]
 script = ExtResource("7_rjl4q")
-racer_id = "antonio_perfeicao"
-name = "Antônio Perfeição"
-brain = SubResource("Resource_esrl2")
-ship = SubResource("Resource_vld5o")
+racer_id = "the_chosen"
+name = "O Escolhido"
+brain = SubResource("Resource_6lcwe")
+ship = SubResource("Resource_k8wcr")
+metadata/_custom_type_script = "uid://065kpbfkmvvp"
 
 [node name="RacerEditor" type="Node2D"]
 script = ExtResource("1_4r4hs")
 racer_id = "antonio_perfeicao"
-ship_id = "shipperson"
-racer = SubResource("Resource_im158")
+ship_id = "chosen_one"
+racer = SubResource("Resource_gtwyn")
 
 [node name="API" type="HTTPRequest" parent="."]
 script = ExtResource("2_qqe7u")

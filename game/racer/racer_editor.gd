@@ -9,6 +9,7 @@ extends Node2D
 @export_tool_button("load ship") var load_ship_bt: Callable = load_ship
 @export var racer: RacerData
 @export_tool_button("Create brain") var create_brain_bt: Callable = create_brain
+@export_tool_button("Fully connect") var fully_connect_bt: Callable = fully_connect_brain
 @export_tool_button("Save racer") var save_bt: Callable = save_racer
 
 
@@ -28,6 +29,22 @@ func create_brain() -> void:
         for i in racer.ship.thrusters.size():
             brain.create_output_neuron("t%d" % i)
         racer.brain = brain
+
+func fully_connect_brain() -> void:
+    if racer != null and racer.brain != null:
+        for n in racer.brain.neurons:
+            if not n.begins_with("t"):
+                continue
+            print("connecting neurons to %s" % n)
+            var neuron: NeuronData = racer.brain.neurons[n]
+            for n0 in racer.brain.neurons:
+                if n0.begins_with("t"):
+                    continue
+                print("connecting %s" % n0)
+                var input: NeuronData = racer.brain.neurons[n0]
+                neuron.input_ids.append(n0)
+                neuron.input.append(input)
+                neuron.operations[0].params.append(0.)
 
 func save_racer() -> void:
     api.save("/racers", racer.racer_id, racer)

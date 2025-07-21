@@ -46,6 +46,8 @@
 - [x] Os endpoints para ler e escrever pistas e naves são cópia um do outro. Cabe funções genéricas chamadas por ambos. [2025-07-13]
 - [ ] O editor de naves reprocessa tudo a cada frame. Cabe uma detecção menos burra de quando há mudanças para processar.
 - [x] A nave não tem informação de colisão. Precisa de um novo atributo com os pontos do polígono do chassi. [2025-07-14]
+- [ ] O z-index das partes da nave está todo desordenado, com os thrusters aparecendo por trás de outras naves e as partículas aparecendo por cima do thruster.
+- [ ] Em curvas acentuadas e arrastando na parede, as partículas dos thrusters parecem sair em uma direção totalmente errada.
 
 ### Bugs
 

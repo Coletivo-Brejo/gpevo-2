@@ -100,26 +100,32 @@ training: Training|None = next((t for t in trainings if t.training_id == trainin
 
 if training is not None:
 
-    evolution_fig: go.Figure = go.Figure(
+    progress_evolution_fig: go.Figure = go.Figure(
         data = training.generate_progress_evolution_traces(),
         layout = create_progress_layout(),
     )
-    st.plotly_chart(evolution_fig)
+    st.plotly_chart(progress_evolution_fig)
+
+    time_evolution_fig: go.Figure = go.Figure(
+        data = training.generate_time_evolution_traces(),
+        layout = create_progress_layout(),
+    )
+    st.plotly_chart(time_evolution_fig)
 
     iterations: int = len(training.racer_history)
     it: int = st.slider("Iteração", 0, iterations-1)
-
-    progress_fig: go.Figure = go.Figure(
-        data = training.generate_progress_traces(it),
-        layout = create_progress_layout(),
-    )
-    st.plotly_chart(progress_fig)
 
     race_fig: go.Figure = go.Figure(
         data = training.generate_history_traces(it),
         layout = create_track_layout(),
     )
     st.plotly_chart(race_fig)
+
+    progress_fig: go.Figure = go.Figure(
+        data = training.generate_progress_traces(it),
+        layout = create_progress_layout(),
+    )
+    st.plotly_chart(progress_fig)
 
 # st.markdown("## Runs")
 

@@ -4,6 +4,7 @@ import os
 import plotly.graph_objs as go
 import requests
 
+from entities.brain import Brain
 from entities.track import Track
 from entities.training import Training
 
@@ -11,6 +12,15 @@ from entities.training import Training
 load_dotenv()
 API_URL = os.environ.get("API_URL")
 DATA_PATH = os.environ.get("DATA_PATH")
+
+def request_racers() -> list[Brain]:
+    response = requests.get(f"{API_URL}/racers")
+    brains: list[Brain] = []
+    if response.ok:
+        racer_list: list[dict] = response.json()
+        for r in racer_list:
+            brains.append(Brain.from_dict(r["brain"]))
+    return brains
 
 def request_tracks() -> list[Track]:
     response = requests.get(f"{API_URL}/tracks")
@@ -34,6 +44,24 @@ def create_track_plot(track: Track) -> go.Figure:
     traces: list[dict] = track.generate_traces()
     layout: dict = create_track_layout()
     return go.Figure(data = traces, layout = layout)
+
+def create_brain_layout(annotations: list[dict]) -> dict:
+    layout: dict = {
+        "showlegend": False,
+        "xaxis": {
+            "autorange": "reversed",
+            "showticklabels": False,
+            "showgrid": False,
+            "zeroline": False,
+        },
+        "yaxis": {
+            "showticklabels": False,
+            "showgrid": False,
+            "zeroline": False,
+        },
+        "annotations": annotations,
+    }
+    return layout
 
 def create_track_layout() -> dict:
     layout: dict = {
@@ -81,6 +109,18 @@ st.button("Log out", on_click=st.logout)
 st.markdown(f"Welcome! {st.user.name}")
 st.write(st.user)
 
+
+st.markdown("## Corredores")
+
+brains: list[Brain] = request_racers()
+for b in brains:
+    traces, annotations = b.generate_traces_and_annotations()
+    layout = create_brain_layout(annotations)
+    brain_fig: go.Figure = go.Figure(
+        data = traces,
+        layout = layout,
+    )
+    st.plotly_chart(brain_fig)
 
 st.markdown("## Pistas")
 

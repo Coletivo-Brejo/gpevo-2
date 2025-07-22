@@ -17,7 +17,7 @@
 - [x] Neurônios centrais (e.g. perceptrons) [2025-07-21]
 - [x] Corredor persistido (nave + cérebro) [2025-07-13]
 - [x] Corredor operacional (input + output) [2025-07-14]
-- [ ] Visualização do cérebro (Streamlit + Godot)
+- [x] Visualização do cérebro no Streamlit [2025-07-22]
 - [x] Pistas com loop e voltas [2025-07-17]
 - [x] Pistas espelhadas [2025-07-17]
 - [x] Execução (pista + corredores) com começo e fim [2025-07-16]
@@ -31,6 +31,7 @@
 - [x] Treinamento iterativo (execução, avaliação, mutação) [2025-07-18]
 - [ ] Configuração de treinamento no Streamlit
 - [x] Visualização dos resultados do treinamento no Streamlit [2025-07-20]
+- [ ] Visualização da evolução do cérebro ao longo do treino
 
 ### Jogo de fato
 

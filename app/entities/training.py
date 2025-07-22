@@ -28,6 +28,10 @@ class Training():
     time_objective: float
     max_training_time: float
     greedy: bool
+    prob_create_neuron: float
+    prob_delete_neuron: float
+    prob_create_connection: float
+    prob_delete_connection: float
     run_history: list[Run]
     racer_history: list[RunStats]
     elapsed_time: float
@@ -52,6 +56,10 @@ class Training():
             _time_objective: float,
             _max_training_time: float,
             _greedy: bool,
+            _prob_create_neuron: float,
+            _prob_delete_neuron: float,
+            _prob_create_connection: float,
+            _prob_delete_connection: float,
             _run_history: list[Run],
             _racer_history: list[RunStats],
             _elapsed_time: float,
@@ -72,6 +80,10 @@ class Training():
         self.time_objective = _time_objective
         self.max_training_time = _max_training_time
         self.greedy = _greedy
+        prob_create_neuron = _prob_create_neuron
+        prob_delete_neuron = _prob_delete_neuron
+        prob_create_connection = _prob_create_connection
+        prob_delete_connection = _prob_delete_connection
         self.run_history = _run_history
         self.racer_history = _racer_history
         self.elapsed_time = _elapsed_time
@@ -97,6 +109,10 @@ class Training():
             _dict["time_objective"],
             _dict["max_training_time"],
             _dict["greedy"],
+            _dict["prob_create_neuron"],
+            _dict["prob_delete_neuron"],
+            _dict["prob_create_connection"],
+            _dict["prob_delete_connection"],
             [Run.from_dict(r) for r in _dict["run_history"]],
             [RunStats.from_dict(r) for r in _dict["racer_history"]],
             _dict["elapsed_time"],

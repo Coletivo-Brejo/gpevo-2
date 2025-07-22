@@ -16,14 +16,14 @@ stuck_timeout = 5.0
 run_timeout = 60.0
 end_on_first_finish = true
 stat_collection_frequency = 1.0
-mirrored = false
+mirrored = true
 laps = 1
 metadata/_custom_type_script = "uid://cwlrb25ewiqrk"
 
 [sub_resource type="Resource" id="Resource_8flk7"]
 script = ExtResource("4_dqem7")
-training_id = "chosen_training_4"
-track_id = "baby_steps"
+training_id = "training_5"
+track_id = "double_knee"
 racer_id = "the_chosen"
 save_results = true
 run_data = SubResource("Resource_ald8b")
@@ -37,6 +37,10 @@ progress_objective = 0.0
 time_objective = 0.0
 max_training_time = 0.0
 greedy = true
+prob_create_neuron = 0.1
+prob_delete_neuron = 0.1
+prob_create_connection = 0.2
+prob_delete_connection = 0.2
 metadata/_custom_type_script = "uid://ria0ktc8qguv"
 
 [node name="Training" type="Node2D"]

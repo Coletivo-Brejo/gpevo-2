@@ -39,9 +39,28 @@ func create_neighbors() -> void:
 	for i in data.n_neighbors:
 		var neighbor: RacerData = current_racer.clone()
 		neighbor.racer_id = "clone_%d" % i
-		var mutable_neurons: Array[NeuronData] = neighbor.brain.get_neurons_with_linear_combination()
-		mutable_neurons.shuffle()
-		neighbor.brain.mutate_weights_from_neuron(mutable_neurons[0])
+		var rng: float = randf()
+		var accum_prob_create_neuron: float = data.prob_create_neuron
+		var accum_prob_delete_neuron: float = data.prob_delete_neuron + accum_prob_create_neuron
+		var accum_prob_create_connection: float = data.prob_create_connection + accum_prob_delete_neuron
+		var accum_prob_delete_connection: float = data.prob_delete_connection + accum_prob_create_connection
+		print("Mutation RNG: %.2f\nProbs: %.2f, %.2f, %.2f, %.2f" % [
+			rng,
+			accum_prob_create_neuron,
+			accum_prob_delete_neuron,
+			accum_prob_create_connection,
+			accum_prob_delete_connection
+		])
+		if accum_prob_create_neuron > rng:
+			neighbor.brain.mutate_creating_neuron()
+		elif accum_prob_delete_neuron > rng:
+			neighbor.brain.mutate_deleting_neuron()
+		elif accum_prob_create_connection > rng:
+			neighbor.brain.mutate_creating_connection()
+		elif accum_prob_delete_connection > rng:
+			neighbor.brain.mutate_removing_connection()
+		else:
+			neighbor.brain.mutate_weights()
 		neighbors.append(neighbor)
 
 func start_run() -> void:

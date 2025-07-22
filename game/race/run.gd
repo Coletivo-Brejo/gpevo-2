@@ -85,7 +85,7 @@ func _process(delta: float) -> void:
 			all_finished = all_finished and stat.finished
 			all_stuck = all_stuck and stat.stuck
 			all_finished_or_stuck = all_finished_or_stuck and (stat.finished or stat.stuck)
-			if stat.progress > max_progress:
+			if not stat.stuck and not stat.finished and stat.progress > max_progress:
 				first_place = stat.racer
 				max_progress = stat.progress
 		if any_finished and data.end_on_first_finish:

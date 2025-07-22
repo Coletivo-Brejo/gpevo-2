@@ -110,6 +110,10 @@ class Training(BaseModel):
     time_objective: float
     max_training_time: float
     greedy: bool
+    prob_create_neuron: float
+    prob_delete_neuron: float
+    prob_create_connection: float
+    prob_delete_connection: float
     run_history: list[Run]
     racer_history: list[RunStats]
     elapsed_time: float

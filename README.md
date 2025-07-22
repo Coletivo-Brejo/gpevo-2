@@ -14,7 +14,7 @@
 - [x] Neurônios e operações básicas (e.g. linear, relu, atan) [2025-07-11]
 - [x] Neurônios de input (e.g. sensores, telemetria) [2025-07-14]
 - [x] Neurônios de output (propulsores) [2025-07-13]
-- [ ] Neurônios centrais (e.g. perceptrons)
+- [x] Neurônios centrais (e.g. perceptrons) [2025-07-21]
 - [x] Corredor persistido (nave + cérebro) [2025-07-13]
 - [x] Corredor operacional (input + output) [2025-07-14]
 - [ ] Visualização do cérebro (Streamlit + Godot)
@@ -25,7 +25,7 @@
 - [x] Visualização dos resultados da corrida do Streamlit [2025-07-16]
 - [x] Encerrar corrida se corredores ficarem presos [2025-07-18]
 - [x] Persistir motivo da conclusão da corrida [2025-07-18]
-- [ ] Mutação: criar/destruir neurônio
+- [x] Mutação: criar/destruir neurônio [2025-07-21]
 - [x] Mutação: criar/destruir conexão neuronal [2025-07-21]
 - [x] Mutação: alterar pesos de conexão neuronal [2025-07-18]
 - [x] Treinamento iterativo (execução, avaliação, mutação) [2025-07-18]

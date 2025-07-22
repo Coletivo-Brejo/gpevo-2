@@ -63,7 +63,6 @@ sensors = Array[ExtResource("4_uy4in")]([SubResource("Resource_ivb5m"), SubResou
 
 [node name="ShipCreator" type="Node2D"]
 script = ExtResource("1_owk5e")
-transparent_sprite = true
 ship = SubResource("Resource_lsw86")
 
 [node name="Collision" type="CollisionPolygon2D" parent="."]

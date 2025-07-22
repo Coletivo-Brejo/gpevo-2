@@ -122,11 +122,12 @@ func mutate_weights(
 		var neurons_with_weights: Array[NeuronData] = []
 		for n in neurons:
 			var neuron: NeuronData = neurons[n]
-			if neuron.operations[0] is LinearCombination:
+			if not neuron.operations.is_empty() and neuron.operations[0] is LinearCombination:
 				neurons_with_weights.append(neuron)
 		if not neurons_with_weights.is_empty():
 			var neuron: NeuronData = neurons_with_weights.pick_random()
 			mutate_weights_from_neuron(neuron, std, weight_amount)
+			print("Changed weights from neuron: %s" % neuron.neuron_id)
 
 func mutate_weights_from_neuron(
 		neuron: NeuronData,
@@ -165,6 +166,7 @@ func mutate_removing_connection(
 		if not neurons_with_input.is_empty():
 			var neuron: NeuronData = neurons_with_input.pick_random()
 			remove_random_input_from_neuron(neuron)
+			print("Removed input from neuron: %s" % [neuron.neuron_id])
 		else:
 			return
 
@@ -202,6 +204,7 @@ func mutate_creating_connection(
 			var possible_outputs: Array[NeuronData] = get_possible_connections_from_input(input_n)
 			var output_n: NeuronData = possible_outputs.pick_random()
 			connect_neurons(output_n, input_n, std)
+			print("Created connection between neurons: %s and %s" % [output_n.neuron_id, input_n.neuron_id])
 		else:
 			return
 
@@ -242,6 +245,22 @@ func connect_neurons(
 	output_n.input.append(input_n)
 	output_n.operations[0].params.append(randfn(0., std))
 
+func mutate_deleting_neuron(
+		amount: int = 1,
+	) -> void:
+	for i in amount:
+		var deletable_neurons: Array[NeuronData] = []
+		for n in neurons:
+			if n.begins_with("n"):
+				var neuron: NeuronData = neurons[n]
+				deletable_neurons.append(neuron)
+		if not deletable_neurons.is_empty():
+			var neuron: NeuronData = deletable_neurons.pick_random()
+			delete_neuron(neuron)
+			print("Deleted neuron: %s" % neuron.neuron_id)
+		else:
+			return
+
 func delete_neuron(neuron: NeuronData) -> void:
 	var neuron_id: String = neuron.neuron_id
 	delete_neuron_from_id(neuron_id)
@@ -256,3 +275,34 @@ func delete_neuron_from_id(neuron_id: String) -> void:
 			else:
 				remove_input_from_neuron(output, input_idx)
 		neurons.erase(neuron_id)
+	
+func mutate_creating_neuron(
+		amount: int = 1,
+		n_inputs: int = 1,
+		n_outputs: int = 1,
+	) -> void:
+	for x in amount:
+		var new_neuron: NeuronData = create_hidden_neuron()
+		print("Created new neuron: %s" % new_neuron.neuron_id)
+		var possible_inputs: Array[NeuronData] = []
+		for n in neurons:
+			if n != new_neuron.neuron_id and not n.begins_with("t"):
+				var neuron: NeuronData = neurons[n]
+				possible_inputs.append(neuron)
+		for i in n_inputs:
+			if possible_inputs.is_empty():
+				break
+			else:
+				var input_n: NeuronData = possible_inputs.pick_random()
+				connect_neurons(new_neuron, input_n)
+				possible_inputs.erase(input_n)
+				print("Connected as output to neuron: %s" % input_n.neuron_id)
+		for o in n_outputs:
+			var possible_outputs: Array[NeuronData] = get_possible_connections_from_input(new_neuron)
+			if possible_inputs.is_empty():
+				break
+			else:
+				var output_n: NeuronData = possible_outputs.pick_random()
+				connect_neurons(output_n, new_neuron)
+				print("Connected as input to neuron: %s" % output_n.neuron_id)
+			

@@ -16,6 +16,10 @@ class_name TrainingData
 @export var time_objective: float
 @export var max_training_time: float
 @export var greedy: bool
+@export var prob_create_neuron: float
+@export var prob_delete_neuron: float
+@export var prob_create_connection: float
+@export var prob_delete_connection: float
 var run_history: Array[RunData]
 var racer_history: Array[RunStats]
 var elapsed_time: float
@@ -38,6 +42,10 @@ static func create(
         _time_objective: float,
         _max_training_time: float,
         _greedy: bool,
+        _prob_create_neuron: float,
+        _prob_delete_neuron: float,
+        _prob_create_connection: float,
+        _prob_delete_connection: float,
     ) -> TrainingData:
 
     var training = TrainingData.new()
@@ -56,6 +64,10 @@ static func create(
     training.time_objective = _time_objective
     training.max_training_time = _max_training_time
     training.greedy = _greedy
+    training.prob_create_neuron = _prob_create_neuron
+    training.prob_delete_neuron = _prob_delete_neuron
+    training.prob_create_connection = _prob_create_connection
+    training.prob_delete_connection = _prob_delete_connection
     return training
 
 static func from_dict(dict: Dictionary) -> TrainingData:
@@ -75,6 +87,10 @@ static func from_dict(dict: Dictionary) -> TrainingData:
         dict["time_objective"],
         dict["max_training_time"],
         dict["greedy"],
+        dict["prob_create_neuron"],
+        dict["prob_delete_neuron"],
+        dict["prob_create_connection"],
+        dict["prob_delete_connection"],
     )
     return training
 
@@ -95,6 +111,10 @@ func to_dict() -> Dictionary:
         "time_objective": time_objective,
         "max_training_time": max_training_time,
         "greedy": greedy,
+        "prob_create_neuron": prob_create_neuron,
+        "prob_delete_neuron": prob_delete_neuron,
+        "prob_create_connection": prob_create_connection,
+        "prob_delete_connection": prob_delete_connection,
         "run_history": Serializer.from_list(run_history),
         "racer_history": Serializer.from_list(racer_history),
         "elapsed_time": elapsed_time,

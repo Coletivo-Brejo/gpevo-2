@@ -53,13 +53,13 @@ class Neuron():
         )
     
     def generate_hover_text(self) -> str:
-        text: str = self.neuron_id
+        text: str = f"<b>{self.neuron_id}</b>"
         if len(self.operations) > 0:
             for i, w in enumerate(self.operations[0].params):
                 if i == 0:
-                    text += f"<br><br>b: {w:.2f}"
+                    text += f"<br>b: {w:+.2f}"
                 else:
-                    text +=f"<br>{self.input_ids[i-1]}: {w:.2f}"
+                    text +=f"<br>{self.input_ids[i-1]}: {w:+.2f}"
         return text
 
 

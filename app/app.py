@@ -1,105 +1,47 @@
-from dotenv import load_dotenv
 import streamlit as st
-import os
 import plotly.graph_objs as go
-import requests
 
-from entities.brain import Brain
+from entities.racer import Racer
 from entities.track import Track
 from entities.training import Training
+from screens.racer_card import draw as draw_racer
+from screens.track_card import draw as draw_track
+from screens.training_card import draw as draw_training
+from utils.proxy import load_all_resources
 
 
-load_dotenv()
-API_URL = os.environ.get("API_URL")
-DATA_PATH = os.environ.get("DATA_PATH")
+def load_racers() -> list[Racer]:
+    racers: list[Racer] = []
+    dict_list: list[dict]|None = load_all_resources("/racers")
+    if dict_list is not None:
+        for d in dict_list:
+            racer: Racer = Racer.from_dict(d)
+            if racer is not None:
+                racers.append(racer)
+    return racers
 
-def request_racers() -> list[Brain]:
-    response = requests.get(f"{API_URL}/racers")
-    brains: list[Brain] = []
-    if response.ok:
-        racer_list: list[dict] = response.json()
-        for r in racer_list:
-            brains.append(Brain.from_dict(r["brain"]))
-    return brains
-
-def request_tracks() -> list[Track]:
-    response = requests.get(f"{API_URL}/tracks")
+def load_tracks() -> list[Track]:
     tracks: list[Track] = []
-    if response.ok:
-        track_list: list[dict] = response.json()
-        for t in track_list:
-            tracks.append(Track.from_dict(t))
+    dict_list: list[dict]|None = load_all_resources("/tracks")
+    if dict_list is not None:
+        for d in dict_list:
+            track: Track = Track.from_dict(d)
+            if track is not None:
+                tracks.append(track)
     return tracks
 
-def request_trainings() -> list[Training]:
-    response = requests.get(f"{API_URL}/trainings")
+def load_trainings(tracks: list[Track] = []) -> list[Training]:
     trainings: list[Training] = []
-    if response.ok:
-        training_list: list[dict] = response.json()
-        for t in training_list:
-            trainings.append(Training.from_dict(t))
+    dict_list: list[dict]|None = load_all_resources("/trainings")
+    if dict_list is not None:
+        for d in dict_list:
+            track: Track|None = next((t for t in tracks if t.track_id == d["track_id"]), None)
+            training: Training = Training.from_dict(d, track)
+            if training is not None:
+                trainings.append(training)
     return trainings
 
-def create_track_plot(track: Track) -> go.Figure:
-    traces: list[dict] = track.generate_traces()
-    layout: dict = create_track_layout()
-    return go.Figure(data = traces, layout = layout)
-
-def create_brain_layout(annotations: list[dict]) -> dict:
-    layout: dict = {
-        "showlegend": False,
-        "xaxis": {
-            "autorange": "reversed",
-            "showticklabels": False,
-            "showgrid": False,
-            "zeroline": False,
-        },
-        "yaxis": {
-            "showticklabels": False,
-            "showgrid": False,
-            "zeroline": False,
-        },
-        "annotations": annotations,
-    }
-    return layout
-
-def create_track_layout() -> dict:
-    layout: dict = {
-        "height": 800.,
-        "width": 800.,
-        "showlegend": False,
-        "xaxis": {
-            "showticklabels": False,
-            "showgrid": False,
-            "zeroline": False,
-        },
-        "yaxis": {
-            "autorange": "reversed",
-            "showticklabels": False,
-            "showgrid": False,
-            "zeroline": False,
-            "scaleanchor": "x",
-            "scaleratio": 1.,
-        },
-    }
-    return layout
-
-def create_progress_layout(percentage: bool = False) -> dict:
-    layout: dict = {
-        "showlegend": False,
-        "xaxis": {
-            "showgrid": False,
-            "zeroline": False,
-        },
-        "yaxis": {
-            "showgrid": False,
-            "tickformat": ".0%" if percentage else "",
-        },
-    }
-    return layout
-
-
-st.title("Teste")
+st.title("GPevo")
 
 if not st.user.is_logged_in:
     st.button("Log in with Google", on_click=st.login)
@@ -109,190 +51,28 @@ st.button("Log out", on_click=st.logout)
 st.markdown(f"Welcome! {st.user.name}")
 st.write(st.user)
 
-
 st.markdown("## Corredores")
 
-brains: list[Brain] = request_racers()
-for b in brains:
-    traces, annotations = b.generate_traces_and_annotations()
-    layout = create_brain_layout(annotations)
-    brain_fig: go.Figure = go.Figure(
-        data = traces,
-        layout = layout,
-    )
-    st.plotly_chart(brain_fig)
+racers: list[Racer] = load_racers()
+for r in racers:
+    with st.expander(f"{r.name}"):
+        draw_racer(r)
 
 st.markdown("## Pistas")
 
-tracks: list[Track] = request_tracks()
+tracks: list[Track] = load_tracks()
 
 track_name: str|None = st.selectbox("Nome da pista", [t.name for t in tracks])
 selected_track: Track|None = next((t for t in tracks if t.name == track_name), None)
 
 if selected_track is not None:
-    st.plotly_chart(create_track_plot(selected_track))
+    draw_track(selected_track)
 
 st.markdown("## Treinos")
 
-trainings: list[Training] = request_trainings()
+trainings: list[Training] = load_trainings(tracks)
 training_id: str|None = st.selectbox("Treino", [t.training_id for t in trainings])
 training: Training|None = next((t for t in trainings if t.training_id == training_id), None)
 
 if training is not None:
-
-    progress_evolution_fig: go.Figure = go.Figure(
-        data = training.generate_progress_evolution_traces(),
-        layout = create_progress_layout(),
-    )
-    st.plotly_chart(progress_evolution_fig)
-
-    time_evolution_fig: go.Figure = go.Figure(
-        data = training.generate_time_evolution_traces(),
-        layout = create_progress_layout(),
-    )
-    st.plotly_chart(time_evolution_fig)
-
-    iterations: int = len(training.racer_history)
-    it: int = st.slider("Iteração", 0, iterations-1)
-
-    race_fig: go.Figure = go.Figure(
-        data = training.generate_history_traces(it),
-        layout = create_track_layout(),
-    )
-    st.plotly_chart(race_fig)
-
-    progress_fig: go.Figure = go.Figure(
-        data = training.generate_progress_traces(it),
-        layout = create_progress_layout(),
-    )
-    st.plotly_chart(progress_fig)
-
-# st.markdown("## Runs")
-
-# runs: list[dict] = []
-# run_endpoint: str = f"{API_URL}/runs"
-# response = requests.get(run_endpoint)
-# if response.ok:
-#     runs = response.json()
-
-# racers: list[dict] = []
-# racer_endpoint: str = f"{API_URL}/racers"
-# response = requests.get(racer_endpoint)
-# if response.ok:
-#     racers = response.json()
-
-# run_id: str|None = st.selectbox("Run", [r["run_id"] for r in runs])
-# selected_run: dict|None = next((r for r in runs if r["run_id"] == run_id), None)
-
-# if selected_run is not None:
-#     track: dict = next((t for t in tracks if t["track_id"] == selected_run["track_id"]))
-#     racer_id: str = st.selectbox("Corredor", selected_run["racer_ids"])
-#     stats: dict = next((s for s in selected_run["stats"] if s["racer_id"] == racer_id))
-
-#     percent_progress: bool = st.checkbox("Porcentagem")
-#     progress: list[float] = stats["progress_history"]
-#     if percent_progress:
-#         progress = [p/track["length"]/selected_run["laps"] for p in progress]
-
-#     traces: list[dict] = [
-#         {
-#             "type": "scatter",
-#             "mode": "lines",
-#             "x": stats["time_history"],
-#             "y": progress,
-#         }
-#     ]
-#     layout: dict = {
-#         "showlegend": False,
-#         "xaxis": {
-#             "showgrid": False,
-#             "zeroline": False,
-#         },
-#         "yaxis": {
-#             "showgrid": False,
-#             "tickformat": ".0%" if percent_progress else "",
-#         },
-#     }
-#     st.plotly_chart(
-#         go.Figure(data=traces, layout=layout),
-#         use_container_width = True,
-#     )
-
-#     x_scale: float = 1.
-#     if selected_run["mirrored"]:
-#         x_scale = -1.
-#     l_xs: list[float] = [p["x"]*x_scale for p in track["l_wall"]]
-#     l_ys: list[float] = [p["y"] for p in track["l_wall"]]
-#     r_xs: list[float] = [p["x"]*x_scale for p in track["r_wall"]]
-#     r_ys: list[float] = [p["y"] for p in track["r_wall"]]
-#     history_xs: list[float] = [p["x"] for p in stats["position_history"]]
-#     history_ys: list[float] = [p["y"] for p in stats["position_history"]]
-#     traces: list[dict] = [
-#         {
-#             "type": "scatter",
-#             "mode": "lines",
-#             "x": l_xs,
-#             "y": l_ys,
-#             "line": {
-#                 "color": "grey",
-#             },
-#         },
-#         {
-#             "type": "scatter",
-#             "mode": "lines",
-#             "x": r_xs,
-#             "y": r_ys,
-#             "line": {
-#                 "color": "grey",
-#             },
-#         },
-#         {
-#             "type": "scatter",
-#             "mode": "lines",
-#             "x": [l_xs[0], r_xs[0]],
-#             "y": [l_ys[0], r_ys[0]],
-#             "line": {
-#                 "color": "grey",
-#             },
-#         },
-#         {
-#             "type": "scatter",
-#             "mode": "lines",
-#             "x": [l_xs[-1], r_xs[-1]],
-#             "y": [l_ys[-1], r_ys[-1]],
-#             "line": {
-#                 "color": "grey",
-#             },
-#         },
-#         {
-#             "type": "scatter",
-#             "mode": "markers",
-#             "x": history_xs,
-#             "y": history_ys,
-#             "marker": {
-#                 "opacity": .5,
-#             },
-#         }
-#     ]
-#     layout: dict = {
-#         "height": 800.,
-#         "width": 800.,
-#         "showlegend": False,
-#         "xaxis": {
-#             "showticklabels": False,
-#             "showgrid": False,
-#             "zeroline": False,
-#         },
-#         "yaxis": {
-#             "autorange": "reversed",
-#             "showticklabels": False,
-#             "showgrid": False,
-#             "zeroline": False,
-#             "scaleanchor": "x",
-#             "scaleratio": 1.,
-#         },
-#     }
-#     st.plotly_chart(
-#         go.Figure(data=traces, layout=layout),
-#         use_container_width = True,
-#     )
+    draw_training(training)

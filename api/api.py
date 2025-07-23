@@ -41,7 +41,7 @@ def read_all_resources(
     resources: list[dict] = []
     for file in os.listdir(dir):
         resource_file: str = f"{dir}/{file}"
-        with open(resource_file) as f:
+        with open(resource_file, encoding="utf-8") as f:
             resource_dict: dict = json.load(f)
             resources.append(resource_dict)
     return JSONResponse(resources)

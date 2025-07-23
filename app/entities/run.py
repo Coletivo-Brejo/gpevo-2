@@ -2,6 +2,7 @@ from __future__ import annotations
 import numpy as np
 
 from .point import PointList
+from .track import Track
 
 
 class RunStats():
@@ -17,6 +18,8 @@ class RunStats():
     progress_history: np.ndarray
     position_history: PointList
 
+    track: Track|None
+
     def __init__(
             self,
             _racer_id: str,
@@ -29,6 +32,7 @@ class RunStats():
             _time_history: np.ndarray,
             _progress_history: np.ndarray,
             _position_history: PointList,
+            _track: Track|None = None,
         ) -> None:
         self.racer_id = _racer_id
         self.track_id = _track_id
@@ -40,9 +44,17 @@ class RunStats():
         self.time_history = _time_history
         self.progress_history = _progress_history
         self.position_history = _position_history
+
+        if _track is not None:
+            self.track = _track
+        else:
+            self.track = Track.load(self.track_id)
     
     @staticmethod
-    def from_dict(_dict: dict) -> RunStats:
+    def from_dict(
+            _dict: dict,
+            _track: Track|None = None,
+        ) -> RunStats:
         return RunStats(
             _dict["racer_id"],
             _dict["track_id"],
@@ -54,13 +66,19 @@ class RunStats():
             np.array(_dict["time_history"]),
             np.array(_dict["progress_history"]),
             PointList.from_list(_dict["position_history"]),
+            _track,
         )
 
     def generate_history_traces(
             self,
+            mirrored: bool = False,
         ) -> list[dict]:
 
-        traces: list[dict] = [
+        traces: list[dict] = []
+        if self.track is not None:
+            traces.extend(
+                self.track.generate_traces(mirrored))
+        traces.extend([
             {
                 "type": "scatter",
                 "mode": "markers",
@@ -70,7 +88,7 @@ class RunStats():
                     "color": "grey",
                 },
             }
-        ]
+        ])
         return traces
     
     def generate_progress_traces(
@@ -105,6 +123,8 @@ class Run():
     end_reason: str
     stats: list[RunStats]
 
+    track: Track|None
+
     def __init__(
             self,
             _run_id: str,
@@ -121,6 +141,7 @@ class Run():
             _elapsed_time: float,
             _end_reason: str,
             _stats: list[RunStats],
+            _track: Track|None = None,
         ) -> None:
         self.run_id = _run_id
         self.track_id = _track_id
@@ -136,9 +157,19 @@ class Run():
         self.elapsed_time = _elapsed_time
         self.end_reason = _end_reason
         self.stats = _stats
+
+        if _track is not None:
+            self.track = _track
+        else:
+            self.track = Track.load(self.track_id)
     
     @staticmethod
-    def from_dict(_dict: dict) -> Run:
+    def from_dict(
+            _dict: dict,
+            _track: Track|None = None
+        ) -> Run:
+        if _track is None:
+            _track = Track.load(_dict["track_id"])
         return Run(
             _dict["run_id"],
             _dict["track_id"],
@@ -153,5 +184,6 @@ class Run():
             _dict["laps"],
             _dict["elapsed_time"],
             _dict["end_reason"],
-            [RunStats.from_dict(s) for s in _dict["stats"]],
+            [RunStats.from_dict(s, _track) for s in _dict["stats"]],
+            _track,
         )

@@ -2,6 +2,7 @@ from __future__ import annotations
 import numpy as np
 
 from .point import PointList
+from utils.proxy import load_resource_dict
 
 
 class Track():
@@ -43,6 +44,15 @@ class Track():
             PointList.from_list(_dict["r_wall"]),
             _dict["length"],
         )
+    
+    @staticmethod
+    def load(track_id: str) -> Track|None:
+        track_dict: dict|None = load_resource_dict("/tracks", track_id)
+        if track_dict is not None:
+            track: Track = Track.from_dict(track_dict)
+            return track
+        else:
+            return None
     
     def generate_traces(
             self,

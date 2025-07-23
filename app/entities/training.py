@@ -1,15 +1,9 @@
 from __future__ import annotations
-from dotenv import load_dotenv
 import numpy as np
-import os
-import requests
 
 from .run import Run, RunStats
 from .track import Track
 
-
-load_dotenv()
-API_URL = os.environ.get("API_URL")
 
 class Training():
 
@@ -37,7 +31,7 @@ class Training():
     elapsed_time: float
     end_reason: str
 
-    track: Track
+    track: Track|None
 
     def __init__(
             self,
@@ -64,6 +58,7 @@ class Training():
             _racer_history: list[RunStats],
             _elapsed_time: float,
             _end_reason: str,
+            _track: Track|None = None,
         ) -> None:
         self.training_id = _training_id
         self.track_id = _track_id
@@ -80,25 +75,33 @@ class Training():
         self.time_objective = _time_objective
         self.max_training_time = _max_training_time
         self.greedy = _greedy
-        prob_create_neuron = _prob_create_neuron
-        prob_delete_neuron = _prob_delete_neuron
-        prob_create_connection = _prob_create_connection
-        prob_delete_connection = _prob_delete_connection
+        self.prob_create_neuron = _prob_create_neuron
+        self.prob_delete_neuron = _prob_delete_neuron
+        self.prob_create_connection = _prob_create_connection
+        self.prob_delete_connection = _prob_delete_connection
         self.run_history = _run_history
         self.racer_history = _racer_history
         self.elapsed_time = _elapsed_time
         self.end_reason = _end_reason
 
-        self.request_track()
+        if _track is not None:
+            self.track = _track
+        else:
+            self.track = Track.load(self.track_id)
     
     @staticmethod
-    def from_dict(_dict: dict) -> Training:
+    def from_dict(
+            _dict: dict,
+            _track: Track|None = None,
+        ) -> Training:
+        if _track is None:
+            _track = Track.load(_dict["track_id"])
         return Training(
             _dict["training_id"],
             _dict["track_id"],
             _dict["racer_id"],
             _dict["save_results"],
-            Run.from_dict(_dict["run_data"]),
+            Run.from_dict(_dict["run_data"], _track),
             _dict["n_neighbors"],
             _dict["initial_temperature"],
             _dict["cooling_rate"],
@@ -113,17 +116,12 @@ class Training():
             _dict["prob_delete_neuron"],
             _dict["prob_create_connection"],
             _dict["prob_delete_connection"],
-            [Run.from_dict(r) for r in _dict["run_history"]],
-            [RunStats.from_dict(r) for r in _dict["racer_history"]],
+            [Run.from_dict(r, _track) for r in _dict["run_history"]],
+            [RunStats.from_dict(r, _track) for r in _dict["racer_history"]],
             _dict["elapsed_time"],
             _dict["end_reason"],
+            _track,
         )
-    
-    def request_track(self) -> None:
-        response = requests.get(f"{API_URL}/tracks/{self.track_id}")
-        if response.ok:
-            track_dict: dict = response.json()
-            self.track = Track.from_dict(track_dict)
 
     def generate_progress_evolution_traces(self) -> list[dict]:
         progress: np.ndarray = np.array([r.max_progress for r in self.racer_history])
@@ -160,8 +158,9 @@ class Training():
             iteration: int = 0,
         ) -> list[dict]:
         traces: list[dict] = []
-        traces.extend(
-            self.track.generate_traces(self.run_data.mirrored))
+        if self.track is not None:
+            traces.extend(
+                self.track.generate_traces(self.run_data.mirrored))
         traces.extend(
             self.racer_history[iteration].generate_history_traces()
         )

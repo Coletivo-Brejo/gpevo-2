@@ -2,10 +2,9 @@ extends Resource
 class_name TrainingData
 
 @export var training_id: String
-@export var track_id: String
 @export var racer_id: String
+@export var setups: Array[TrainingRunSetup]
 @export var save_results: bool
-@export var run_data: RunData
 @export var n_neighbors: int
 @export var initial_temperature: float
 @export var cooling_rate: float
@@ -20,18 +19,17 @@ class_name TrainingData
 @export var prob_delete_neuron: float
 @export var prob_create_connection: float
 @export var prob_delete_connection: float
-var run_history: Array[RunData]
-var racer_history: Array[RunStats]
+var run_history: Array
+var clone_history: Array[String]
 var elapsed_time: float
 var end_reason: String
 
 
 static func create(
         _training_id: String,
-        _track_id: String,
         _racer_id: String,
+        _setups: Array[TrainingRunSetup],
         _save_results: bool,
-        _run_data: RunData,
         _n_neighbors: int,
         _initial_temperature: float,
         _cooling_rate: float,
@@ -50,10 +48,9 @@ static func create(
 
     var training = TrainingData.new()
     training.training_id = _training_id
-    training.track_id = _track_id
     training.racer_id = _racer_id
+    training.setups = _setups
     training.save_results = _save_results
-    training.run_data = _run_data
     training.n_neighbors = _n_neighbors
     training.initial_temperature = _initial_temperature
     training.cooling_rate = _cooling_rate
@@ -71,12 +68,15 @@ static func create(
     return training
 
 static func from_dict(dict: Dictionary) -> TrainingData:
+    var _setups: Array[TrainingRunSetup] = []
+    for t in dict["setups"]:
+        _setups.append(TrainingRunSetup.from_dict(t))
+
     var training = TrainingData.create(
         dict["training_id"],
-        dict["track_id"],
         dict["racer_id"],
+        _setups,
         dict["save_results"],
-        RunData.from_dict(dict["run_data"]),
         dict["n_neighbors"],
         dict["initial_temperature"],
         dict["cooling_rate"],
@@ -95,12 +95,16 @@ static func from_dict(dict: Dictionary) -> TrainingData:
     return training
 
 func to_dict() -> Dictionary:
+    var _runs: Array = []
+    for it in run_history:
+        _runs.append([])
+        for r_data in it:
+            _runs[-1].append(r_data.to_dict())
     return {
         "training_id": training_id,
-        "track_id": track_id,
         "racer_id": racer_id,
+        "setups": Serializer.from_list(setups),
         "save_results": save_results,
-        "run_data": run_data.to_dict(),
         "n_neighbors": n_neighbors,
         "initial_temperature": initial_temperature,
         "cooling_rate": cooling_rate,
@@ -115,8 +119,8 @@ func to_dict() -> Dictionary:
         "prob_delete_neuron": prob_delete_neuron,
         "prob_create_connection": prob_create_connection,
         "prob_delete_connection": prob_delete_connection,
-        "run_history": Serializer.from_list(run_history),
-        "racer_history": Serializer.from_list(racer_history),
+        "run_history": _runs,
+        "clone_history": clone_history,
         "elapsed_time": elapsed_time,
         "end_reason": end_reason,
     }

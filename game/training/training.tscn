@@ -1,44 +1,67 @@
-[gd_scene load_steps=8 format=3 uid="uid://ctc2bx7y34dii"]
+[gd_scene load_steps=11 format=3 uid="uid://ctc2bx7y34dii"]
 
 [ext_resource type="Script" uid="uid://b1xpqmbitwr7v" path="res://training/training.gd" id="1_g86yt"]
-[ext_resource type="Script" uid="uid://065kpbfkmvvp" path="res://racer/racer_data.gd" id="2_bcpnu"]
-[ext_resource type="Script" uid="uid://cwlrb25ewiqrk" path="res://race/run_data.gd" id="3_y6l7h"]
+[ext_resource type="Script" uid="uid://nm3rpw2rqq4e" path="res://training/training_run_setup.gd" id="3_46hvn"]
 [ext_resource type="Script" uid="uid://ria0ktc8qguv" path="res://training/training_data.gd" id="4_dqem7"]
+[ext_resource type="Script" uid="uid://b85tgmg481k0x" path="res://race/run_setup.gd" id="4_y6l7h"]
 [ext_resource type="Script" uid="uid://dbcj37ky1n81f" path="res://api/api.gd" id="5_emg05"]
 
-[sub_resource type="Resource" id="Resource_ald8b"]
-script = ExtResource("3_y6l7h")
-run_id = ""
-racers_data = Array[ExtResource("2_bcpnu")]([])
-begin_countdown = 0.0
+[sub_resource type="Resource" id="Resource_bcpnu"]
+script = ExtResource("4_y6l7h")
+begin_countdown = 3.0
 end_countdown = 0.0
 stuck_timeout = 5.0
-run_timeout = 60.0
+run_timeout = 30.0
+follow_first = true
+end_on_first_finish = true
+stat_collection_frequency = 1.0
+mirrored = false
+laps = 1
+metadata/_custom_type_script = "uid://b85tgmg481k0x"
+
+[sub_resource type="Resource" id="Resource_46hvn"]
+script = ExtResource("3_46hvn")
+track_id = "nascar"
+run_setup = SubResource("Resource_bcpnu")
+metadata/_custom_type_script = "uid://nm3rpw2rqq4e"
+
+[sub_resource type="Resource" id="Resource_y6l7h"]
+script = ExtResource("4_y6l7h")
+begin_countdown = 3.0
+end_countdown = 0.0
+stuck_timeout = 5.0
+run_timeout = 30.0
+follow_first = true
 end_on_first_finish = true
 stat_collection_frequency = 1.0
 mirrored = true
 laps = 1
-metadata/_custom_type_script = "uid://cwlrb25ewiqrk"
+metadata/_custom_type_script = "uid://b85tgmg481k0x"
+
+[sub_resource type="Resource" id="Resource_dqem7"]
+script = ExtResource("3_46hvn")
+track_id = "nascar"
+run_setup = SubResource("Resource_y6l7h")
+metadata/_custom_type_script = "uid://nm3rpw2rqq4e"
 
 [sub_resource type="Resource" id="Resource_8flk7"]
 script = ExtResource("4_dqem7")
-training_id = "training_5"
-track_id = "double_knee"
+training_id = "training_0"
 racer_id = "the_chosen"
+setups = Array[ExtResource("3_46hvn")]([SubResource("Resource_46hvn"), SubResource("Resource_dqem7")])
 save_results = true
-run_data = SubResource("Resource_ald8b")
-n_neighbors = 5
+n_neighbors = 10
 initial_temperature = 100.0
 cooling_rate = 0.1
 convergence_threshold = 0.0
 convergence_iterations = 0
-n_iterations = 20
+n_iterations = 5
 progress_objective = 0.0
 time_objective = 0.0
 max_training_time = 0.0
 greedy = true
-prob_create_neuron = 0.1
-prob_delete_neuron = 0.1
+prob_create_neuron = 0.05
+prob_delete_neuron = 0.05
 prob_create_connection = 0.2
 prob_delete_connection = 0.2
 metadata/_custom_type_script = "uid://ria0ktc8qguv"
@@ -50,3 +73,18 @@ data = SubResource("Resource_8flk7")
 [node name="API" type="HTTPRequest" parent="."]
 script = ExtResource("5_emg05")
 metadata/_custom_type_script = "uid://dbcj37ky1n81f"
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Runs" type="HBoxContainer" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="CanvasLayer/Runs"]
+layout_mode = 2
+stretch = true

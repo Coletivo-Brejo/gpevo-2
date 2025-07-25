@@ -1,8 +1,19 @@
 from __future__ import annotations
 import numpy as np
+import streamlit as st
 
 from .point import PointList
 from utils.proxy import load_resource_dict
+
+
+@st.cache_data
+def load_track(track_id: str) -> Track|None:
+    track_dict: dict|None = load_resource_dict("/tracks", track_id)
+    if track_dict is not None:
+        track: Track = Track.from_dict(track_dict)
+        return track
+    else:
+        return None
 
 
 class Track():
@@ -47,12 +58,7 @@ class Track():
     
     @staticmethod
     def load(track_id: str) -> Track|None:
-        track_dict: dict|None = load_resource_dict("/tracks", track_id)
-        if track_dict is not None:
-            track: Track = Track.from_dict(track_dict)
-            return track
-        else:
-            return None
+        return load_track(track_id)
     
     def generate_traces(
             self,

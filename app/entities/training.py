@@ -1,17 +1,37 @@
 from __future__ import annotations
 import numpy as np
 
-from .run import Run, RunStats
+from .run import Run, RunSetup, RunStats
 from .track import Track
+
+
+class TrainingRunSetup():
+
+    track_id: str
+    run_setup: RunSetup
+
+    def __init__(
+            self,
+            _track_id: str,
+            _run_setup: RunSetup,
+        ) -> None:
+        self.track_id = _track_id
+        self.run_setup = _run_setup
+    
+    @staticmethod
+    def from_dict(_dict: dict) -> TrainingRunSetup:
+        return TrainingRunSetup(
+            _dict["track_id"],
+            RunSetup.from_dict(_dict["run_setup"]),
+        )
 
 
 class Training():
 
     training_id: str
-    track_id: str
     racer_id: str
+    setups: list[TrainingRunSetup]
     save_results: bool
-    run_data: Run
     n_neighbors: int
     initial_temperature: float
     cooling_rate: float
@@ -26,20 +46,17 @@ class Training():
     prob_delete_neuron: float
     prob_create_connection: float
     prob_delete_connection: float
-    run_history: list[Run]
-    racer_history: list[RunStats]
+    run_history: list[list[Run]]
+    clone_history: list[str]
     elapsed_time: float
     end_reason: str
-
-    track: Track|None
 
     def __init__(
             self,
             _training_id: str,
-            _track_id: str,
             _racer_id: str,
+            _setups: list[TrainingRunSetup],
             _save_results: bool,
-            _run_data: Run,
             _n_neighbors: int,
             _initial_temperature: float,
             _cooling_rate: float,
@@ -54,17 +71,15 @@ class Training():
             _prob_delete_neuron: float,
             _prob_create_connection: float,
             _prob_delete_connection: float,
-            _run_history: list[Run],
-            _racer_history: list[RunStats],
+            _run_history: list[list[Run]],
+            _clone_history: list[str],
             _elapsed_time: float,
             _end_reason: str,
-            _track: Track|None = None,
         ) -> None:
         self.training_id = _training_id
-        self.track_id = _track_id
         self.racer_id = _racer_id
+        self.setups = _setups
         self.save_results = _save_results
-        self.run_data = _run_data
         self.n_neighbors = _n_neighbors
         self.initial_temperature = _initial_temperature
         self.cooling_rate = _cooling_rate
@@ -80,28 +95,17 @@ class Training():
         self.prob_create_connection = _prob_create_connection
         self.prob_delete_connection = _prob_delete_connection
         self.run_history = _run_history
-        self.racer_history = _racer_history
+        self.clone_history = _clone_history
         self.elapsed_time = _elapsed_time
         self.end_reason = _end_reason
-
-        if _track is not None:
-            self.track = _track
-        else:
-            self.track = Track.load(self.track_id)
     
     @staticmethod
-    def from_dict(
-            _dict: dict,
-            _track: Track|None = None,
-        ) -> Training:
-        if _track is None:
-            _track = Track.load(_dict["track_id"])
+    def from_dict(_dict: dict) -> Training:
         return Training(
             _dict["training_id"],
-            _dict["track_id"],
             _dict["racer_id"],
+            [TrainingRunSetup.from_dict(s) for s in _dict["setups"]],
             _dict["save_results"],
-            Run.from_dict(_dict["run_data"], _track),
             _dict["n_neighbors"],
             _dict["initial_temperature"],
             _dict["cooling_rate"],
@@ -116,15 +120,32 @@ class Training():
             _dict["prob_delete_neuron"],
             _dict["prob_create_connection"],
             _dict["prob_delete_connection"],
-            [Run.from_dict(r, _track) for r in _dict["run_history"]],
-            [RunStats.from_dict(r, _track) for r in _dict["racer_history"]],
+            [[Run.from_dict(r) for r in it] for it in _dict["run_history"]],
+            _dict["clone_history"],
             _dict["elapsed_time"],
             _dict["end_reason"],
-            _track,
         )
 
-    def generate_progress_evolution_traces(self) -> list[dict]:
-        progress: np.ndarray = np.array([r.max_progress for r in self.racer_history])
+    def get_setup_stat_history(
+            self,
+            setup_idx: int,
+        ) -> list[RunStats]:
+        stats: list[RunStats] = []
+        first_stat: RunStats|None = self.run_history[0][setup_idx].get_stats_from_racer(self.racer_id)
+        if first_stat is not None:
+            stats.append(first_stat)
+        for i in range(len(self.run_history)):
+            stat: RunStats|None = self.run_history[i][setup_idx].get_stats_from_racer(self.clone_history[i])
+            if stat is not None:
+                stats.append(stat)
+        return stats
+
+    def generate_setup_progress_evolution_traces(
+            self,
+            setup_idx: int,
+        ) -> list[dict]:
+        stats: list[RunStats] = self.get_setup_stat_history(setup_idx)
+        progress: np.ndarray = np.array([s.max_progress for s in stats])
         traces: list[dict] = [
             {
                 "type": "scatter",
@@ -135,8 +156,12 @@ class Training():
         ]
         return traces
 
-    def generate_time_evolution_traces(self) -> list[dict]:
-        time: np.ndarray = np.array([r.time if r.finished else None for r in self.racer_history ])
+    def generate_setup_time_evolution_traces(
+            self,
+            setup_idx: int,
+        ) -> list[dict]:
+        stats: list[RunStats] = self.get_setup_stat_history(setup_idx)
+        time: np.ndarray = np.array([s.time if s.finished else None for s in stats])
         traces: list[dict] = [
             {
                 "type": "scatter",
@@ -149,19 +174,20 @@ class Training():
 
     def generate_progress_traces(
             self,
+            setup_idx: int,
             iteration: int = 0,
         ) -> list[dict]:
-        return self.racer_history[iteration].generate_progress_traces()
+        if iteration == 0:
+            return self.run_history[0][setup_idx].generate_racer_progress_traces(self.racer_id)
+        else:
+            return self.run_history[iteration][setup_idx].generate_racer_progress_traces(self.clone_history[iteration])
 
     def generate_history_traces(
             self,
+            setup_idx: int,
             iteration: int = 0,
         ) -> list[dict]:
-        traces: list[dict] = []
-        if self.track is not None:
-            traces.extend(
-                self.track.generate_traces(self.run_data.mirrored))
-        traces.extend(
-            self.racer_history[iteration].generate_history_traces()
-        )
-        return traces
+        if iteration == 0:
+            return self.run_history[0][setup_idx].generate_racer_history_traces(self.racer_id)
+        else:
+            return self.run_history[iteration][setup_idx].generate_racer_history_traces(self.clone_history[iteration])

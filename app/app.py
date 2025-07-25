@@ -30,13 +30,12 @@ def load_tracks() -> list[Track]:
                 tracks.append(track)
     return tracks
 
-def load_trainings(tracks: list[Track] = []) -> list[Training]:
+def load_trainings() -> list[Training]:
     trainings: list[Training] = []
     dict_list: list[dict]|None = load_all_resources("/trainings")
     if dict_list is not None:
         for d in dict_list:
-            track: Track|None = next((t for t in tracks if t.track_id == d["track_id"]), None)
-            training: Training = Training.from_dict(d, track)
+            training: Training = Training.from_dict(d)
             if training is not None:
                 trainings.append(training)
     return trainings
@@ -70,7 +69,7 @@ if selected_track is not None:
 
 st.markdown("## Treinos")
 
-trainings: list[Training] = load_trainings(tracks)
+trainings: list[Training] = load_trainings()
 training_id: str|None = st.selectbox("Treino", [t.training_id for t in trainings])
 training: Training|None = next((t for t in trainings if t.training_id == training_id), None)
 

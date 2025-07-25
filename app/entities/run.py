@@ -18,8 +18,6 @@ class RunStats():
     progress_history: np.ndarray
     position_history: PointList
 
-    track: Track|None
-
     def __init__(
             self,
             _racer_id: str,
@@ -32,7 +30,6 @@ class RunStats():
             _time_history: np.ndarray,
             _progress_history: np.ndarray,
             _position_history: PointList,
-            _track: Track|None = None,
         ) -> None:
         self.racer_id = _racer_id
         self.track_id = _track_id
@@ -44,16 +41,10 @@ class RunStats():
         self.time_history = _time_history
         self.progress_history = _progress_history
         self.position_history = _position_history
-
-        if _track is not None:
-            self.track = _track
-        else:
-            self.track = Track.load(self.track_id)
     
     @staticmethod
     def from_dict(
             _dict: dict,
-            _track: Track|None = None,
         ) -> RunStats:
         return RunStats(
             _dict["racer_id"],
@@ -66,19 +57,10 @@ class RunStats():
             np.array(_dict["time_history"]),
             np.array(_dict["progress_history"]),
             PointList.from_list(_dict["position_history"]),
-            _track,
         )
 
-    def generate_history_traces(
-            self,
-            mirrored: bool = False,
-        ) -> list[dict]:
-
-        traces: list[dict] = []
-        if self.track is not None:
-            traces.extend(
-                self.track.generate_traces(mirrored))
-        traces.extend([
+    def generate_history_traces(self) -> list[dict]:
+        traces: list[dict] = [
             {
                 "type": "scatter",
                 "mode": "markers",
@@ -88,13 +70,10 @@ class RunStats():
                     "color": "grey",
                 },
             }
-        ])
+        ]
         return traces
     
-    def generate_progress_traces(
-            self,
-        ) -> list[dict]:
-        
+    def generate_progress_traces(self) -> list[dict]:
         traces: list[dict] = [
             {
                 "type": "scatter",
@@ -106,19 +85,60 @@ class RunStats():
         return traces
 
 
+class RunSetup():
+
+    begin_countdown: float
+    end_countdown: float
+    stuck_timeout: float
+    run_timeout: float
+    follow_first: bool
+    end_on_first_finish: bool
+    stat_collection_frequency: float
+    mirrored: bool
+    laps: int
+
+    def __init__(
+            self,
+            _begin_countdown: float,
+            _end_countdown: float,
+            _stuck_timeout: float,
+            _run_timeout: float,
+            _end_on_first_finish: bool,
+            _stat_collection_frequency: float,
+            _mirrored: bool,
+            _laps: int,
+        ) -> None:
+        self.begin_countdown = _begin_countdown
+        self.end_countdown = _end_countdown
+        self.stuck_timeout = _stuck_timeout
+        self.run_timeout = _run_timeout
+        self.end_on_first_finish = _end_on_first_finish
+        self.stat_collection_frequency = _stat_collection_frequency
+        self.mirrored = _mirrored
+        self.laps = _laps
+    
+    @staticmethod
+    def from_dict(
+            _dict: dict,
+        ) -> RunSetup:
+        return RunSetup(
+            _dict["begin_countdown"],
+            _dict["end_countdown"],
+            _dict["stuck_timeout"],
+            _dict["run_timeout"],
+            _dict["end_on_first_finish"],
+            _dict["stat_collection_frequency"],
+            _dict["mirrored"],
+            _dict["laps"],
+        )
+
+
 class Run():
 
     run_id: str
     track_id: str
     racer_ids: list[str]
-    begin_countdown: float
-    end_countdown: float
-    stuck_timeout: float
-    run_timeout: float
-    end_on_first_finish: bool
-    stat_collection_frequency: float
-    mirrored: bool
-    laps: int
+    setup: RunSetup
     elapsed_time: float
     end_reason: str
     stats: list[RunStats]
@@ -130,14 +150,7 @@ class Run():
             _run_id: str,
             _track_id: str,
             _racer_ids: list[str],
-            _begin_countdown: float,
-            _end_countdown: float,
-            _stuck_timeout: float,
-            _run_timeout: float,
-            _end_on_first_finish: bool,
-            _stat_collection_frequency: float,
-            _mirrored: bool,
-            _laps: int,
+            _setup: RunSetup,
             _elapsed_time: float,
             _end_reason: str,
             _stats: list[RunStats],
@@ -146,14 +159,7 @@ class Run():
         self.run_id = _run_id
         self.track_id = _track_id
         self.racer_ids = _racer_ids
-        self.begin_countdown = _begin_countdown
-        self.end_countdown = _end_countdown
-        self.stuck_timeout = _stuck_timeout
-        self.run_timeout = _run_timeout
-        self.end_on_first_finish = _end_on_first_finish
-        self.stat_collection_frequency = _stat_collection_frequency
-        self.mirrored = _mirrored
-        self.laps = _laps
+        self.setup = _setup
         self.elapsed_time = _elapsed_time
         self.end_reason = _end_reason
         self.stats = _stats
@@ -166,24 +172,45 @@ class Run():
     @staticmethod
     def from_dict(
             _dict: dict,
-            _track: Track|None = None
+            _track: Track|None = None,
         ) -> Run:
-        if _track is None:
-            _track = Track.load(_dict["track_id"])
         return Run(
             _dict["run_id"],
             _dict["track_id"],
             _dict["racer_ids"],
-            _dict["begin_countdown"],
-            _dict["end_countdown"],
-            _dict["stuck_timeout"],
-            _dict["run_timeout"],
-            _dict["end_on_first_finish"],
-            _dict["stat_collection_frequency"],
-            _dict["mirrored"],
-            _dict["laps"],
+            RunSetup.from_dict(_dict["setup"]),
             _dict["elapsed_time"],
             _dict["end_reason"],
-            [RunStats.from_dict(s, _track) for s in _dict["stats"]],
+            [RunStats.from_dict(s) for s in _dict["stats"]],
             _track,
         )
+    
+    def get_stats_from_racer(
+            self,
+            racer_id: str,
+        ) -> RunStats|None:
+        for s in self.stats:
+            if s.racer_id == racer_id:
+                return s
+        return None
+
+    def generate_racer_history_traces(
+            self,
+            racer_id: str
+        ) -> list[dict]:
+        traces: list[dict] = []
+        if self.track is not None:
+            traces.extend(self.track.generate_traces(self.setup.mirrored))
+        stat: RunStats|None = self.get_stats_from_racer(racer_id)
+        if stat is not None:
+            traces.extend(stat.generate_history_traces())
+        return traces
+    
+    def generate_racer_progress_traces(
+            self,
+            racer_id: str,
+        ) -> list[dict]:
+        stat: RunStats|None = self.get_stats_from_racer(racer_id)
+        if stat is not None:
+            return stat.generate_progress_traces()
+        return []

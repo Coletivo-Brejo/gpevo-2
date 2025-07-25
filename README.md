@@ -36,13 +36,16 @@
 ### Jogo de fato
 
 - [ ] Decals para naves
+- [ ] Linha de partida e de chegada
 - [ ] Perfis de acesso (sem login, público, gestor de equipe, administrador)
 - [ ] Calendário de eventos
 - [ ] Estrutura de equipe (gestores, corredores, verba, pontuação, cor, etc.)
 - [ ] Precificação de treinamentos
-- [ ] Treinamento com alternância de pista espelhada entre iterações
+- [x] Treinamento com avaliação de mais de uma pista ao mesmo tempo (e.g. pista espelhada e não espelhada) [2025-07-25]
 - [ ] Fantasmas durante uma execução
 - [ ] Equipamentos embaralhadores de sinal
+- [ ] Limitação de profundidade do cérebro durante treinamento
+- [ ] Limitação de quantidade de neurônios durante treinamento
 
 ### Dívida técnica
 

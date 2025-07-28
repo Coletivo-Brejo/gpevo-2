@@ -149,7 +149,7 @@ class Training():
         trace_name: str = self.create_setup_trace_name(setup_idx)
         stats: list[RunStats] = self.get_setup_stat_history(setup_idx)
         progress: np.ndarray = np.array([s.max_progress for s in stats])
-        trace_mode: str = "lines+markers" if len(stats) < 20 else "lines"
+        trace_mode: str = "lines+markers" if len(stats) < 30 else "lines"
         traces: list[dict] = [
             {
                 "type": "scatter",
@@ -168,7 +168,7 @@ class Training():
         trace_name: str = self.create_setup_trace_name(setup_idx)
         stats: list[RunStats] = self.get_setup_stat_history(setup_idx)
         time: np.ndarray = np.array([s.time if s.finished else None for s in stats])
-        trace_mode: str = "lines+markers" if len(stats) < 20 else "lines"
+        trace_mode: str = "lines+markers" if len(stats) < 30 else "lines"
         traces: list[dict] = [
             {
                 "type": "scatter",

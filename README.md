@@ -46,6 +46,9 @@
 - [ ] Equipamentos embaralhadores de sinal
 - [x] Limitação de profundidade do cérebro durante treinamento [2025-07-27]
 - [x] Limitação de quantidade de neurônios durante treinamento [2025-07-27]
+- [ ] Visualização do histórico de ativações dos neurônios ao longo de uma corrida (tomografia)
+- [ ] Visualização do histórico de colisões ao longo de uma corrida
+- [ ] Visualização do corredor com indicação de propulsores e sensores
 
 ### Dívida técnica
 
@@ -55,7 +58,7 @@
 - [x] A nave não tem informação de colisão. Precisa de um novo atributo com os pontos do polígono do chassi. [2025-07-14]
 - [ ] O z-index das partes da nave está todo desordenado, com os thrusters aparecendo por trás de outras naves e as partículas aparecendo por cima do thruster.
 - [ ] Em curvas acentuadas e arrastando na parede, as partículas dos thrusters parecem sair em uma direção totalmente errada.
-- [ ] Quando um neurônio é totalmente desconectado dos demais, ele continua registrado no cérebro e é contabilizado para os limites de neurônios. Convém excluí-lo.
+- [x] Quando um neurônio é totalmente desconectado dos demais, ele continua registrado no cérebro e é contabilizado para os limites de neurônios. Convém excluí-lo. [2025-07-28]
 
 ### Bugs
 

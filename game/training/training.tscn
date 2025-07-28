@@ -10,12 +10,12 @@
 [sub_resource type="Resource" id="Resource_emg05"]
 script = ExtResource("2_y6l7h")
 n_clones = 10
-prob_create_neuron = 0.2
-prob_delete_neuron = 0.05
-prob_create_connection = 0.3
-prob_delete_connection = 0.05
-max_hidden_layers = 1
-max_hidden_neurons = 3
+prob_create_neuron = 0.0
+prob_delete_neuron = 0.0
+prob_create_connection = 0.15
+prob_delete_connection = 0.15
+max_hidden_layers = 0
+max_hidden_neurons = 0
 max_connections = -1
 metadata/_custom_type_script = "uid://dm3lc2fgjehu0"
 
@@ -24,7 +24,7 @@ script = ExtResource("4_y6l7h")
 begin_countdown = 0.0
 end_countdown = 0.0
 stuck_timeout = 5.0
-run_timeout = 30.0
+run_timeout = 60.0
 follow_first = true
 end_on_first_finish = true
 stat_collection_frequency = 1.0
@@ -43,7 +43,7 @@ script = ExtResource("4_y6l7h")
 begin_countdown = 0.0
 end_countdown = 0.0
 stuck_timeout = 5.0
-run_timeout = 30.0
+run_timeout = 60.0
 follow_first = true
 end_on_first_finish = true
 stat_collection_frequency = 1.0
@@ -59,15 +59,15 @@ metadata/_custom_type_script = "uid://nm3rpw2rqq4e"
 
 [sub_resource type="Resource" id="Resource_8flk7"]
 script = ExtResource("4_dqem7")
-training_id = "training_0"
+training_id = "training_9"
 racer_id = "mini_racer"
 setups = Array[ExtResource("3_46hvn")]([SubResource("Resource_46hvn"), SubResource("Resource_dqem7")])
 save_results = true
 initial_temperature = 100.0
-cooling_rate = 0.1
+cooling_rate = 0.01
 convergence_threshold = 0.0
 convergence_iterations = 0
-n_iterations = 5
+n_iterations = 20
 progress_objective = 0.0
 time_objective = 0.0
 max_training_time = 0.0

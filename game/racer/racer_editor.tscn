@@ -150,8 +150,6 @@ ship = SubResource("Resource_jy3kx")
 
 [node name="RacerEditor" type="Node2D"]
 script = ExtResource("1_4r4hs")
-racer_id = "the_chosen"
-ship_id = "mini_ship"
 racer = SubResource("Resource_3wvjf")
 
 [node name="API" type="HTTPRequest" parent="."]

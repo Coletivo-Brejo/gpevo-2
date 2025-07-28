@@ -1,5 +1,6 @@
 from __future__ import annotations
 from copy import deepcopy
+import logging
 from numpy import ndarray
 from numpy.random import choice, normal, rand
 from pydantic import BaseModel
@@ -58,15 +59,12 @@ class Brain(BaseModel):
                 hidden_neurons.append(n)
         return hidden_neurons
     
-    def get_neuron_layer(self, neuron: Neuron) -> int:
-        if self.layers is None:
-            self.build_layers()
-        if self.layers is not None:
-            for i, l in enumerate(self.layers):
-                for n in l:
-                    if n == neuron.neuron_id:
-                        return i
-        return -1
+    def get_thruster_neurons(self) -> list[Neuron]:
+        thruster_neurons: list[Neuron] = []
+        for n in self.neurons:
+            if n.neuron_id.startswith("t"):
+                thruster_neurons.append(n)
+        return thruster_neurons
     
     def count_connections(self) -> int:
         connections: int = 0
@@ -102,8 +100,13 @@ class Brain(BaseModel):
                 if input_n is not None:
                     self.place_neuron(input_n, desired_layer+1)
 
+    def get_neuron_layer(self, neuron: Neuron) -> int:
+        return self.get_neuron_coords(neuron)[0]
+
     def get_neuron_coords(self, neuron: Neuron) -> tuple[int, int]:
         coords: tuple[int, int] = (-1, -1)
+        if self.layers is None:
+            self.build_layers()
         if self.layers is not None:
             for i, l in enumerate(self.layers):
                 for j, n in enumerate(l):
@@ -115,7 +118,7 @@ class Brain(BaseModel):
         return coords
         
     def add_neuron_to_layer(self, neuron: Neuron, layer: int) -> None:
-        current_layer: int = self.get_neuron_coords(neuron)[0]
+        current_layer: int = self.get_neuron_layer(neuron)
         if current_layer != -1 and current_layer != layer:
             self.remove_neuron_from_layer(neuron)
         self.create_layer(layer)
@@ -160,36 +163,47 @@ class Brain(BaseModel):
             self,
             setup: MutationSetup,
         ) -> list[Brain]:
+        logging.debug("Starting mutation")
         self.build_layers()
         if setup.max_hidden_neurons >= 0:
             if len(self.get_hidden_neurons()) > setup.max_hidden_neurons:
+                logging.debug("Maximum neuron count reached, zeroing neuron creation probability")
                 setup.prob_create_neuron = 0.
         if len(self.get_hidden_neurons()) == 0:
+            logging.debug("No hidden neurons, zeroing neuron deletion probability")
             setup.prob_delete_neuron = 0.
         if setup.max_connections >= 0:
             if self.count_connections() > setup.max_connections:
+                logging.debug("Maximum connection count reached, zeroing connection creation probability")
                 setup.prob_create_connection = 0.
         if self.count_connections() == 0:
+            logging.debug("No connections, zeroing connection deletion probability")
             setup.prob_delete_connection = 0.
         clones: list[Brain] = []
-        for _ in range(setup.n_clones):
+        for i in range(setup.n_clones):
+            logging.debug(f"Starting clone {i+1} out of {setup.n_clones}")
             clone: Brain = self.clone()
             rng: float = rand()
             accum_prob_create_neuron: float = setup.prob_create_neuron
             accum_prob_delete_neuron: float = setup.prob_delete_neuron + accum_prob_create_neuron
             accum_prob_create_connection: float = setup.prob_create_connection + accum_prob_delete_neuron
             accum_prob_delete_connection: float = setup.prob_delete_connection + accum_prob_create_connection
-            print(f"RNG: {rng:.2f}")
-            print(f"Probs: {accum_prob_create_neuron:.2f}, {accum_prob_delete_neuron:.2f}, {accum_prob_create_connection:.2f}, {accum_prob_delete_connection:.2f}")
+            logging.debug(f"RNG: {rng:.2f}")
+            logging.debug(f"Accumulated probabilities: {accum_prob_create_neuron:.2f}, {accum_prob_delete_neuron:.2f}, {accum_prob_create_connection:.2f}, {accum_prob_delete_connection:.2f}")
             if accum_prob_create_neuron > rng:
+                logging.debug("Creating neuron")
                 clone.mutate_creating_neuron(setup.max_hidden_layers)
             elif accum_prob_delete_neuron > rng:
+                logging.debug("Deleting neuron")
                 clone.mutate_deleting_neuron()
             elif accum_prob_create_connection > rng:
+                logging.debug("Creating connection")
                 clone.mutate_creating_connection(setup.max_hidden_layers)
             elif accum_prob_delete_connection > rng:
+                logging.debug("Deleting connection")
                 clone.mutate_removing_connection()
             else:
+                logging.debug("Changing weights")
                 clone.mutate_weights()
             clone.build_layers()
             clones.append(clone)
@@ -205,6 +219,7 @@ class Brain(BaseModel):
         for n in self.neurons:
             if len(n.operations) > 0 and n.operations[0].type == "linear_combination":
                 neurons_with_weights.append(n)
+        logging.debug(f"Neurons with weights: {list(n.neuron_id for n in neurons_with_weights)}")
         if amount == -1:
             amount = len(neurons_with_weights)
         neuron_idx: ndarray = choice(
@@ -225,6 +240,7 @@ class Brain(BaseModel):
             std: float = 1.,
             amount: int = 1,
         ) -> None:
+        logging.debug(f"Changing weights of {neuron.neuron_id}")
         lin_op: Operation|None = None
         for op in neuron.operations:
             if op.type == "linear_combination":
@@ -239,16 +255,19 @@ class Brain(BaseModel):
             )
             for i in w_idx:
                 lin_op.params[i] += normal(0., std)
+                logging.debug(f"Changed weight {i} to {lin_op.params[i]:.2f}")
     
     def mutate_removing_connection(
             self,
             amount: int = 1,
         ) -> None:
         for _ in range(amount):
+            logging.debug("Removing connection")
             neurons_with_input: list[Neuron] = []
             for n in self.neurons:
                 if len(n.input_ids) > 0:
                     neurons_with_input.append(n)
+            logging.debug(f"Neurons with input: {list(n.neuron_id for n in neurons_with_input)}")
             if len(neurons_with_input) > 0:
                 idx: int = choice(range(len(neurons_with_input)))
                 neuron: Neuron = neurons_with_input[idx]
@@ -261,6 +280,7 @@ class Brain(BaseModel):
             neuron: Neuron,
             amount: int = 1,
         ) -> None:
+        logging.debug(f"Removing random input from {neuron.neuron_id}")
         amount = min(amount, len(neuron.input_ids))
         input_idx: ndarray = choice(
             range(len(neuron.input_ids)),
@@ -269,16 +289,43 @@ class Brain(BaseModel):
         )
         input_idx[::-1].sort() # ordena decrescente para evitar IndexError
         for i in input_idx:
-            self.remove_input_from_neuron(neuron, i)
+            self.remove_input_from_neuron(
+                neuron,
+                i,
+                delete_if_isolated = True,
+            )
 
     def remove_input_from_neuron(
             self,
             neuron: Neuron,
             input_idx: int,
+            delete_if_isolated: bool = False,
         ) -> None:
         if input_idx in range(len(neuron.input_ids)):
-            del neuron.input_ids[input_idx]
-            del neuron.operations[0].params[input_idx+1]
+            input_n: Neuron|None = self.get_neuron(neuron.input_ids[input_idx])
+            if input_n is not None:
+                del neuron.input_ids[input_idx]
+                del neuron.operations[0].params[input_idx+1]
+                logging.debug(f"Connection removed: {input_n.neuron_id} -/> {neuron.neuron_id}")
+                if delete_if_isolated:
+                    self.delete_neuron_if_isolated(input_n)
+                    self.delete_neuron_if_isolated(neuron)
+    
+    def delete_neuron_if_isolated(
+            self,
+            neuron: Neuron,
+        ) -> None:
+        if not neuron.neuron_id.startswith("n"):
+            return
+        logging.debug(f"Checking if {neuron.neuron_id} is isolated")
+        thrusters: list[Neuron] = self.get_thruster_neurons()
+        for t in thrusters:
+            inputs: list[Neuron] = self.get_recursive_inputs(t)
+            if neuron in inputs:
+                logging.debug(f"Not isolated because it connects to {t.neuron_id}")
+                return
+        logging.debug(f"Deleting {neuron.neuron_id} because it has not connection to thrusters")
+        self.delete_neuron(neuron)
 
     def mutate_creating_connection(
             self,
@@ -287,15 +334,18 @@ class Brain(BaseModel):
             std: float = 1.,
         ) -> None:
         for _ in range(amount):
+            logging.debug("Creating new connection")
             full_layers: bool = max_hidden_layers >= 0 and self.layers is not None and (len(self.layers)-2) >= max_hidden_layers
             possible_inputs: list[Neuron] = []
             for n in self.neurons:
                 if len(self.get_possible_connections_from_input(n, full_layers)) > 0:
                     possible_inputs.append(n)
+            logging.debug(f"Possible inputs: {list(n.neuron_id for n in possible_inputs)}")
             if len(possible_inputs) > 0:
                 input_idx: int = choice(range(len(possible_inputs)))
                 input_n: Neuron = possible_inputs[input_idx]
                 possible_outputs: list[Neuron] = self.get_possible_connections_from_input(input_n, full_layers)
+                logging.debug(f"Possible outputs for {input_n.neuron_id}: {list(n.neuron_id for n in possible_outputs)}")
                 output_idx: int = choice(range(len(possible_outputs)))
                 output_n: Neuron = possible_outputs[output_idx]
                 self.connect_neurons(output_n, input_n, std)
@@ -319,7 +369,7 @@ class Brain(BaseModel):
                     continue
                 elif n in self.get_recursive_inputs(input_n): # impede conexões cíclicas
                     continue
-                elif only_forward_layers and input_layer <= self.get_neuron_layer(n):
+                elif only_forward_layers and input_layer != -1 and input_layer <= self.get_neuron_layer(n):
                     continue
                 possible_connections.append(n)
         return possible_connections
@@ -347,6 +397,7 @@ class Brain(BaseModel):
         ) -> None:
         output_n.input_ids.append(input_n.neuron_id)
         output_n.operations[0].params.append(normal(scale = std))
+        logging.debug(f"Connection created: {input_n.neuron_id} -> {output_n.neuron_id}")
 
     def mutate_deleting_neuron(
             self,
@@ -372,6 +423,7 @@ class Brain(BaseModel):
                     input_idx: int = n.input_ids.index(neuron.neuron_id)
                     self.remove_input_from_neuron(n, input_idx)
             self.neurons.remove(neuron)
+            logging.debug(f"{neuron.neuron_id} deleted")
 
     def mutate_creating_neuron(
             self,
@@ -383,21 +435,28 @@ class Brain(BaseModel):
         for _ in range(amount):
             full_layers: bool = max_hidden_layers >= 0 and self.layers is not None and (len(self.layers)-2) >= max_hidden_layers
             new_neuron: Neuron = self.create_hidden_neuron()
+            logging.debug(f"Neuron created: {new_neuron.neuron_id}")
             possible_inputs: list[Neuron] = []
             for n in self.neurons:
                 if n.neuron_id != new_neuron.neuron_id and not n.neuron_id.startswith("t"):
                     if not full_layers or self.get_neuron_layer(n) > 1:
                         possible_inputs.append(n)
+            logging.debug(f"Possible inputs: {list(n.neuron_id for n in possible_inputs)}")
+            layer: int = -1
             for _ in range(n_inputs):
                 if len(possible_inputs) > 0:
                     input_idx: int = choice(range(len(possible_inputs)))
                     input_n: Neuron = possible_inputs[input_idx]
                     self.connect_neurons(new_neuron, input_n)
                     possible_inputs.remove(input_n)
+                    input_layer: int = self.get_neuron_layer(input_n)
+                    if layer == -1 or input_layer < layer:
+                        self.add_neuron_to_layer(new_neuron, input_layer-1)
                 else:
                     break
             for _ in range(n_outputs):
                 possible_outputs: list[Neuron] = self.get_possible_connections_from_input(new_neuron, full_layers)
+                logging.debug(f"Possible outputs: {list(n.neuron_id for n in possible_outputs)}")
                 if len(possible_outputs) > 0:
                     output_idx: int = choice(range(len(possible_outputs)))
                     output_n: Neuron = possible_outputs[output_idx]

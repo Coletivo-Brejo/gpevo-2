@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 import json
+import logging
 import os
 from pydantic import BaseModel
 
@@ -15,6 +16,8 @@ from models.models import (
 )
 from models.training import Training
 
+
+logging.basicConfig(level=logging.DEBUG)
 
 load_dotenv()
 DATA_PATH = os.environ.get("DATA_PATH")

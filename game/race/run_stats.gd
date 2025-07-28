@@ -59,11 +59,11 @@ func check_progress(delta: float) -> void:
 	if not finished and not stuck and not racer.paused:
 		var lap_progress: float = track.data.core.get_closest_offset(track.to_local(racer.global_position))
 		if assert_lap_progress(lap_progress):
+			progress = lap*track_length + lap_progress
 			var new_checkpoint: int = floori(lap_progress / track.data.core.get_baked_length() * 10) % 10
 			if checkpoint == 9 and new_checkpoint == 0:
 				lap += 1
 			checkpoint = new_checkpoint
-			progress = lap*track_length + lap_progress
 			if lap >= laps:
 				racer_finished.emit()
 				finished = true

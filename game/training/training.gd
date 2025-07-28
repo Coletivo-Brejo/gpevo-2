@@ -56,34 +56,25 @@ func run_iteration() -> void:
 	start_runs()
 
 func create_neighbors() -> void:
-	neighbors = []
-	neighbors.append(current_racer)
-	for i in data.n_neighbors:
-		var neighbor: RacerData = current_racer.clone()
-		neighbor.racer_id = "clone_%d" % i
-		var rng: float = randf()
-		var accum_prob_create_neuron: float = data.prob_create_neuron
-		var accum_prob_delete_neuron: float = data.prob_delete_neuron + accum_prob_create_neuron
-		var accum_prob_create_connection: float = data.prob_create_connection + accum_prob_delete_neuron
-		var accum_prob_delete_connection: float = data.prob_delete_connection + accum_prob_create_connection
-		print("Mutation RNG: %.2f\nProbs: %.2f, %.2f, %.2f, %.2f" % [
-			rng,
-			accum_prob_create_neuron,
-			accum_prob_delete_neuron,
-			accum_prob_create_connection,
-			accum_prob_delete_connection
-		])
-		if accum_prob_create_neuron > rng:
-			neighbor.brain.mutate_creating_neuron()
-		elif accum_prob_delete_neuron > rng:
-			neighbor.brain.mutate_deleting_neuron()
-		elif accum_prob_create_connection > rng:
-			neighbor.brain.mutate_creating_connection()
-		elif accum_prob_delete_connection > rng:
-			neighbor.brain.mutate_removing_connection()
-		else:
-			neighbor.brain.mutate_weights()
-		neighbors.append(neighbor)
+	neighbors = [current_racer]
+	var mutation_request_body: Dictionary = {
+		"brain": current_racer.brain.to_dict(),
+		"mutation_setup": data.mutation_setup.to_dict(),
+	}
+	api.post_responded.connect(_on_brains_received)
+	api.post("/mutate", mutation_request_body)
+
+func _on_brains_received(brains_response: Variant) -> void:
+	var brains: Array[Dictionary] = []
+	brains.assign(brains_response)
+	api.post_responded.disconnect(_on_brains_received)
+	for i in brains.size():
+		var brain_dict: Dictionary = brains[i]
+		var clone: RacerData = current_racer.clone()
+		clone.racer_id = "clone_%d" % i
+		clone.brain = BrainData.from_dict(brain_dict)
+		neighbors.append(clone)
+	start_runs()
 
 func start_runs() -> void:
 	for run in runs:
@@ -166,7 +157,7 @@ func evaluate_and_select() -> void:
 	var progress_deltas: Array[float] = []
 	var best_progress: float = get_result_for_racer(data.racer_id)
 	var best_racer: RacerData = null
-	for i in data.n_neighbors:
+	for i in data.mutation_setup.n_clones:
 		var progress: float = get_result_for_racer("clone_%d" % i)
 		progress_deltas.append(best_progress - progress)
 		if data.greedy and progress > best_progress:

@@ -61,31 +61,75 @@ class Neuron():
                 else:
                     text +=f"<br>{self.input_ids[i-1]}: {w:+.2f}"
         return text
+    
+
+class MutationSetup():
+
+    n_clones: int
+    prob_create_neuron: float
+    prob_delete_neuron: float
+    prob_create_connection: float
+    prob_delete_connection: float
+    max_hidden_layers: int
+    max_hidden_neurons: int
+    max_connections: int
+
+    def __init__(
+            self,
+            _n_clones: int,
+            _prob_create_neuron: float,
+            _prob_delete_neuron: float,
+            _prob_create_connection: float,
+            _prob_delete_connection: float,
+            _max_hidden_layers: int,
+            _max_hidden_neurons: int,
+            _max_connections: int,
+        ) -> None:
+        self.n_clones = _n_clones
+        self.prob_create_neuron = _prob_create_neuron
+        self.prob_delete_neuron = _prob_delete_neuron
+        self.prob_create_connection = _prob_create_connection
+        self.prob_delete_connection = _prob_delete_connection
+        self.max_hidden_layers = _max_hidden_layers
+        self.max_hidden_neurons = _max_hidden_neurons
+        self.max_connections = _max_connections
+    
+    @staticmethod
+    def from_dict(_dict: dict) -> MutationSetup:
+        return MutationSetup(
+            _dict["n_clones"],
+            _dict["prob_create_neuron"],
+            _dict["prob_delete_neuron"],
+            _dict["prob_create_connection"],
+            _dict["prob_delete_connection"],
+            _dict["max_hidden_layers"],
+            _dict["max_hidden_neurons"],
+            _dict["max_connections"],
+        )
 
 
 class Brain():
 
     neurons: list[Neuron]
     current_id: int
-
-    layers: list[list[Neuron]]
+    layers: list[list[str]]
 
     def __init__(
             self,
             _neurons: list[Neuron],
             _current_id: int,
+            _layers: list[list[str]],
         ) -> None:
         self.neurons = _neurons
         self.current_id = _current_id
-
-        self.layers = []
-        self.build_layers()
+        self.layers = _layers
     
     @staticmethod
     def from_dict(_dict: dict) -> Brain:
         return Brain(
             [Neuron.from_dict(n) for n in _dict["neurons"]],
             _dict["current_id"],
+            _dict["layers"],
         )
     
     def get_neuron(self, neuron_id: str) -> Neuron|None:
@@ -93,54 +137,17 @@ class Brain():
             if n.neuron_id == neuron_id:
                 return n
         return None
-    
-    def build_layers(self) -> None:
-        for n in self.neurons:
-            if n.neuron_id.startswith("t"):
-                self.place_neuron(n, 0)
-        input_layer: int = len(self.layers)
-        for n in self.neurons:
-            if n.neuron_id.startswith("s") or n.neuron_id.startswith("v"):
-                self.place_neuron(n, input_layer)
-        if len(self.layers[-2]) == 0:
-            self.layers.pop(-2)
-                
-    def create_layer(self, i: int) -> None:
-        while len(self.layers) < i+1:
-            self.layers.append([])
-    
-    def place_neuron(self, neuron: Neuron, desired_layer: int) -> None:
-        current_layer: int = self.get_neuron_coords(neuron)[0]
-        if current_layer == -1 or current_layer < desired_layer:
-            self.add_neuron_to_layer(neuron, desired_layer)
-            for n_id in neuron.input_ids:
-                input_n: Neuron|None = self.get_neuron(n_id)
-                if input_n is not None:
-                    self.place_neuron(input_n, desired_layer+1)
 
     def get_neuron_coords(self, neuron: Neuron) -> tuple[int, int]:
         coords: tuple[int, int] = (-1, -1)
         for i, l in enumerate(self.layers):
             for j, n in enumerate(l):
-                if neuron == n:
+                if n == neuron.neuron_id:
                     coords = (i, j)
                     break
             if coords != (-1, -1):
                 break
         return coords
-        
-    def add_neuron_to_layer(self, neuron: Neuron, i: int) -> None:
-        current_layer: int = self.get_neuron_coords(neuron)[0]
-        if current_layer != -1 and current_layer != i:
-            self.remove_neuron_from_layer(neuron)
-        self.create_layer(i)
-        self.layers[i].append(neuron)
-    
-    def remove_neuron_from_layer(self, neuron: Neuron) -> None:
-        for l in self.layers:
-            for n in l:
-                if n == neuron:
-                    l.remove(neuron)
     
     def convert_plot_coords(self, layer: int, position: int) -> tuple[float, float]:
         h_spacing: float = 50.
@@ -162,26 +169,28 @@ class Brain():
 
         for i, l in enumerate(self.layers):
             for j, n in enumerate(l):
-                n_x, n_y = self.convert_plot_coords(i, j)
-                neuron_xs.append(n_x)
-                neuron_ys.append(n_y)
-                neuron_txt.append(n.generate_hover_text())
-                annotations.append({
-                    "x": n_x,
-                    "y": n_y,
-                    "text": n.neuron_id,
-                    "showarrow": False,
-                    "xshift": -10,
-                    "yshift": 10,
-                })
-                for input_id in n.input_ids:
-                    input_n: Neuron|None = self.get_neuron(input_id)
-                    if input_n is not None:
-                        input_x, input_y = self.convert_plot_coords(
-                            *self.get_neuron_coords(input_n)
-                        )
-                        conn_xs.extend([input_x, n_x, None])
-                        conn_ys.extend([input_y, n_y, None])
+                neuron: Neuron|None = self.get_neuron(n)
+                if neuron is not None:
+                    n_x, n_y = self.convert_plot_coords(i, j)
+                    neuron_xs.append(n_x)
+                    neuron_ys.append(n_y)
+                    neuron_txt.append(neuron.generate_hover_text())
+                    annotations.append({
+                        "x": n_x,
+                        "y": n_y,
+                        "text": n,
+                        "showarrow": False,
+                        "xshift": -10,
+                        "yshift": 10,
+                    })
+                    for input_id in neuron.input_ids:
+                        input_n: Neuron|None = self.get_neuron(input_id)
+                        if input_n is not None:
+                            input_x, input_y = self.convert_plot_coords(
+                                *self.get_neuron_coords(input_n)
+                            )
+                            conn_xs.extend([input_x, n_x, None])
+                            conn_ys.extend([input_y, n_y, None])
 
         traces: list[dict] = [
             {

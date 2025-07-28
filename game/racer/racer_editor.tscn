@@ -58,6 +58,27 @@ max_inputs = 0
 input_ids = Array[String]([])
 operations = Array[ExtResource("2_im158")]([])
 
+[sub_resource type="Resource" id="Resource_t5bqw"]
+script = ExtResource("3_ih6k7")
+neuron_id = "v0"
+max_inputs = 0
+input_ids = Array[String]([])
+operations = Array[ExtResource("2_im158")]([])
+
+[sub_resource type="Resource" id="Resource_16lrr"]
+script = ExtResource("3_ih6k7")
+neuron_id = "v1"
+max_inputs = 0
+input_ids = Array[String]([])
+operations = Array[ExtResource("2_im158")]([])
+
+[sub_resource type="Resource" id="Resource_uhk15"]
+script = ExtResource("3_ih6k7")
+neuron_id = "v2"
+max_inputs = 0
+input_ids = Array[String]([])
+operations = Array[ExtResource("2_im158")]([])
+
 [sub_resource type="Resource" id="Resource_pifa5"]
 script = ExtResource("4_f6645")
 params = Array[float]([0.0])
@@ -102,27 +123,6 @@ neuron_id = "t2"
 max_inputs = -1
 input_ids = Array[String]([])
 operations = Array[ExtResource("2_im158")]([SubResource("Resource_vy4w5"), SubResource("Resource_xiyaq")])
-
-[sub_resource type="Resource" id="Resource_t5bqw"]
-script = ExtResource("3_ih6k7")
-neuron_id = "v0"
-max_inputs = 0
-input_ids = Array[String]([])
-operations = Array[ExtResource("2_im158")]([])
-
-[sub_resource type="Resource" id="Resource_16lrr"]
-script = ExtResource("3_ih6k7")
-neuron_id = "v1"
-max_inputs = 0
-input_ids = Array[String]([])
-operations = Array[ExtResource("2_im158")]([])
-
-[sub_resource type="Resource" id="Resource_uhk15"]
-script = ExtResource("3_ih6k7")
-neuron_id = "v2"
-max_inputs = 0
-input_ids = Array[String]([])
-operations = Array[ExtResource("2_im158")]([])
 
 [sub_resource type="Resource" id="Resource_6cyow"]
 script = ExtResource("6_7srsy")

@@ -44,8 +44,8 @@
 - [x] Treinamento com avaliação de mais de uma pista ao mesmo tempo (e.g. pista espelhada e não espelhada) [2025-07-25]
 - [ ] Fantasmas durante uma execução
 - [ ] Equipamentos embaralhadores de sinal
-- [ ] Limitação de profundidade do cérebro durante treinamento
-- [ ] Limitação de quantidade de neurônios durante treinamento
+- [x] Limitação de profundidade do cérebro durante treinamento [2025-07-27]
+- [x] Limitação de quantidade de neurônios durante treinamento [2025-07-27]
 
 ### Dívida técnica
 

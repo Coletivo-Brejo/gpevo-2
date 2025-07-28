@@ -1,5 +1,7 @@
 from pydantic import BaseModel
 
+from .brain import Brain
+
 
 class Point(BaseModel):
     x: float
@@ -46,20 +48,6 @@ class Ship(BaseModel):
     thrusters: list[Thruster]
     sensors: list[SensorSet]
 
-class Operation(BaseModel):
-    type: str
-    params: list[float]
-
-class Neuron(BaseModel):
-    neuron_id: str
-    max_inputs: int
-    input_ids: list[str]
-    operations: list[Operation]
-
-class Brain(BaseModel):
-    neurons: list[Neuron]
-    current_id: int
-
 class Racer(BaseModel):
     racer_id: str
     name: str
@@ -97,31 +85,3 @@ class Run(BaseModel):
     elapsed_time: float
     end_reason: str
     stats: list[RunStats]
-
-class TrainingRunSetup(BaseModel):
-    track_id: str
-    run_setup: RunSetup
-
-class Training(BaseModel):
-    training_id: str
-    racer_id: str
-    setups: list[TrainingRunSetup]
-    save_results: bool
-    n_neighbors: int
-    initial_temperature: float
-    cooling_rate: float
-    convergence_threshold: float
-    convergence_iterations: int
-    n_iterations: int
-    progress_objective: float
-    time_objective: float
-    max_training_time: float
-    greedy: bool
-    prob_create_neuron: float
-    prob_delete_neuron: float
-    prob_create_connection: float
-    prob_delete_connection: float
-    run_history: list[list[Run]]
-    clone_history: list[str]
-    elapsed_time: float
-    end_reason: str

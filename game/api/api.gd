@@ -4,6 +4,7 @@ class_name API
 
 signal resource_saved()
 signal resource_loaded(resource_dict: Dictionary)
+signal post_responded(body: Variant)
 
 @export var url: String = "http://127.0.0.1:8000"
 
@@ -30,11 +31,20 @@ func load(route: String, resource_id: String) -> void:
 	print(endpoint)
 	request(endpoint)
 
+func post(route: String, body_dict: Dictionary) -> void:
+	disconnect_all()
+	request_completed.connect(_on_post_responded)
+	var endpoint: String = "%s%s" % [url, route]
+	var body_json: String = JSON.stringify(body_dict)
+	request(endpoint, [], HTTPClient.METHOD_POST, body_json)
+
 func disconnect_all() -> void:
 	if request_completed.is_connected(_on_resource_saved):
 		request_completed.disconnect(_on_resource_saved)
 	if request_completed.is_connected(_on_resource_loaded):
 		request_completed.disconnect(_on_resource_loaded)
+	if request_completed.is_connected(_on_post_responded):
+		request_completed.disconnect(_on_post_responded)
 
 func _on_resource_saved(
 		result: int,
@@ -44,7 +54,7 @@ func _on_resource_saved(
 	) -> void:
 	if result != HTTPRequest.RESULT_SUCCESS:
 		push_error("Falha ao salvar recurso")
-	print(_body.get_string_from_utf8())
+	# print(_body.get_string_from_utf8())
 	print("Recurso salvo")
 	disconnect_all()
 	resource_saved.emit()
@@ -61,3 +71,17 @@ func _on_resource_loaded(
 	if resource_dict != null:
 		disconnect_all()
 		resource_loaded.emit(resource_dict)
+
+func _on_post_responded(
+		result: int,
+		_response_code: int,
+		_headers: PackedStringArray,
+		body: PackedByteArray,
+	) -> void:
+	if result != HTTPRequest.RESULT_SUCCESS:
+		push_error("Falha ao carregar recurso")
+	var parsed_body: Variant = JSON.parse_string(body.get_string_from_utf8())
+	# print(parsed_body)
+	if parsed_body != null:
+		disconnect_all()
+		post_responded.emit(parsed_body)

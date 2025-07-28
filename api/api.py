@@ -6,13 +6,14 @@ import json
 import os
 from pydantic import BaseModel
 
-from models import (
+from models.brain import Brain, MutationSetup
+from models.models import (
     Racer,
     Run,
     Ship,
     Track,
-    Training,
 )
+from models.training import Training
 
 
 load_dotenv()
@@ -124,3 +125,10 @@ def read_training(training_id: str):
 @app.put("/trainings/{training_id}")
 def update_training(training_id: str, training: Training):
     return update_resource(TRAININGS_PATH, training_id, training)
+
+@app.post("/mutate")
+def mutate_brain(
+        brain: Brain,
+        mutation_setup: MutationSetup,
+    ):
+    return brain.mutate(mutation_setup)

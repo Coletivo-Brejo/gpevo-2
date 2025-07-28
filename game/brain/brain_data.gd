@@ -4,11 +4,13 @@ class_name BrainData
 
 @export var neurons: Dictionary#[String, NeuronData]
 var current_id: int
+var layers: Array
 
 
 static func create(
 		_neurons: Array[NeuronData] = [],
 		_current_id: int = 0,
+		_layers: Array = [],
 	) -> BrainData:
 	
 	var brain = BrainData.new()
@@ -17,6 +19,7 @@ static func create(
 		brain.neurons[n.neuron_id] = n
 	brain.create_connections()
 	brain.current_id = _current_id
+	brain.layers = _layers
 	return brain
 
 static func from_dict(dict: Dictionary) -> BrainData:
@@ -26,6 +29,7 @@ static func from_dict(dict: Dictionary) -> BrainData:
 	var brain = BrainData.create(
 		_neurons,
 		dict["current_id"],
+		dict["layers"],
 	)
 	return brain
 
@@ -36,6 +40,7 @@ func to_dict() -> Dictionary:
 	return {
 		"neurons": _neurons,
 		"current_id": current_id,
+		"layers": layers,
 	}
 
 func create_connections() -> void:
@@ -103,206 +108,3 @@ func create_hidden_neuron(b: float = 0., leakage: float = .01) -> NeuronData:
 	)
 	neurons[neuron_id] = neuron
 	return neuron
-
-func get_neurons_with_linear_combination() -> Array[NeuronData]:
-	var _neurons: Array[NeuronData]
-	for n in neurons:
-		var neuron: NeuronData = neurons[n]
-		for op in neuron.operations:
-			if op is LinearCombination:
-				_neurons.append(neuron)
-	return _neurons
-
-func mutate_weights(
-		amount: int = 1,
-		std: float = 1.,
-		weight_amount: int = 1,
-	) -> void:
-	for i in amount:
-		var neurons_with_weights: Array[NeuronData] = []
-		for n in neurons:
-			var neuron: NeuronData = neurons[n]
-			if not neuron.operations.is_empty() and neuron.operations[0] is LinearCombination:
-				neurons_with_weights.append(neuron)
-		if not neurons_with_weights.is_empty():
-			var neuron: NeuronData = neurons_with_weights.pick_random()
-			mutate_weights_from_neuron(neuron, std, weight_amount)
-			print("Changed weights from neuron: %s" % neuron.neuron_id)
-
-func mutate_weights_from_neuron(
-		neuron: NeuronData,
-		std: float = 1.,
-		amount: int = -1
-	) -> void:
-	var lin_op: LinearCombination
-	for op in neuron.operations:
-		if op is LinearCombination:
-			lin_op = op
-			break
-	if lin_op != null:
-		var w_idx: Array = range(lin_op.params.size())
-		w_idx.shuffle()
-		if amount == -1:
-			amount = lin_op.params.size()
-		for i in amount:
-			lin_op.params[w_idx[i]] += randfn(0., std)
-
-func mutate_weights_from_neuron_id(
-		neuron_id: String,
-		std: float = 1.,
-		amount: int = -1
-	) -> void:
-	mutate_weights_from_neuron(neurons[neuron_id], std, amount)
-
-func mutate_removing_connection(
-		amount: int = 1,
-	) -> void:
-	for i in amount:
-		var neurons_with_input: Array[NeuronData] = []
-		for n in neurons:
-			var neuron: NeuronData = neurons[n]
-			if not neuron.input.is_empty():
-				neurons_with_input.append(neuron)
-		if not neurons_with_input.is_empty():
-			var neuron: NeuronData = neurons_with_input.pick_random()
-			remove_random_input_from_neuron(neuron)
-			print("Removed input from neuron: %s" % [neuron.neuron_id])
-		else:
-			return
-
-func remove_random_input_from_neuron(
-		neuron: NeuronData,
-		amount: int = 1,
-	) -> void:
-	for i in amount:
-		var input_idx: int = randi_range(0, neuron.input.size()-1)
-		remove_input_from_neuron(neuron, input_idx)
-		if neuron.input.is_empty():
-			return
-
-func remove_input_from_neuron(
-		neuron: NeuronData,
-		input_idx: int,
-	) -> void:
-	if input_idx in range(neuron.input.size()):
-		neuron.input_ids.remove_at(input_idx)
-		neuron.input.remove_at(input_idx)
-		neuron.operations[0].params.remove_at(input_idx+1)
-
-func mutate_creating_connection(
-		amount: int = 1,
-		std: float = 1.,
-	) -> void:
-	for i in amount:
-		var possible_inputs: Array[NeuronData] = []
-		for n in neurons:
-			var input_n: NeuronData = neurons[n]
-			if not get_possible_connections_from_input(input_n).is_empty():
-				possible_inputs.append(input_n)
-		if not possible_inputs.is_empty():
-			var input_n: NeuronData = possible_inputs.pick_random()
-			var possible_outputs: Array[NeuronData] = get_possible_connections_from_input(input_n)
-			var output_n: NeuronData = possible_outputs.pick_random()
-			connect_neurons(output_n, input_n, std)
-			print("Created connection between neurons: %s and %s" % [output_n.neuron_id, input_n.neuron_id])
-		else:
-			return
-
-func get_possible_connections_from_input(
-		input_n: NeuronData,
-	) -> Array[NeuronData]:
-	var possible_connections: Array[NeuronData] = []
-	if not input_n.neuron_id.begins_with("t"): # thrusters não podem ser input
-		for n in neurons:
-			var output_n: NeuronData = neurons[n]
-			if output_n == input_n:
-				continue
-			elif input_n in output_n.input:
-				continue
-			elif output_n.max_inputs != -1 and output_n.input.size() >= output_n.max_inputs:
-				continue
-			elif output_n in get_recursive_inputs(input_n): # impede conexões cíclicas
-				continue
-			possible_connections.append(output_n)
-	return possible_connections
-
-func get_recursive_inputs(
-		neuron: NeuronData,
-	) -> Array[NeuronData]:
-	var all_inputs: Array[NeuronData] = []
-	for input_n in neuron.input:
-		if input_n not in all_inputs:
-			all_inputs.append(input_n)
-			all_inputs.append_array(get_recursive_inputs(input_n))
-	return all_inputs
-
-func connect_neurons(
-		output_n: NeuronData,
-		input_n: NeuronData,
-		std: float = 1.,
-	) -> void:
-	output_n.input_ids.append(input_n.neuron_id)
-	output_n.input.append(input_n)
-	output_n.operations[0].params.append(randfn(0., std))
-
-func mutate_deleting_neuron(
-		amount: int = 1,
-	) -> void:
-	for i in amount:
-		var deletable_neurons: Array[NeuronData] = []
-		for n in neurons:
-			if n.begins_with("n"):
-				var neuron: NeuronData = neurons[n]
-				deletable_neurons.append(neuron)
-		if not deletable_neurons.is_empty():
-			var neuron: NeuronData = deletable_neurons.pick_random()
-			delete_neuron(neuron)
-			print("Deleted neuron: %s" % neuron.neuron_id)
-		else:
-			return
-
-func delete_neuron(neuron: NeuronData) -> void:
-	var neuron_id: String = neuron.neuron_id
-	delete_neuron_from_id(neuron_id)
-
-func delete_neuron_from_id(neuron_id: String) -> void:
-	if neuron_id in neurons.keys():
-		for n in neurons:
-			var output: NeuronData = neurons[n]
-			var input_idx: int = output.input_ids.find(neuron_id)
-			if input_idx == -1:
-				continue
-			else:
-				remove_input_from_neuron(output, input_idx)
-		neurons.erase(neuron_id)
-	
-func mutate_creating_neuron(
-		amount: int = 1,
-		n_inputs: int = 1,
-		n_outputs: int = 1,
-	) -> void:
-	for x in amount:
-		var new_neuron: NeuronData = create_hidden_neuron()
-		print("Created new neuron: %s" % new_neuron.neuron_id)
-		var possible_inputs: Array[NeuronData] = []
-		for n in neurons:
-			if n != new_neuron.neuron_id and not n.begins_with("t"):
-				var neuron: NeuronData = neurons[n]
-				possible_inputs.append(neuron)
-		for i in n_inputs:
-			if possible_inputs.is_empty():
-				break
-			else:
-				var input_n: NeuronData = possible_inputs.pick_random()
-				connect_neurons(new_neuron, input_n)
-				possible_inputs.erase(input_n)
-				print("Connected as output to neuron: %s" % input_n.neuron_id)
-		for o in n_outputs:
-			var possible_outputs: Array[NeuronData] = get_possible_connections_from_input(new_neuron)
-			if possible_inputs.is_empty():
-				break
-			else:
-				var output_n: NeuronData = possible_outputs.pick_random()
-				connect_neurons(output_n, new_neuron)
-				print("Connected as input to neuron: %s" % output_n.neuron_id)
-			

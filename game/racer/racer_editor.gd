@@ -19,15 +19,22 @@ func _ready() -> void:
 func create_brain() -> void:
     if racer != null and racer.ship != null:
         var brain = BrainData.create()
+        brain.layers = [[], []]
         var current_sensor: int = 0
         for s in racer.ship.sensors:
             for i in s.amount:
-                brain.create_input_neuron("s%d" % current_sensor)
+                var n_id: String = "s%d" % current_sensor
+                brain.create_input_neuron(n_id)
+                brain.layers[1].append(n_id)
                 current_sensor += 1
         for i in 3:
-            brain.create_input_neuron("v%d" % i)
+            var n_id: String = "v%d" % i
+            brain.create_input_neuron(n_id)
+            brain.layers[1].append(n_id)
         for i in racer.ship.thrusters.size():
-            brain.create_output_neuron("t%d" % i)
+            var n_id: String = "t%d" % i
+            brain.create_output_neuron(n_id)
+            brain.layers[0].append(n_id)
         racer.brain = brain
 
 func fully_connect_brain() -> void:

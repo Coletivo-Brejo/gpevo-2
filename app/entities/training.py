@@ -1,8 +1,8 @@
 from __future__ import annotations
 import numpy as np
 
+from .brain import MutationSetup
 from .run import Run, RunSetup, RunStats
-from .track import Track
 
 
 class TrainingRunSetup():
@@ -32,7 +32,6 @@ class Training():
     racer_id: str
     setups: list[TrainingRunSetup]
     save_results: bool
-    n_neighbors: int
     initial_temperature: float
     cooling_rate: float
     convergence_threshold: float
@@ -42,10 +41,7 @@ class Training():
     time_objective: float
     max_training_time: float
     greedy: bool
-    prob_create_neuron: float
-    prob_delete_neuron: float
-    prob_create_connection: float
-    prob_delete_connection: float
+    mutation_setup: MutationSetup
     run_history: list[list[Run]]
     clone_history: list[str]
     elapsed_time: float
@@ -57,7 +53,6 @@ class Training():
             _racer_id: str,
             _setups: list[TrainingRunSetup],
             _save_results: bool,
-            _n_neighbors: int,
             _initial_temperature: float,
             _cooling_rate: float,
             _convergence_threshold: float,
@@ -67,10 +62,7 @@ class Training():
             _time_objective: float,
             _max_training_time: float,
             _greedy: bool,
-            _prob_create_neuron: float,
-            _prob_delete_neuron: float,
-            _prob_create_connection: float,
-            _prob_delete_connection: float,
+            _mutation_setup: MutationSetup,
             _run_history: list[list[Run]],
             _clone_history: list[str],
             _elapsed_time: float,
@@ -80,7 +72,6 @@ class Training():
         self.racer_id = _racer_id
         self.setups = _setups
         self.save_results = _save_results
-        self.n_neighbors = _n_neighbors
         self.initial_temperature = _initial_temperature
         self.cooling_rate = _cooling_rate
         self.convergence_threshold = _convergence_threshold
@@ -90,10 +81,7 @@ class Training():
         self.time_objective = _time_objective
         self.max_training_time = _max_training_time
         self.greedy = _greedy
-        self.prob_create_neuron = _prob_create_neuron
-        self.prob_delete_neuron = _prob_delete_neuron
-        self.prob_create_connection = _prob_create_connection
-        self.prob_delete_connection = _prob_delete_connection
+        self.mutation_setup = _mutation_setup
         self.run_history = _run_history
         self.clone_history = _clone_history
         self.elapsed_time = _elapsed_time
@@ -106,7 +94,6 @@ class Training():
             _dict["racer_id"],
             [TrainingRunSetup.from_dict(s) for s in _dict["setups"]],
             _dict["save_results"],
-            _dict["n_neighbors"],
             _dict["initial_temperature"],
             _dict["cooling_rate"],
             _dict["convergence_threshold"],
@@ -116,10 +103,7 @@ class Training():
             _dict["time_objective"],
             _dict["max_training_time"],
             _dict["greedy"],
-            _dict["prob_create_neuron"],
-            _dict["prob_delete_neuron"],
-            _dict["prob_create_connection"],
-            _dict["prob_delete_connection"],
+            MutationSetup.from_dict(_dict["mutation_setup"]),
             [[Run.from_dict(r) for r in it] for it in _dict["run_history"]],
             _dict["clone_history"],
             _dict["elapsed_time"],
@@ -180,7 +164,7 @@ class Training():
         if iteration == 0:
             return self.run_history[0][setup_idx].generate_racer_progress_traces(self.racer_id)
         else:
-            return self.run_history[iteration][setup_idx].generate_racer_progress_traces(self.clone_history[iteration])
+            return self.run_history[iteration-1][setup_idx].generate_racer_progress_traces(self.clone_history[iteration-1])
 
     def generate_history_traces(
             self,
@@ -190,4 +174,4 @@ class Training():
         if iteration == 0:
             return self.run_history[0][setup_idx].generate_racer_history_traces(self.racer_id)
         else:
-            return self.run_history[iteration][setup_idx].generate_racer_history_traces(self.clone_history[iteration])
+            return self.run_history[iteration-1][setup_idx].generate_racer_history_traces(self.clone_history[iteration-1])

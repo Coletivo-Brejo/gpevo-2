@@ -42,8 +42,13 @@ def draw(training: Training) -> None:
             )
             st.plotly_chart(time_evolution_fig, key=f"{setup_idx}_time_evo")
 
-            iterations: int = len(training.run_history)
-            it: int = st.slider("Iteração", 0, iterations, key=f"{setup_idx}_it_slider")
+    iterations: int = len(training.run_history)
+    it: int = st.slider("Iteração", 0, iterations, key=f"{setup_idx}_it_slider")
+
+    cols = st.columns(len(training.setups))
+
+    for setup_idx, col in enumerate(cols):
+        with col:
 
             race_fig: go.Figure = go.Figure(
                 data = training.generate_history_traces(setup_idx, it),

@@ -117,6 +117,7 @@ func load_racer(racer_id: String) -> void:
 func _on_racer_loaded(racer_dict: Dictionary) -> void:
 	api.resource_loaded.disconnect(_on_racer_loaded)
 	current_racer = RacerData.from_dict(racer_dict)
+	data.brain_history.append(current_racer.brain)
 	all_loaded = true
 
 func _on_run_finished() -> void:
@@ -188,6 +189,7 @@ func set_new_racer(racer_data: RacerData) -> void:
 	current_racer = racer_data.clone()
 	current_clone_id = current_racer.racer_id
 	data.clone_history.append(current_clone_id)
+	data.brain_history.append(current_racer.brain)
 	current_racer.racer_id = data.racer_id
 
 func get_ending_reason() -> String:

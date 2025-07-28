@@ -31,7 +31,7 @@
 - [x] Treinamento iterativo (execução, avaliação, mutação) [2025-07-18]
 - [ ] Configuração de treinamento no Streamlit
 - [x] Visualização dos resultados do treinamento no Streamlit [2025-07-20]
-- [ ] Visualização da evolução do cérebro ao longo do treino
+- [x] Visualização da evolução do cérebro ao longo do treino [2025-07-28]
 
 ### Jogo de fato
 
@@ -55,6 +55,7 @@
 - [x] A nave não tem informação de colisão. Precisa de um novo atributo com os pontos do polígono do chassi. [2025-07-14]
 - [ ] O z-index das partes da nave está todo desordenado, com os thrusters aparecendo por trás de outras naves e as partículas aparecendo por cima do thruster.
 - [ ] Em curvas acentuadas e arrastando na parede, as partículas dos thrusters parecem sair em uma direção totalmente errada.
+- [ ] Quando um neurônio é totalmente desconectado dos demais, ele continua registrado no cérebro e é contabilizado para os limites de neurônios. Convém excluí-lo.
 
 ### Bugs
 

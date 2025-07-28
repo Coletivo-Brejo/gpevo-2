@@ -17,6 +17,7 @@ class_name TrainingData
 @export var mutation_setup: MutationSetup
 var run_history: Array
 var clone_history: Array[String]
+var brain_history: Array[BrainData]
 var elapsed_time: float
 var end_reason: String
 
@@ -101,6 +102,7 @@ func to_dict() -> Dictionary:
         "mutation_setup": mutation_setup.to_dict(),
         "run_history": _runs,
         "clone_history": clone_history,
+        "brain_history": Serializer.from_list(brain_history),
         "elapsed_time": elapsed_time,
         "end_reason": end_reason,
     }

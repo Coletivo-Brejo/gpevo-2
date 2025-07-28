@@ -1,8 +1,9 @@
 from __future__ import annotations
 import numpy as np
 
-from .brain import MutationSetup
+from .brain import Brain, MutationSetup
 from .run import Run, RunSetup, RunStats
+from .track import Track
 
 
 class TrainingRunSetup():
@@ -44,6 +45,7 @@ class Training():
     mutation_setup: MutationSetup
     run_history: list[list[Run]]
     clone_history: list[str]
+    brain_history: list[Brain]
     elapsed_time: float
     end_reason: str
 
@@ -65,6 +67,7 @@ class Training():
             _mutation_setup: MutationSetup,
             _run_history: list[list[Run]],
             _clone_history: list[str],
+            _brain_history: list[Brain],
             _elapsed_time: float,
             _end_reason: str,
         ) -> None:
@@ -84,6 +87,7 @@ class Training():
         self.mutation_setup = _mutation_setup
         self.run_history = _run_history
         self.clone_history = _clone_history
+        self.brain_history = _brain_history
         self.elapsed_time = _elapsed_time
         self.end_reason = _end_reason
     
@@ -106,6 +110,7 @@ class Training():
             MutationSetup.from_dict(_dict["mutation_setup"]),
             [[Run.from_dict(r) for r in it] for it in _dict["run_history"]],
             _dict["clone_history"],
+            [Brain.from_dict(b) for b in _dict["brain_history"]],
             _dict["elapsed_time"],
             _dict["end_reason"],
         )
@@ -123,17 +128,33 @@ class Training():
             if stat is not None:
                 stats.append(stat)
         return stats
+    
+    def create_setup_trace_name(
+            self,
+            setup_idx: int,
+        ) -> str:
+        setup: TrainingRunSetup = self.setups[setup_idx]
+        track: Track|None = Track.load(setup.track_id)
+        trace_name: str = ""
+        if track is not None:
+            trace_name = track.name
+            if setup.run_setup.mirrored:
+                trace_name += " (Espelhado)"
+        return trace_name
 
     def generate_setup_progress_evolution_traces(
             self,
             setup_idx: int,
         ) -> list[dict]:
+        trace_name: str = self.create_setup_trace_name(setup_idx)
         stats: list[RunStats] = self.get_setup_stat_history(setup_idx)
         progress: np.ndarray = np.array([s.max_progress for s in stats])
+        trace_mode: str = "lines+markers" if len(stats) < 20 else "lines"
         traces: list[dict] = [
             {
                 "type": "scatter",
-                "mode": "markers+lines",
+                "mode": trace_mode,
+                "name": trace_name,
                 "x": [i for i in range(len(progress))],
                 "y": progress,
             }
@@ -144,12 +165,15 @@ class Training():
             self,
             setup_idx: int,
         ) -> list[dict]:
+        trace_name: str = self.create_setup_trace_name(setup_idx)
         stats: list[RunStats] = self.get_setup_stat_history(setup_idx)
         time: np.ndarray = np.array([s.time if s.finished else None for s in stats])
+        trace_mode: str = "lines+markers" if len(stats) < 20 else "lines"
         traces: list[dict] = [
             {
                 "type": "scatter",
-                "mode": "markers+lines",
+                "mode": trace_mode,
+                "name": trace_name,
                 "x": [i for i in range(len(time))],
                 "y": time,
             }

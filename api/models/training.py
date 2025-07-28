@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from .brain import MutationSetup
+from .brain import Brain, MutationSetup
 from .models import Run, RunSetup
 
 
@@ -25,5 +25,6 @@ class Training(BaseModel):
     mutation_setup: MutationSetup
     run_history: list[list[Run]]
     clone_history: list[str]
+    brain_history: list[Brain]
     elapsed_time: float
     end_reason: str

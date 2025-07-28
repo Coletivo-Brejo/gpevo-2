@@ -161,12 +161,12 @@ class Brain(BaseModel):
             setup: MutationSetup,
         ) -> list[Brain]:
         self.build_layers()
-        if setup.max_hidden_neurons > 0:
+        if setup.max_hidden_neurons >= 0:
             if len(self.get_hidden_neurons()) > setup.max_hidden_neurons:
                 setup.prob_create_neuron = 0.
         if len(self.get_hidden_neurons()) == 0:
             setup.prob_delete_neuron = 0.
-        if setup.max_connections > 0:
+        if setup.max_connections >= 0:
             if self.count_connections() > setup.max_connections:
                 setup.prob_create_connection = 0.
         if self.count_connections() == 0:
@@ -287,7 +287,7 @@ class Brain(BaseModel):
             std: float = 1.,
         ) -> None:
         for _ in range(amount):
-            full_layers: bool = max_hidden_layers > 0 and self.layers is not None and (len(self.layers)-2) >= max_hidden_layers
+            full_layers: bool = max_hidden_layers >= 0 and self.layers is not None and (len(self.layers)-2) >= max_hidden_layers
             possible_inputs: list[Neuron] = []
             for n in self.neurons:
                 if len(self.get_possible_connections_from_input(n, full_layers)) > 0:
@@ -381,7 +381,7 @@ class Brain(BaseModel):
             n_outputs: int = 1,
         ) -> None:
         for _ in range(amount):
-            full_layers: bool = max_hidden_layers > 0 and self.layers is not None and (len(self.layers)-2) >= max_hidden_layers
+            full_layers: bool = max_hidden_layers >= 0 and self.layers is not None and (len(self.layers)-2) >= max_hidden_layers
             new_neuron: Neuron = self.create_hidden_neuron()
             possible_inputs: list[Neuron] = []
             for n in self.neurons:

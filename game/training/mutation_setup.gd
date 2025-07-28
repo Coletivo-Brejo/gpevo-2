@@ -6,9 +6,9 @@ class_name MutationSetup
 @export var prob_delete_neuron: float
 @export var prob_create_connection: float
 @export var prob_delete_connection: float
-@export var max_hidden_layers: int
-@export var max_hidden_neurons: int
-@export var max_connections: int
+@export var max_hidden_layers: int = -1
+@export var max_hidden_neurons: int = -1
+@export var max_connections: int = -1
 
 
 static func create(

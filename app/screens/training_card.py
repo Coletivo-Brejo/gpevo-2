@@ -1,18 +1,23 @@
 import plotly.graph_objs as go
 import streamlit as st
 
+from .brain_card import draw as draw_brain
 from .track_card import create_track_layout
+from entities.brain import Brain
 from entities.training import Training
 
 
 def create_progress_layout(
         title: str,
-        percentage: bool = False
+        percentage: bool = False,
+        show_legend: bool = False,
     ) -> dict:
     layout: dict = {
         "title": title,
-        "showlegend": False,
+        "showlegend": show_legend,
+        "legend_orientation": "h",
         "xaxis": {
+            "title": "Iteração",
             "showgrid": False,
             "zeroline": False,
         },
@@ -25,25 +30,29 @@ def create_progress_layout(
 
 def draw(training: Training) -> None:
 
-    cols = st.columns(len(training.setups))
+    progress_traces: list[dict] = []
+    time_traces: list[dict] = []
+    for i in range(len(training.setups)):
+        progress_traces.extend(training.generate_setup_progress_evolution_traces(i))
+        time_traces.extend(training.generate_setup_time_evolution_traces(i))
 
-    for setup_idx, col in enumerate(cols):
-        with col:
+    progress_evolution_fig: go.Figure = go.Figure(
+        data = progress_traces,
+        layout = create_progress_layout("Evolução do progresso", show_legend=True),
+    )
+    st.plotly_chart(progress_evolution_fig)
 
-            progress_evolution_fig: go.Figure = go.Figure(
-                data = training.generate_setup_progress_evolution_traces(setup_idx),
-                layout = create_progress_layout("Evolução do progresso"),
-            )
-            st.plotly_chart(progress_evolution_fig, key=f"{setup_idx}_progress_evo")
-
-            time_evolution_fig: go.Figure = go.Figure(
-                data = training.generate_setup_time_evolution_traces(setup_idx),
-                layout = create_progress_layout("Evolução do tempo para completar"),
-            )
-            st.plotly_chart(time_evolution_fig, key=f"{setup_idx}_time_evo")
+    time_evolution_fig: go.Figure = go.Figure(
+        data = time_traces,
+        layout = create_progress_layout("Evolução do tempo para completar", show_legend=True),
+    )
+    st.plotly_chart(time_evolution_fig)
 
     iterations: int = len(training.run_history)
-    it: int = st.slider("Iteração", 0, iterations, key=f"{setup_idx}_it_slider")
+    it: int = st.slider("Iteração", 0, iterations)
+
+    brain: Brain = training.brain_history[it]
+    draw_brain(brain)
 
     cols = st.columns(len(training.setups))
 

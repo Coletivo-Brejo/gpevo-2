@@ -3,8 +3,9 @@ class_name Racer
 
 const scene_path: String = "res://racer/racer.tscn"
 const LINEAR_DAMP: float = .1
-const ANGULAR_DAMP: float = .1
+const ANGULAR_DAMP: float = .3
 const WALL_FRICTION: float = 1.
+const INERTIA_SCALE: float = .5
 
 @onready var collision: CollisionPolygon2D = $Collision
 
@@ -52,7 +53,7 @@ func set_paused(_paused: bool) -> void:
 func calculate_inertia() -> void:
     var w: float = data.ship.chassis_texture.get_width()
     var h: float = data.ship.chassis_texture.get_height()
-    inertia = data.ship.mass * (w*w + h*h) / 12.
+    inertia = data.ship.mass * (w*w + h*h) / 12. * INERTIA_SCALE
 
 func build_ship() -> void:
     for t in data.ship.thrusters:

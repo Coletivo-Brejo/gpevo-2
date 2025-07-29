@@ -5,6 +5,7 @@ signal training_finished
 
 @onready var api: API = $API
 @onready var run_container: Control = $CanvasLayer/Runs
+@onready var label: Label = $CanvasLayer/Label
 
 @export var data: TrainingData
 var runs_data: Array[RunData]
@@ -22,6 +23,9 @@ var running: bool
 
 
 func _ready() -> void:
+	var url_params: Dictionary = URLReader.read_params()
+	for param in url_params:
+		label.text += "%s: %s\n" % [param, url_params[param]]
 	for setup in data.setups:
 		var run_data = RunData.create(
 			"",

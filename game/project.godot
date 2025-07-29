@@ -11,6 +11,7 @@ config_version=5
 [application]
 
 config/name="GPevo-2"
+run/main_scene="uid://ctc2bx7y34dii"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
 
@@ -50,3 +51,8 @@ escape={
 
 2d_physics/layer_1="wall"
 2d_physics/layer_2="ship"
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"

@@ -33,6 +33,7 @@
 - [x] Visualização dos resultados do treinamento no Streamlit [2025-07-20]
 - [x] Visualização da evolução do cérebro ao longo do treino [2025-07-28]
 - [ ] Perfis de acesso (sem login, público, gestor de equipe, administrador)
+- [x] Embedding do jogo no Streamlit para executar treinamentos (loucura) [2025-07-29]
 
 ### Jogo de fato
 

@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://nm3rpw2rqq4e" path="res://training/training_run_setup.gd" id="3_46hvn"]
 [ext_resource type="Script" uid="uid://ria0ktc8qguv" path="res://training/training_data.gd" id="4_dqem7"]
 [ext_resource type="Script" uid="uid://b85tgmg481k0x" path="res://race/run_setup.gd" id="4_y6l7h"]
-[ext_resource type="Script" uid="uid://dbcj37ky1n81f" path="res://api/api.gd" id="5_emg05"]
+[ext_resource type="Script" uid="uid://dbcj37ky1n81f" path="res://utils/api.gd" id="5_emg05"]
 
 [sub_resource type="Resource" id="Resource_emg05"]
 script = ExtResource("2_y6l7h")
@@ -93,3 +93,12 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_alignment = 1
+vertical_alignment = 1

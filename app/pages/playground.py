@@ -1,5 +1,4 @@
 import streamlit as st
-import plotly.graph_objs as go
 
 from entities.racer import Racer
 from entities.track import Track

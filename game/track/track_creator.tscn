@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://dyi663rgn5n4j" path="res://track/track_data.gd" id="2_x4txj"]
 [ext_resource type="Script" uid="uid://btyru6q0fevmb" path="res://track/track_segment_data.gd" id="3_lqlpf"]
 [ext_resource type="Resource" uid="uid://ikeeggsqlwdv" path="res://racer/antonio.tres" id="4_1e7eu"]
-[ext_resource type="Script" uid="uid://dbcj37ky1n81f" path="res://api/api.gd" id="5_1e7eu"]
+[ext_resource type="Script" uid="uid://dbcj37ky1n81f" path="res://utils/api.gd" id="5_1e7eu"]
 [ext_resource type="Script" uid="uid://r3jld7fr3qtm" path="res://track/dummy.gd" id="5_lqlpf"]
 [ext_resource type="PackedScene" uid="uid://b3vatuiulqgkg" path="res://race/run.tscn" id="7_w5abi"]
 [ext_resource type="Script" uid="uid://065kpbfkmvvp" path="res://racer/racer_data.gd" id="8_5yi5b"]

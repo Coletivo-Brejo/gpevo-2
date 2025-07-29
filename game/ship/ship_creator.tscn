@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bbqjm1xm18lvb" path="res://ship/ship_creator.gd" id="1_owk5e"]
 [ext_resource type="Texture2D" uid="uid://dlhyn6cpeg6i2" path="res://ship/chassis/chassis_1.png" id="2_5oxdw"]
-[ext_resource type="Script" uid="uid://dbcj37ky1n81f" path="res://api/api.gd" id="2_fgh14"]
+[ext_resource type="Script" uid="uid://dbcj37ky1n81f" path="res://utils/api.gd" id="2_fgh14"]
 [ext_resource type="Script" uid="uid://dn10k375jpym7" path="res://ship/ship_data.gd" id="3_mnd43"]
 [ext_resource type="Script" uid="uid://cwdn7evjl16fj" path="res://ship/sensor_set_data.gd" id="4_uy4in"]
 [ext_resource type="Texture2D" uid="uid://c40jstihuul8" path="res://ship/sensor/sensor.png" id="5_obldy"]
@@ -48,7 +48,6 @@ metadata/_custom_type_script = "uid://dn10k375jpym7"
 
 [node name="ShipCreator" type="Node2D"]
 script = ExtResource("1_owk5e")
-transparent_sprite = true
 ship = SubResource("Resource_6fogv")
 
 [node name="Collision" type="CollisionPolygon2D" parent="."]

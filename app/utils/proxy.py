@@ -15,8 +15,14 @@ def load_resource_dict(route: str, resource_id: str) -> dict|None:
     else:
         return None
 
-def load_all_resources(route: str) -> list[dict]|None:
-    response = requests.get(f"{API_URL}{route}")
+def load_all_resources(
+        route: str,
+        fields: list[str]|None = None,
+    ) -> list[dict]|None:
+    params: dict = {}
+    if fields is not None:
+        params["fields"] = fields
+    response = requests.get(f"{API_URL}{route}", params=params)
     if response.ok:
         dict_list: list[dict] = response.json()
         return dict_list

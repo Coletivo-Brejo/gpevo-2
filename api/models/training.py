@@ -1,3 +1,4 @@
+from datetime import datetime
 from pydantic import BaseModel
 
 from .brain import Brain, MutationSetup
@@ -28,3 +29,9 @@ class Training(BaseModel):
     brain_history: list[Brain]
     elapsed_time: float
     end_reason: str
+
+class TrainingEntry(BaseModel):
+    training_id: str
+    status: str
+    created_at: datetime
+    finished_at: datetime

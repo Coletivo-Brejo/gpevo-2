@@ -27,7 +27,10 @@ def create_track_layout() -> dict:
 
 def draw(track: Track) -> None:
     st.write(f"### {track.name}")
-    mirrored: bool = st.toggle("Espelhar")
+    mirrored: bool = st.toggle(
+        "Espelhar",
+        key = "track_mirrored_toggle",
+    )
     traces: list[dict] = track.generate_traces(mirrored)
     layout: dict = create_track_layout()
     fig: go.Figure = go.Figure(

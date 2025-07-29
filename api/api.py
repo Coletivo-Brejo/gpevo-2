@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 import json
@@ -17,7 +17,7 @@ from models.models import (
 from models.training import Training
 
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.WARNING)
 
 load_dotenv()
 DATA_PATH = os.environ.get("DATA_PATH")
@@ -29,7 +29,7 @@ TRAININGS_PATH = f"{DATA_PATH}/trainings"
 
 def read_resource(
         dir: str,
-        resource_id: str
+        resource_id: str,
     ) -> JSONResponse:
     resource_file = f"{dir}/{resource_id}.json"
     try:
@@ -41,14 +41,26 @@ def read_resource(
 
 def read_all_resources(
         dir: str,
+        fields: list[str]|None = None,
     ) -> JSONResponse:
     resources: list[dict] = []
     for file in os.listdir(dir):
         resource_file: str = f"{dir}/{file}"
         with open(resource_file, encoding="utf-8") as f:
             resource_dict: dict = json.load(f)
+            if fields is not None:
+                resource_dict = {k:v for k, v in resource_dict.items() if k in fields}
             resources.append(resource_dict)
     return JSONResponse(resources)
+
+def read_all_resource_ids(
+        dir: str,
+    ) -> JSONResponse:
+    resource_ids: list[str] = []
+    for file in os.listdir(dir):
+        if file.endswith(".json"):
+            resource_ids.append(file[:-5])
+    return JSONResponse(resource_ids)
 
 def update_resource(
         dir: str,
@@ -70,8 +82,14 @@ def read_root():
     return {"Hello": "World"}
 
 @app.get("/tracks")
-def read_tracks():
-    return read_all_resources(TRACKS_PATH)
+def read_tracks(
+        fields: list[str] = Query(None),
+    ) -> JSONResponse:
+    return read_all_resources(TRACKS_PATH, fields)
+
+@app.get("/tracks/ids")
+def read_track_ids():
+    return read_all_resource_ids(TRACKS_PATH)
 
 @app.get("/tracks/{track_id}")
 def read_track(track_id: str):
@@ -94,8 +112,14 @@ def update_ship(ship_id: str, ship: Ship):
     return update_resource(SHIPS_PATH, ship_id, ship)
 
 @app.get("/racers")
-def read_racers():
-    return read_all_resources(RACERS_PATH)
+def read_racers(
+        fields: list[str] = Query(None),
+    ) -> JSONResponse:
+    return read_all_resources(RACERS_PATH, fields)
+
+@app.get("/racers/ids")
+def read_racer_ids():
+    return read_all_resource_ids(RACERS_PATH)
 
 @app.get("/racers/{racer_id}")
 def read_racer(racer_id: str):

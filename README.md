@@ -32,12 +32,12 @@
 - [ ] Configuração de treinamento no Streamlit
 - [x] Visualização dos resultados do treinamento no Streamlit [2025-07-20]
 - [x] Visualização da evolução do cérebro ao longo do treino [2025-07-28]
+- [ ] Perfis de acesso (sem login, público, gestor de equipe, administrador)
 
 ### Jogo de fato
 
 - [ ] Decals para naves
 - [ ] Linha de partida e de chegada
-- [ ] Perfis de acesso (sem login, público, gestor de equipe, administrador)
 - [ ] Calendário de eventos
 - [ ] Estrutura de equipe (gestores, corredores, verba, pontuação, cor, etc.)
 - [ ] Precificação de treinamentos

@@ -1,5 +1,6 @@
 from datetime import datetime
 from pydantic import BaseModel
+from typing import Optional
 
 from .brain import Brain, MutationSetup
 from .models import Run, RunSetup
@@ -34,4 +35,4 @@ class TrainingEntry(BaseModel):
     training_id: str
     status: str
     created_at: datetime
-    finished_at: datetime
+    finished_at: Optional[datetime] = None

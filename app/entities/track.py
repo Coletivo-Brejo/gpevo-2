@@ -7,8 +7,11 @@ from utils.proxy import load_resource_dict
 
 
 @st.cache_data
-def load_track(track_id: str) -> Track|None:
-    track_dict: dict|None = load_resource_dict("/tracks", track_id)
+def load_track(
+        track_id: str,
+        fields: list[str]|None = None,
+    ) -> Track|None:
+    track_dict: dict|None = load_resource_dict("/tracks", track_id, fields)
     if track_dict is not None:
         track: Track = Track.from_dict(track_dict)
         return track
@@ -57,8 +60,11 @@ class Track():
         )
     
     @staticmethod
-    def load(track_id: str) -> Track|None:
-        return load_track(track_id)
+    def load(
+            track_id: str,
+            fields: list[str]|None = None,
+        ) -> Track|None:
+        return load_track(track_id, fields)
     
     def generate_traces(
             self,

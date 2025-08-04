@@ -35,3 +35,32 @@ def load_all_resources(
         return dict_list
     else:
         return None
+
+def get(
+        route: str,
+        params: dict = {},
+    ) -> dict|list|None:
+    response = requests.get(
+        f"{API_URL}{route}",
+        params = params,
+    )
+    if response.ok:
+        return response.json()
+    else:
+        return None
+
+def post(
+        route: str,
+        body: dict,
+        params: dict = {},
+    ) -> dict|list|None:
+    response = requests.post(
+        f"{API_URL}{route}",
+        data = json.dumps(body, ensure_ascii=False),
+        params = params,
+    )
+    if response.ok:
+        print(response.json())
+        return response.json()
+    else:
+        return None

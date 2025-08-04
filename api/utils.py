@@ -33,12 +33,13 @@ def get_all_resources(
         fields: list[str]|None = None,
     ) -> list[dict]:
     resources: list[dict] = []
-    for file in os.listdir(dir):
-        if file.endswith(".json"):
-            resource_id: str = file[:-5]
-            resource_dict: dict|None = get_resource(dir, resource_id, fields)
-            if resource_dict is not None:
-                resources.append(resource_dict)
+    if os.path.exists(dir):
+        for file in os.listdir(dir):
+            if file.endswith(".json"):
+                resource_id: str = file[:-5]
+                resource_dict: dict|None = get_resource(dir, resource_id, fields)
+                if resource_dict is not None:
+                    resources.append(resource_dict)
     return resources
 
 def read_resource(

@@ -6,12 +6,8 @@ import logging
 import os
 
 from models.brain import Brain, MutationSetup
-from models.models import (
-    Racer,
-    Run,
-    Ship,
-    Track,
-)
+from models.models import Racer, Ship, Track
+from models.run import Run
 from routers import trainings
 from utils import (
     get_next_id,

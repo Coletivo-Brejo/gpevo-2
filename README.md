@@ -29,11 +29,12 @@
 - [x] Mutação: criar/destruir conexão neuronal [2025-07-21]
 - [x] Mutação: alterar pesos de conexão neuronal [2025-07-18]
 - [x] Treinamento iterativo (execução, avaliação, mutação) [2025-07-18]
-- [ ] Configuração de treinamento no Streamlit
+- [x] Configuração de treinamento no Streamlit [2025-08-04]
 - [x] Visualização dos resultados do treinamento no Streamlit [2025-07-20]
 - [x] Visualização da evolução do cérebro ao longo do treino [2025-07-28]
 - [ ] Perfis de acesso (sem login, público, gestor de equipe, administrador)
 - [x] Embedding do jogo no Streamlit para executar treinamentos (loucura) [2025-07-29]
+- [ ] Execução de treinamento dentro do Streamlit
 
 ### Jogo de fato
 
@@ -93,4 +94,10 @@ Para executar a aplicação:
 ```
 cd app
 $PYTHON -m streamlit run app.py
+```
+
+Para servir o jogo via web:
+```
+cd build
+$PYTHON -m http.server 5000
 ```

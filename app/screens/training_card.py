@@ -32,7 +32,7 @@ def draw(training: Training) -> None:
 
     progress_traces: list[dict] = []
     time_traces: list[dict] = []
-    for i in range(len(training.setups)):
+    for i in range(len(training.setup.setups)):
         progress_traces.extend(training.generate_setup_progress_evolution_traces(i))
         time_traces.extend(training.generate_setup_time_evolution_traces(i))
 
@@ -54,7 +54,7 @@ def draw(training: Training) -> None:
     brain: Brain = training.brain_history[it]
     draw_brain(brain)
 
-    cols = st.columns(len(training.setups))
+    cols = st.columns(len(training.setup.setups))
 
     for setup_idx, col in enumerate(cols):
         with col:

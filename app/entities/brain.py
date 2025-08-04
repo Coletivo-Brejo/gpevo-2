@@ -106,6 +106,18 @@ class MutationSetup():
             _dict["max_hidden_neurons"],
             _dict["max_connections"],
         )
+    
+    def to_dict(self) -> dict:
+        return {
+            "n_clones": self.n_clones,
+            "prob_create_neuron": self.prob_create_neuron,
+            "prob_delete_neuron": self.prob_delete_neuron,
+            "prob_create_connection": self.prob_create_connection,
+            "prob_delete_connection": self.prob_delete_connection,
+            "max_hidden_layers": self.max_hidden_layers,
+            "max_hidden_neurons": self.max_hidden_neurons,
+            "max_connections": self.max_connections,
+        }
 
 
 class Brain():

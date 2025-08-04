@@ -103,6 +103,7 @@ class RunSetup():
             _end_countdown: float,
             _stuck_timeout: float,
             _run_timeout: float,
+            _follow_first: bool,
             _end_on_first_finish: bool,
             _stat_collection_frequency: float,
             _mirrored: bool,
@@ -112,6 +113,7 @@ class RunSetup():
         self.end_countdown = _end_countdown
         self.stuck_timeout = _stuck_timeout
         self.run_timeout = _run_timeout
+        self.follow_first = _follow_first
         self.end_on_first_finish = _end_on_first_finish
         self.stat_collection_frequency = _stat_collection_frequency
         self.mirrored = _mirrored
@@ -126,11 +128,25 @@ class RunSetup():
             _dict["end_countdown"],
             _dict["stuck_timeout"],
             _dict["run_timeout"],
+            _dict["follow_first"],
             _dict["end_on_first_finish"],
             _dict["stat_collection_frequency"],
             _dict["mirrored"],
             _dict["laps"],
         )
+    
+    def to_dict(self) -> dict:
+        return {
+            "begin_countdown": self.begin_countdown,
+            "end_countdown": self.end_countdown,
+            "stuck_timeout": self.stuck_timeout,
+            "run_timeout": self.run_timeout,
+            "follow_first": self.follow_first,
+            "end_on_first_finish": self.end_on_first_finish,
+            "stat_collection_frequency": self.stat_collection_frequency,
+            "mirrored": self.mirrored,
+            "laps": self.laps,
+        }
 
 
 class Run():

@@ -3,15 +3,14 @@ from pydantic import BaseModel
 from typing import Optional
 
 from .brain import Brain, MutationSetup
-from .models import Run, RunSetup
+from .run import RunSetup
 
 
 class TrainingRunSetup(BaseModel):
     track_id: str
     run_setup: RunSetup
 
-class Training(BaseModel):
-    training_id: str
+class TrainingSetup(BaseModel):
     racer_id: str
     setups: list[TrainingRunSetup]
     save_results: bool
@@ -25,7 +24,11 @@ class Training(BaseModel):
     max_training_time: float
     greedy: bool
     mutation_setup: MutationSetup
-    run_history: list[list[Run]]
+
+class Training(BaseModel):
+    training_id: str
+    setup: TrainingSetup
+    run_id_history: list[list[str]]
     clone_history: list[str]
     brain_history: list[Brain]
     elapsed_time: float

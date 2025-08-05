@@ -22,11 +22,11 @@ TRAININGS_PATH = "{data_path}/trainings".format(
 )
 TRAINING_ENTRIES_PATH = f"{TRAININGS_PATH}/entries"
 
-def update_training(training: Training) -> None:
-    update_resource(TRAININGS_PATH, training.training_id, training)
+def update_training(training: Training) -> JSONResponse:
+    return update_resource(TRAININGS_PATH, training.training_id, training)
 
-def update_training_entry(entry: TrainingEntry) -> None:
-    update_resource(TRAINING_ENTRIES_PATH, entry.training_id, entry)
+def update_training_entry(entry: TrainingEntry) -> JSONResponse:
+    return update_resource(TRAINING_ENTRIES_PATH, entry.training_id, entry)
 
 def invalidate_entries(racer_id: str) -> None:
     entry_list: list[dict] = get_all_resources(TRAINING_ENTRIES_PATH)
@@ -53,6 +53,12 @@ def read_trainings(
     ) -> JSONResponse:
     return read_all_resources(TRAININGS_PATH, fields)
 
+@router.get("/trainings/entries")
+def read_training_entries(
+        fields: list[str] = Query(None),
+    ) -> JSONResponse:
+    return read_all_resources(TRAINING_ENTRIES_PATH, fields)
+
 @router.post("/trainings/new")
 def create_training(setup: TrainingSetup) -> JSONResponse:
     invalidate_entries(setup.racer_id)
@@ -67,6 +73,9 @@ def create_training(setup: TrainingSetup) -> JSONResponse:
     new_training: Training = Training(
         training_id = training_id,
         setup = setup,
+        iteration = 0,
+        convergence_iteration = 0,
+        temperature = setup.initial_temperature,
         run_id_history = [],
         clone_history = [],
         brain_history = [],
@@ -76,11 +85,24 @@ def create_training(setup: TrainingSetup) -> JSONResponse:
     update_training(new_training)
     return read_resource(TRAINING_ENTRIES_PATH, training_id)
 
-@router.get("/trainings/entries")
-def read_training_entries(
-        fields: list[str] = Query(None),
-    ) -> JSONResponse:
-    return read_all_resources(TRAINING_ENTRIES_PATH, fields)
+@router.put("/trainings")
+def save_training(training: Training) -> JSONResponse:
+    training_id: str = training.training_id
+    entry_dict: dict|None = get_resource(TRAINING_ENTRIES_PATH, training_id)
+    if entry_dict is not None:
+        entry: TrainingEntry = TrainingEntry(**entry_dict)
+        if entry.status not in {"finished", "deprecated", "interrupted"}:
+            if training.end_reason != "":
+                entry.status = "finished"
+                entry.finished_at = now()
+            elif training.end_reason == "":
+                entry.status = "running"
+            update_training_entry(entry)
+            return update_training(training)
+        else:
+            return JSONResponse({"Erro": "Treinamento já concluído ou interrompido"}, status_code = 400)
+    else:
+        return JSONResponse({"Erro": "Treinamento não encontrado"}, status_code = 404)
 
 @router.get("/trainings/{training_id}")
 def read_training(
@@ -88,16 +110,3 @@ def read_training(
         fields: list[str] = Query(None),
     ) -> JSONResponse:
     return read_resource(TRAININGS_PATH, training_id, fields)
-
-# @router.put("/trainings/{training_id}")
-# def update_training(training_id: str, training: Training):
-#     entry_dict: dict|None = get_resource(TRAINING_ENTRIES_PATH, training_id)
-#     if entry_dict is not None:
-#         entry: TrainingEntry = TrainingEntry(**entry_dict)
-#         if training.end_reason != "" and entry.finished_at is None:
-#             entry.status = "finished"
-#             entry.finished_at = now()
-#         elif training.end_reason == "":
-#             entry.status = "running"
-#         update_training_entry(entry)
-#     return update_resource(TRAININGS_PATH, training_id, training)

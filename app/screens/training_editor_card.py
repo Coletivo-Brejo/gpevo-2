@@ -4,7 +4,7 @@ from entities.brain import MutationSetup
 from entities.racer import Racer
 from entities.run import RunSetup
 from entities.track import Track
-from entities.training import TrainingEntry, TrainingRunSetup, TrainingSetup
+from entities.training import TrainingRunSetup, TrainingSetup
 from screens.racer_card import draw as draw_racer
 from screens.track_card import draw as draw_track
 from utils.proxy import load_all_resources, post

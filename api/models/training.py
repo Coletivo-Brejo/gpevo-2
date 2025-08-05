@@ -28,6 +28,9 @@ class TrainingSetup(BaseModel):
 class Training(BaseModel):
     training_id: str
     setup: TrainingSetup
+    iteration: int
+    convergence_iteration: int
+    temperature: float
     run_id_history: list[list[str]]
     clone_history: list[str]
     brain_history: list[Brain]

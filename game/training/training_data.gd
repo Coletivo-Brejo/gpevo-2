@@ -2,20 +2,11 @@ extends Resource
 class_name TrainingData
 
 @export var training_id: String
-@export var racer_id: String
-@export var setups: Array[TrainingRunSetup]
-@export var save_results: bool
-@export var initial_temperature: float
-@export var cooling_rate: float
-@export var convergence_threshold: float
-@export var convergence_iterations: int
-@export var n_iterations: int
-@export var progress_objective: float
-@export var time_objective: float
-@export var max_training_time: float
-@export var greedy: bool
-@export var mutation_setup: MutationSetup
-var run_history: Array
+@export var setup: TrainingSetup
+var iteration: int
+var convergence_iteration: int
+@export var temperature: float
+var run_id_history: Array
 var clone_history: Array[String]
 var brain_history: Array[BrainData]
 var elapsed_time: float
@@ -24,83 +15,55 @@ var end_reason: String
 
 static func create(
         _training_id: String,
-        _racer_id: String,
-        _setups: Array[TrainingRunSetup],
-        _save_results: bool,
-        _initial_temperature: float,
-        _cooling_rate: float,
-        _convergence_threshold: float,
-        _convergence_iterations: int,
-        _n_iterations: int,
-        _progress_objective: float,
-        _time_objective: float,
-        _max_training_time: float,
-        _greedy: bool,
-        _mutation_setup: MutationSetup,
+        _setup: TrainingSetup,
+        _iteration: int,
+        _convergence_iteration: int,
+        _temperature: float,
+        _run_id_history: Array,
+        _clone_history: Array[String],
+        _brain_history: Array[BrainData],
+        _elapsed_time: float,
+        _end_reason: String,
     ) -> TrainingData:
-
     var training = TrainingData.new()
     training.training_id = _training_id
-    training.racer_id = _racer_id
-    training.setups = _setups
-    training.save_results = _save_results
-    training.initial_temperature = _initial_temperature
-    training.cooling_rate = _cooling_rate
-    training.convergence_threshold = _convergence_threshold
-    training.convergence_iterations = _convergence_iterations
-    training.n_iterations = _n_iterations
-    training.progress_objecive = _progress_objective
-    training.time_objective = _time_objective
-    training.max_training_time = _max_training_time
-    training.greedy = _greedy
-    training.mutation_setup = _mutation_setup
+    training.setup = _setup
+    training.iteration = _iteration
+    training.convergence_iteration = _convergence_iteration
+    training.temperature = _temperature
+    training.run_id_history = _run_id_history
+    training.clone_history = _clone_history
+    training.brain_history = _brain_history
+    training.elapsed_time = _elapsed_time
+    training.end_reason = _end_reason
     return training
 
 static func from_dict(dict: Dictionary) -> TrainingData:
-    var _setups: Array[TrainingRunSetup] = []
-    for t in dict["setups"]:
-        _setups.append(TrainingRunSetup.from_dict(t))
-
+    var _brains: Array[BrainData] = []
+    for b in dict["brain_history"]:
+        _brains.append(BrainData.from_dict(b))
     var training = TrainingData.create(
         dict["training_id"],
-        dict["racer_id"],
-        _setups,
-        dict["save_results"],
-        dict["initial_temperature"],
-        dict["cooling_rate"],
-        dict["convergence_threshold"],
-        dict["convergence_iterations"],
-        dict["n_iterations"],
-        dict["progress_objective"],
-        dict["time_objective"],
-        dict["max_training_time"],
-        dict["greedy"],
-        dict["mutation_setup"],
+        TrainingSetup.from_dict(dict["setup"]),
+        dict["iteration"],
+        dict["convergence_iteration"],
+        dict["temperature"],
+        dict["run_id_history"],
+        dict["clone_history"],
+        _brains,
+        dict["elapsed_time"],
+        dict["end_reason"],
     )
     return training
 
 func to_dict() -> Dictionary:
-    var _runs: Array = []
-    for it in run_history:
-        _runs.append([])
-        for r_data in it:
-            _runs[-1].append(r_data.to_dict())
     return {
         "training_id": training_id,
-        "racer_id": racer_id,
-        "setups": Serializer.from_list(setups),
-        "save_results": save_results,
-        "initial_temperature": initial_temperature,
-        "cooling_rate": cooling_rate,
-        "convergence_threshold": convergence_threshold,
-        "convergence_iterations": convergence_iterations,
-        "n_iterations": n_iterations,
-        "progress_objective": progress_objective,
-        "time_objective": time_objective,
-        "max_training_time": max_training_time,
-        "greedy": greedy,
-        "mutation_setup": mutation_setup.to_dict(),
-        "run_history": _runs,
+        "setup": setup.to_dict(),
+        "iteration": iteration,
+        "convergence_iteration": convergence_iteration,
+        "temperature": temperature,
+        "run_id_history": run_id_history,
         "clone_history": clone_history,
         "brain_history": Serializer.from_list(brain_history),
         "elapsed_time": elapsed_time,

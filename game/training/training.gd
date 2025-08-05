@@ -3,6 +3,8 @@ class_name Training
 
 signal training_finished
 
+const scene_path: String = "res://training/training.tscn"
+
 @onready var api: API = $API
 @onready var run_container: Control = $CanvasLayer/Runs
 @onready var label: Label = $CanvasLayer/Label
@@ -12,21 +14,25 @@ var runs_data: Array[RunData]
 var runs: Array[Run]
 var runs_vp: Array[SubViewport]
 var runs_finished: Array[bool]
-var iteration: int
-var convergence_iteration: int
-var temperature: float
 var current_racer: RacerData
 var current_clone_id: String
 var neighbors: Array[RacerData]
 var all_loaded: bool
+var all_saved: bool
 var running: bool
+var finished: bool
+var label_info: Dictionary
 
+
+static func create(
+		_data: TrainingData,
+	) -> Training:
+	var training: Training = load(scene_path).instantiate()
+	training.data = _data
+	return training
 
 func _ready() -> void:
-	var url_params: Dictionary = URLReader.read_params()
-	for param in url_params:
-		label.text += "%s: %s\n" % [param, url_params[param]]
-	for setup in data.setups:
+	for setup in data.setup.setups:
 		var run_data = RunData.create(
 			"",
 			null,
@@ -36,26 +42,30 @@ func _ready() -> void:
 		runs_data.append(run_data)
 		var vp_container = SubViewportContainer.new()
 		vp_container.set_stretch(true)
-		vp_container.set_custom_minimum_size(Vector2(get_viewport().size.x/data.setups.size(), 0.))
+		vp_container.set_custom_minimum_size(Vector2(get_viewport().size.x/data.setup.setups.size(), 0.))
 		run_container.add_child(vp_container)
 		var vp = SubViewport.new()
 		vp_container.add_child(vp)
 		runs_vp.append(vp)
-	data.elapsed_time = 0.
-	iteration = 0
-	convergence_iteration = 0
-	temperature = data.initial_temperature
 	all_loaded = false
+	all_saved = true
 	running = false
-	if not data.setups.is_empty():
-		load_track(data.setups[0].track_id)
+	if not data.setup.setups.is_empty():
+		load_track(data.setup.setups[0].track_id)
 
 func _process(_delta: float) -> void:
-	if all_loaded and not running:
-		run_iteration()
-		running = true
+	if all_loaded and all_saved and not finished:
+		if data.end_reason != "":
+			finished = true
+			finish_training()
+		elif not running:
+			running = true
+			run_iteration()
 
 func run_iteration() -> void:
+	label_info["Iteration"] = data.iteration
+	label_info["Elapsed time"] = "%.0fs" % data.elapsed_time
+	update_label()
 	create_neighbors()
 	start_runs()
 
@@ -63,7 +73,7 @@ func create_neighbors() -> void:
 	neighbors = [current_racer]
 	var mutation_request_body: Dictionary = {
 		"brain": current_racer.brain.to_dict(),
-		"mutation_setup": data.mutation_setup.to_dict(),
+		"mutation_setup": data.setup.mutation_setup.to_dict(),
 	}
 	api.post_responded.connect(_on_brains_received)
 	api.post("/mutate", mutation_request_body)
@@ -85,9 +95,9 @@ func start_runs() -> void:
 		if run != null:
 			run.queue_free()
 	runs = []
-	for i in data.setups.size():
+	for i in data.setup.setups.size():
 		var run_data: RunData = runs_data[i].clone()
-		run_data.run_id = "%s_run%d_it%02d" % [data.training_id, i, iteration]
+		run_data.run_id = "%s_run%d_it%02d" % [data.training_id, i, data.iteration]
 		run_data.racers_data = neighbors
 		var run = Run.create(run_data)
 		run.run_finished.connect(_on_run_finished)
@@ -102,21 +112,21 @@ func _on_track_loaded(track_dict: Dictionary) -> void:
 	api.resource_loaded.disconnect(_on_track_loaded)
 	if track_dict != null:
 		var track_data = TrackData.from_dict(track_dict)
-		for i in data.setups.size():
-			if data.setups[i].track_id == track_data.track_id:
+		for i in data.setup.setups.size():
+			if data.setup.setups[i].track_id == track_data.track_id:
 				runs_data[i].track_data = track_data
 	var all_tracks_loaded: bool = true
-	for i in data.setups.size():
+	for i in data.setup.setups.size():
 		if runs_data[i].track_data == null:
 			all_tracks_loaded = false
-			load_track(data.setups[i].track_id)
+			load_track(data.setup.setups[i].track_id)
 			break
 	if all_tracks_loaded:
-		load_racer(data.racer_id)
+		load_racer(data.setup.racer_id)
 
 func load_racer(racer_id: String) -> void:
 	api.resource_loaded.connect(_on_racer_loaded)
-	api.load("/racers", data.racer_id)
+	api.load("/racers", data.setup.racer_id)
 
 func _on_racer_loaded(racer_dict: Dictionary) -> void:
 	api.resource_loaded.disconnect(_on_racer_loaded)
@@ -132,24 +142,27 @@ func _on_run_finished() -> void:
 	for run in runs:
 		run_times.append(run.data.elapsed_time)
 	data.elapsed_time += run_times.max()
-	data.run_history.append([])
+	data.run_id_history.append([])
 	for run in runs:
-		data.run_history[-1].append(run.data)
+		data.run_id_history[-1].append(run.data.run_id)
 	evaluate_and_select()
-	var previous_progress: float = get_result_for_racer(data.racer_id)
+	var previous_progress: float = get_result_for_racer(data.setup.racer_id)
 	var current_progress: float = get_result_for_racer(current_clone_id)
 	var improvement_ratio: float = current_progress/previous_progress
-	if improvement_ratio < (1. + data.convergence_threshold):
-		convergence_iteration += 1
+	if improvement_ratio < (1. + data.setup.convergence_threshold):
+		data.convergence_iteration += 1
 	else:
-		convergence_iteration = 0
+		data.convergence_iteration = 0
 	var end_reason: String = get_ending_reason()
 	if end_reason != "":
 		end_training(end_reason)
 	else:
-		temperature *= (1. - data.cooling_rate)
-		iteration += 1
-		run_iteration()
+		data.temperature *= (1. - data.setup.cooling_rate)
+		data.iteration += 1
+		if data.setup.save_results:
+			save_results()
+		else:
+			run_iteration()
 
 func get_result_for_racer(racer_id: String) -> float:
 	var result: float = 99999999.
@@ -160,12 +173,12 @@ func get_result_for_racer(racer_id: String) -> float:
 
 func evaluate_and_select() -> void:
 	var progress_deltas: Array[float] = []
-	var best_progress: float = get_result_for_racer(data.racer_id)
+	var best_progress: float = get_result_for_racer(data.setup.racer_id)
 	var best_racer: RacerData = null
-	for i in data.mutation_setup.n_clones:
+	for i in data.setup.mutation_setup.n_clones:
 		var progress: float = get_result_for_racer("clone_%d" % i)
 		progress_deltas.append(best_progress - progress)
-		if data.greedy and progress > best_progress:
+		if data.setup.greedy and progress > best_progress:
 			best_progress = progress
 			best_racer = runs[0].data.racers_data[i+1]
 	print(progress_deltas)
@@ -174,7 +187,7 @@ func evaluate_and_select() -> void:
 	else:
 		var accum_probs: Array[float] = []
 		for i in range(progress_deltas.size()):
-			var prob: float = exp(-progress_deltas[i]/temperature)
+			var prob: float = exp(-progress_deltas[i]/data.temperature)
 			if i == 0:
 				accum_probs.append(prob)
 			else:
@@ -194,19 +207,19 @@ func set_new_racer(racer_data: RacerData) -> void:
 	current_clone_id = current_racer.racer_id
 	data.clone_history.append(current_clone_id)
 	data.brain_history.append(current_racer.brain)
-	current_racer.racer_id = data.racer_id
+	current_racer.racer_id = data.setup.racer_id
 
 func get_ending_reason() -> String:
 	var current_progress: float = get_result_for_racer(current_clone_id)
-	if data.progress_objective > 0. and current_progress > data.progress_objective:
+	if data.setup.progress_objective > 0. and current_progress > data.setup.progress_objective:
 			return "progress objetive met"
-	# elif data.time_objective > 0. and stat.finished and stat.time < data.time_objective:
+	# elif data.setup.time_objective > 0. and stat.finished and stat.time < data.setup.time_objective:
 	# 	return "time objetive met"
-	elif data.convergence_iterations > 0 and convergence_iteration >= data.convergence_iterations:
+	elif data.setup.convergence_iterations > 0 and data.convergence_iteration >= data.setup.convergence_iterations:
 		return "improvement converged"
-	elif data.max_training_time > 0. and data.elapsed_time > data.max_training_time:
+	elif data.setup.max_training_time > 0. and data.elapsed_time > data.setup.max_training_time:
 		return "max training time reached"
-	elif iteration >= data.n_iterations-1:
+	elif data.iteration >= data.setup.n_iterations-1:
 		return "max iteration reached"
 	else:
 		return ""
@@ -214,7 +227,7 @@ func get_ending_reason() -> String:
 func end_training(reason: String) -> void:
 	data.end_reason = reason
 	print(reason)
-	if data.save_results:
+	if data.setup.save_results:
 		save_results()
 	else:
 		finish_training()
@@ -223,13 +236,39 @@ func finish_training() -> void:
 	training_finished.emit()
 
 func save_results() -> void:
-	api.resource_saved.connect(_on_results_saved)
-	api.save("/trainings", data.training_id, data)
+	print("Salvando treinamento")
+	all_saved = false
+	running = false
+	api.put_responded.connect(_on_results_saved)
+	api.put("/trainings", data.to_dict())
 
-func _on_results_saved() -> void:
-	api.resource_saved.disconnect(_on_results_saved)
-	api.save("/racers", data.racer_id, current_racer)
+func _on_results_saved(_body: Variant) -> void:
+	api.put_responded.disconnect(_on_results_saved)
+	save_runs()
+
+func save_runs() -> void:
+	print("Salvando runs")
+	api.post_responded.connect(_on_runs_saved)
+	var runs_dict: Array[Dictionary] = []
+	for run in runs:
+		runs_dict.append(run.data.to_dict())
+	api.post("/runs", runs_dict)
+
+func _on_runs_saved(_body: Variant) -> void:
+	api.post_responded.disconnect(_on_runs_saved)
+	update_racer()
+
+func update_racer() -> void:
+	print("Salvando corredor")
+	api.resource_saved.connect(_on_racer_updated)
+	api.save("/racers", data.setup.racer_id, current_racer)
 
 func _on_racer_updated() -> void:
 	api.resource_saved.disconnect(_on_racer_updated)
-	finish_training()
+	all_saved = true
+
+func update_label() -> void:
+	var label_text: String = ""
+	for info in label_info:
+		label_text += "%s: %s\n" % [info, label_info[info]]
+	label.set_text(label_text)

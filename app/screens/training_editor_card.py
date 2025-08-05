@@ -89,170 +89,172 @@ def create_training(
 
 def draw() -> None:
 
-    st.markdown("## Montagem de treinamento")
-    st.markdown("### Geral")
+    with st.form("new_training"):
 
-    n_iterations: int = st.slider(
-        "Iterações",
-        min_value = 10,
-        max_value = 100,
-        value = 20,
-    )
+        st.markdown("### Geral")
 
-    initial_temperature: float = st.slider(
-        "Temperatura inicial",
-        min_value = 50.,
-        max_value = 100.,
-        value = 100.,
-    )
-
-    cooling_rate: float = st.slider(
-        "Taxa de resfriamento",
-        min_value = .01,
-        max_value = .2,
-        value = .1,
-    )
-
-    greedy: bool = st.checkbox("Otimização gulosa", True)
-
-    st.markdown("### Corredor")
-
-    allowed_racers: list[dict] = load_headers("/racers", ["racer_id", "name"])
-    racer_name: str = st.selectbox("Corredor", (r["name"] for r in allowed_racers))
-    racer_id: str = next((r["racer_id"] for r in allowed_racers if r["name"] == racer_name), "")
-    racer: Racer|None = Racer.load(racer_id)
-
-    if racer is not None:
-        draw_racer(racer)
-
-    st.markdown("### Mutação")
-
-    n_clones: int = st.slider(
-        "Quantidade de clones",
-        min_value = 5,
-        max_value = 20,
-        value = 10,
-    )
-
-    cols = st.columns(2)
-
-    with cols[0]:
-        prob_create_neuron: float = st.slider(
-            "Probabilidade de criação de neurônio",
-            min_value = 0.,
-            max_value = 1.,
-            step = .05,
-        )
-        prob_create_connection: float = st.slider(
-            "Probabilidade de criação de conexão",
-            min_value = 0.,
-            max_value = 1.,
-            step = .05,
-        )
-    with cols[1]:
-        prob_delete_neuron: float = st.slider(
-            "Probabilidade de remoção de neurônio",
-            min_value = 0.,
-            max_value = 1.,
-            step = .05,
-        )
-        prob_delete_connection: float = st.slider(
-            "Probabilidade de remoção de conexão",
-            min_value = 0.,
-            max_value = 1.,
-            step = .05,
-        )
-
-    limit_layers: bool = st.toggle("Limitar camadas")
-    max_hidden_layers: int = -1
-    if limit_layers:
-        max_hidden_layers = st.slider(
-            "Número máximo de camadas centrais",
-            min_value = 0,
-            max_value = 10,
-            value = 0,
-        )
-
-    limit_neurons: bool = st.toggle("Limitar neurônios")
-    max_hidden_neurons: int = -1
-    if limit_neurons:
-        max_hidden_neurons = st.slider(
-            "Número máximo de neurônios centrais",
-            min_value = 0,
-            max_value = 20,
-            value = 0,
-        )
-
-    limit_connections: bool = st.toggle("Limitar conexões")
-    max_connections: int = -1
-    if limit_connections:
-        max_connections = st.slider(
-            "Número máximo de conexões",
-            min_value = 0,
+        n_iterations: int = st.slider(
+            "Iterações",
+            min_value = 10,
             max_value = 100,
-            value = 0,
+            value = 20,
         )
 
-    st.markdown("### Pista")
+        initial_temperature: float = st.slider(
+            "Temperatura inicial",
+            min_value = 50.,
+            max_value = 100.,
+            value = 100.,
+        )
 
-    allowed_tracks: list[dict] = load_headers("/tracks", ["track_id", "name"])
-    track_name: str = st.selectbox("Pista", (t["name"] for t in allowed_tracks))
-    track_id: str = next((t["track_id"] for t in allowed_tracks if t["name"] == track_name), "")
-    track: Track|None = Track.load(track_id)
+        cooling_rate: float = st.slider(
+            "Taxa de resfriamento",
+            min_value = .01,
+            max_value = .2,
+            value = .1,
+        )
 
-    if track is not None:
-        draw_track(track)
+        greedy: bool = st.checkbox("Otimização gulosa", True)
 
-        reflective: bool = st.checkbox(
-            "Treino refletido",
-            help = "Realiza o treino na pista normal e espelhada ao mesmo tmepo")
-        
-        laps: int = 1
-        if track.loops:
-            laps = st.slider(
-                "Número de voltas",
-                min_value = 1,
-                max_value = 5,
-                value = 1,
+        st.markdown("### Corredor")
+
+        allowed_racers: list[dict] = load_headers("/racers", ["racer_id", "name"])
+        racer_name: str = st.selectbox("Corredor", (r["name"] for r in allowed_racers))
+        racer_id: str = next((r["racer_id"] for r in allowed_racers if r["name"] == racer_name), "")
+        racer: Racer|None = Racer.load(racer_id)
+
+        if racer is not None:
+            draw_racer(racer)
+
+        st.markdown("### Mutação")
+
+        n_clones: int = st.slider(
+            "Quantidade de clones",
+            min_value = 5,
+            max_value = 20,
+            value = 10,
+        )
+
+        cols = st.columns(2)
+
+        with cols[0]:
+            prob_create_neuron: float = st.slider(
+                "Probabilidade de criação de neurônio",
+                min_value = 0.,
+                max_value = 1.,
+                step = .05,
             )
-        
-        stuck_timeout: float = st.slider(
-            "Tolerância de tempo parado",
-            min_value = 1.,
-            max_value = 10.,
-            value = 5.,
-        )
-
-        limit_run_time: bool = st.toggle("Limitar tempo de corrida", True)
-        run_timeout: float = 0.
-        if limit_run_time:
-            run_timeout = st.slider(
-                "Tempo máximo de corrida",
-                min_value = 30.,
-                max_value = 180.,
-                value = 60.,
+            prob_create_connection: float = st.slider(
+                "Probabilidade de criação de conexão",
+                min_value = 0.,
+                max_value = 1.,
+                step = .05,
             )
-    
-    if st.button("Criar"):
-        create_training(
-            racer_id,
-            track_id,
-            st.session_state["track_mirrored_toggle"],
-            reflective,
-            stuck_timeout,
-            run_timeout,
-            laps,
-            initial_temperature,
-            cooling_rate,
-            n_iterations,
-            greedy,
-            n_clones,
-            prob_create_neuron,
-            prob_delete_neuron,
-            prob_create_connection,
-            prob_delete_connection,
-            max_hidden_layers,
-            max_hidden_neurons,
-            max_connections
-        )
-        st.rerun()
+        with cols[1]:
+            prob_delete_neuron: float = st.slider(
+                "Probabilidade de remoção de neurônio",
+                min_value = 0.,
+                max_value = 1.,
+                step = .05,
+            )
+            prob_delete_connection: float = st.slider(
+                "Probabilidade de remoção de conexão",
+                min_value = 0.,
+                max_value = 1.,
+                step = .05,
+            )
+
+        limit_layers: bool = st.toggle("Limitar camadas")
+        max_hidden_layers: int = -1
+        if limit_layers:
+            max_hidden_layers = st.slider(
+                "Número máximo de camadas centrais",
+                min_value = 0,
+                max_value = 10,
+                value = 0,
+            )
+
+        limit_neurons: bool = st.toggle("Limitar neurônios")
+        max_hidden_neurons: int = -1
+        if limit_neurons:
+            max_hidden_neurons = st.slider(
+                "Número máximo de neurônios centrais",
+                min_value = 0,
+                max_value = 20,
+                value = 0,
+            )
+
+        limit_connections: bool = st.toggle("Limitar conexões")
+        max_connections: int = -1
+        if limit_connections:
+            max_connections = st.slider(
+                "Número máximo de conexões",
+                min_value = 0,
+                max_value = 100,
+                value = 0,
+            )
+
+        st.markdown("### Pista")
+
+        allowed_tracks: list[dict] = load_headers("/tracks", ["track_id", "name"])
+        track_name: str = st.selectbox("Pista", (t["name"] for t in allowed_tracks))
+        track_id: str = next((t["track_id"] for t in allowed_tracks if t["name"] == track_name), "")
+        track: Track|None = Track.load(track_id)
+
+        if track is not None:
+            draw_track(track)
+
+            reflective: bool = st.checkbox(
+                "Treino refletido",
+                help = "Realiza o treino na pista normal e espelhada ao mesmo tmepo")
+            
+            laps: int = 1
+            if track.loops:
+                laps = st.slider(
+                    "Número de voltas",
+                    min_value = 1,
+                    max_value = 5,
+                    value = 1,
+                )
+            
+            stuck_timeout: float = st.slider(
+                "Tolerância de tempo parado",
+                min_value = 1.,
+                max_value = 10.,
+                value = 5.,
+            )
+
+            limit_run_time: bool = st.toggle("Limitar tempo de corrida", True)
+            run_timeout: float = 0.
+            if limit_run_time:
+                run_timeout = st.slider(
+                    "Tempo máximo de corrida",
+                    min_value = 30.,
+                    max_value = 180.,
+                    value = 60.,
+                )
+        
+        submitted: bool = st.form_submit_button("Criar treinamento")
+        if submitted:
+            create_training(
+                racer_id,
+                track_id,
+                st.session_state["track_mirrored_toggle"],
+                reflective,
+                stuck_timeout,
+                run_timeout,
+                laps,
+                initial_temperature,
+                cooling_rate,
+                n_iterations,
+                greedy,
+                n_clones,
+                prob_create_neuron,
+                prob_delete_neuron,
+                prob_create_connection,
+                prob_delete_connection,
+                max_hidden_layers,
+                max_hidden_neurons,
+                max_connections
+            )
+            st.rerun()

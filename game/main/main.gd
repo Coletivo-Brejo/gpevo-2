@@ -5,12 +5,13 @@ extends Node2D
 
 func _ready() -> void:
     var url_params: Dictionary = URLReader.read_params()
+    # var url_params: Dictionary = {"mode": "training", "training_id": "training_0"}
     var mode: String = url_params.get("mode")
     if mode != null:
         if mode == "training":
             var training_id: String = url_params.get("training_id")
             if training_id != null:
-                pass
+                load_training(training_id)
 
 func load_training(training_id: String) -> void:
     api.resource_loaded.connect(_on_training_loaded)

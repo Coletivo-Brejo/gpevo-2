@@ -14,7 +14,6 @@ st.write(st.user)
 
 pages: list = [
     st.Page("pages/playground.py", title = "Playground"),
-    st.Page("pages/training_editor.py", title = "Editor de treinos"),
     st.Page("pages/training_manager.py", title = "Treinamentos")
 ]
 pg = st.navigation(pages)

@@ -37,9 +37,9 @@
 - [x] Embedding do jogo no Streamlit para executar treinamentos (loucura) [2025-07-29]
 - [x] Configuração de treinamento no Streamlit [2025-08-04]
 - [x] Persistência de resultados do treinamento a cada iteração [2025-08-05]
+- [x] Continuação de treinamento interrompido [2025-08-05]
+- [x] Execução de treinamento dentro do Streamlit [2025-08-05]
 - [ ] Perfis de acesso (sem login, público, gestor de equipe, administrador)
-- [ ] Continuação de treinamento interrompido
-- [ ] Execução de treinamento dentro do Streamlit
 
 ### Jogo de fato
 

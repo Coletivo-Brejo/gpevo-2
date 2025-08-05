@@ -1,71 +1,10 @@
-[gd_scene load_steps=13 format=3 uid="uid://ctc2bx7y34dii"]
+[gd_scene load_steps=3 format=3 uid="uid://ctc2bx7y34dii"]
 
 [ext_resource type="Script" uid="uid://b1xpqmbitwr7v" path="res://training/training.gd" id="1_g86yt"]
-[ext_resource type="Script" uid="uid://dm3lc2fgjehu0" path="res://training/mutation_setup.gd" id="2_y6l7h"]
-[ext_resource type="Script" uid="uid://nm3rpw2rqq4e" path="res://training/training_run_setup.gd" id="3_46hvn"]
-[ext_resource type="Script" uid="uid://ria0ktc8qguv" path="res://training/training_data.gd" id="4_dqem7"]
-[ext_resource type="Script" uid="uid://csadtj03e8uvp" path="res://training/training_setup.gd" id="4_emg05"]
-[ext_resource type="Script" uid="uid://b85tgmg481k0x" path="res://race/run_setup.gd" id="4_y6l7h"]
 [ext_resource type="Script" uid="uid://dbcj37ky1n81f" path="res://utils/api.gd" id="5_emg05"]
-
-[sub_resource type="Resource" id="Resource_ald8b"]
-script = ExtResource("2_y6l7h")
-n_clones = 5
-prob_create_neuron = 0.1
-prob_delete_neuron = 0.05
-prob_create_connection = 0.1
-prob_delete_connection = 0.05
-max_hidden_layers = -1
-max_hidden_neurons = -1
-max_connections = -1
-metadata/_custom_type_script = "uid://dm3lc2fgjehu0"
-
-[sub_resource type="Resource" id="Resource_8flk7"]
-script = ExtResource("4_y6l7h")
-begin_countdown = 3.0
-end_countdown = 3.0
-stuck_timeout = 5.0
-run_timeout = 60.0
-follow_first = true
-end_on_first_finish = true
-stat_collection_frequency = 1.0
-mirrored = false
-laps = 1
-metadata/_custom_type_script = "uid://b85tgmg481k0x"
-
-[sub_resource type="Resource" id="Resource_sfjwt"]
-script = ExtResource("3_46hvn")
-track_id = "baby_steps"
-run_setup = SubResource("Resource_8flk7")
-metadata/_custom_type_script = "uid://nm3rpw2rqq4e"
-
-[sub_resource type="Resource" id="Resource_7vln1"]
-script = ExtResource("4_emg05")
-racer_id = "mini_racer"
-setups = Array[ExtResource("3_46hvn")]([SubResource("Resource_sfjwt")])
-save_results = true
-initial_temperature = 100.0
-cooling_rate = 0.1
-convergence_threshold = 0.0
-convergence_iterations = 0
-n_iterations = 10
-progress_objective = 0.0
-time_objective = 0.0
-max_training_time = 0.0
-greedy = true
-mutation_setup = SubResource("Resource_ald8b")
-metadata/_custom_type_script = "uid://csadtj03e8uvp"
-
-[sub_resource type="Resource" id="Resource_j61q3"]
-script = ExtResource("4_dqem7")
-training_id = "training_0"
-setup = SubResource("Resource_7vln1")
-temperature = 100.0
-metadata/_custom_type_script = "uid://ria0ktc8qguv"
 
 [node name="Training" type="Node2D"]
 script = ExtResource("1_g86yt")
-data = SubResource("Resource_j61q3")
 
 [node name="API" type="HTTPRequest" parent="."]
 script = ExtResource("5_emg05")
@@ -88,5 +27,3 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-horizontal_alignment = 1
-vertical_alignment = 1

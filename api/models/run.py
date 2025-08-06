@@ -14,6 +14,7 @@ class RunStats(BaseModel):
     time_history: list[float]
     progress_history: list[float]
     position_history: list[Point]
+    activation_history: dict[str, list[float]]
 
 class RunSetup(BaseModel):
     begin_countdown: float

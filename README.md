@@ -78,6 +78,8 @@ $PYTHON -m http.server 5000
 - [x] Continuação de treinamento interrompido [2025-08-05]
 - [x] Execução de treinamento dentro do Streamlit [2025-08-05]
 - [x] Rota para deletar treinamentos (treinamento + entry + runs) [2025-08-06]
+- [x] Visualização do histórico de ativações dos neurônios ao longo de uma corrida (eletroencefalograma) [2025-08-06]
+- [X] [B] Os neurônios do treino normal e espelhado estão com o mesmo padrão de ativação, provavelmente por algum compartilhamento de dados e recursos entre os cérebros do mesmo clone. Definir cada NeuronData como `local_to_scene` não resolveu o problema, assim como clonar o cérebro também não. [2025-08-06]
 - [ ] *Página de corredor na aplicação
 - [ ] *Remoção manual de neurônios e conexões
 - [ ] Perfis de acesso (sem login, público, gestor de equipe, administrador)
@@ -88,7 +90,6 @@ $PYTHON -m http.server 5000
 - [ ] Precificação de treinamentos
 - [ ] Fantasmas durante uma execução
 - [ ] Equipamentos embaralhadores de sinal
-- [ ] *Visualização do histórico de ativações dos neurônios ao longo de uma corrida (tomografia)
 - [ ] Visualização do histórico de colisões ao longo de uma corrida
 - [ ] Visualização do corredor com indicação de propulsores e sensores
 - [ ] [D] O editor de naves reprocessa tudo a cada frame. Cabe uma detecção menos burra de quando há mudanças para processar.

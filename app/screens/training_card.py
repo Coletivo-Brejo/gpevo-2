@@ -11,13 +11,14 @@ def create_progress_layout(
         title: str,
         percentage: bool = False,
         show_legend: bool = False,
+        xaxis_title: str = "Iteração",
     ) -> dict:
     layout: dict = {
         "title": title,
         "showlegend": show_legend,
         "legend_orientation": "h",
         "xaxis": {
-            "title": "Iteração",
+            "title": xaxis_title,
             "showgrid": False,
             "zeroline": False,
         },
@@ -67,6 +68,15 @@ def draw(training: Training) -> None:
 
             progress_fig: go.Figure = go.Figure(
                 data = training.generate_progress_traces(setup_idx, it),
-                layout = create_progress_layout("Progresso"),
+                layout = create_progress_layout("Progresso", xaxis_title = "Tempo"),
             )
             st.plotly_chart(progress_fig, key=f"{setup_idx}_run_progress")
+
+            eeg_fig: go.Figure = go.Figure(
+                data = training.generate_eeg_traces(setup_idx, it),
+                layout = create_progress_layout(
+                    "Ativação neuronal",
+                    show_legend = True,
+                    xaxis_title = "Tempo"),
+            )
+            st.plotly_chart(eeg_fig, key=f"{setup_idx}_run_eeg")

@@ -18,6 +18,7 @@ var time_stuck: float = 0.
 var time_history: Array[float] = []
 var progress_history: Array[float] = []
 var position_history: Array[Vector2] = []
+var activation_history: Dictionary = {}
 var stuck_timeout: float
 var laps: int
 var checkpoint: int = 0
@@ -39,6 +40,8 @@ static func create(
 	stats.stuck_timeout = _stuck_timeout
 	stats.laps = _laps
 	stats.track_length = _track.data.core.get_baked_length()
+	for n in _racer.data.brain.neurons:
+		stats.activation_history[n] = []
 	return stats
 
 func to_dict() -> Dictionary:
@@ -52,7 +55,8 @@ func to_dict() -> Dictionary:
 		"stuck": stuck,
 		"time_history": time_history,
 		"progress_history": progress_history,
-		"position_history": Serializer.from_list(position_history)
+		"position_history": Serializer.from_list(position_history),
+		"activation_history": activation_history,
 	}
 
 func check_progress(delta: float) -> void:
@@ -97,6 +101,9 @@ func record_history(_time: float) -> void:
 		time_history.append(_time)
 		progress_history.append(max_progress)
 		position_history.append(racer.position)
+		for n in racer.data.brain.neurons:
+			var neuron: NeuronData = racer.data.brain.neurons[n]
+			activation_history[n].append(neuron.activate())
 
 func get_progress_fraction() -> float:
 	return progress / track.data.core.get_baked_length()

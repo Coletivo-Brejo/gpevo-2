@@ -107,8 +107,8 @@ func sense() -> void:
     var x_neuron: NeuronData = data.brain.neurons["v0"]
     var y_neuron: NeuronData = data.brain.neurons["v1"]
     var ang_neuron: NeuronData = data.brain.neurons["v2"]
-    x_neuron.activate_manually(velocity.x)
-    y_neuron.activate_manually(-velocity.y)
+    x_neuron.activate_manually(velocity.x/100.)
+    y_neuron.activate_manually(-velocity.y/100.)
     ang_neuron.activate_manually(angular_velocity)
 
 func thrust() -> void:

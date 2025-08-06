@@ -285,6 +285,16 @@ class Training():
             return self.run_history[0][setup_idx].generate_racer_history_traces(self.setup.racer_id)
         else:
             return self.run_history[iteration-1][setup_idx].generate_racer_history_traces(self.clone_history[iteration-1])
+        
+    def generate_eeg_traces(
+            self,
+            setup_idx: int,
+            iteration: int = 0,
+        ) -> list[dict]:
+        if iteration == 0:
+            return self.run_history[0][setup_idx].generate_racer_eeg_traces(self.setup.racer_id)
+        else:
+            return self.run_history[iteration-1][setup_idx].generate_racer_eeg_traces(self.clone_history[iteration-1])
 
 
 class TrainingEntry():

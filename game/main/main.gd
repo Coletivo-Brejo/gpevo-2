@@ -5,7 +5,7 @@ extends Node2D
 
 func _ready() -> void:
     var url_params: Dictionary = URLReader.read_params()
-    # var url_params: Dictionary = {"mode": "training", "training_id": "training_0"}
+    # var url_params: Dictionary = {"mode": "training", "training_id": "training_7"}
     var mode: String = url_params.get("mode")
     if mode != null:
         if mode == "training":

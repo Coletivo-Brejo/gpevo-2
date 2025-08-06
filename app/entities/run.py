@@ -32,6 +32,7 @@ class RunStats():
     time_history: np.ndarray
     progress_history: np.ndarray
     position_history: PointList
+    activation_history: dict[str, np.ndarray]
 
     def __init__(
             self,
@@ -45,6 +46,7 @@ class RunStats():
             _time_history: np.ndarray,
             _progress_history: np.ndarray,
             _position_history: PointList,
+            _activation_history: dict[str, np.ndarray]
         ) -> None:
         self.racer_id = _racer_id
         self.track_id = _track_id
@@ -56,6 +58,7 @@ class RunStats():
         self.time_history = _time_history
         self.progress_history = _progress_history
         self.position_history = _position_history
+        self.activation_history = _activation_history
     
     @staticmethod
     def from_dict(
@@ -72,6 +75,7 @@ class RunStats():
             np.array(_dict["time_history"]),
             np.array(_dict["progress_history"]),
             PointList.from_list(_dict["position_history"]),
+            {k:np.array(v) for k, v in _dict["activation_history"].items()},
         )
 
     def generate_history_traces(self) -> list[dict]:
@@ -97,6 +101,21 @@ class RunStats():
                 "y": self.progress_history,
             }
         ]
+        return traces
+    
+    def generate_eeg_traces(self) -> list[dict]:
+        traces: list[dict] = []
+        for n, values in self.activation_history.items():
+            traces.append(
+                {
+                    "type": "scatter",
+                    "mode": "lines",
+                    "name": n,
+                    "x": self.time_history,
+                    "y": values,
+                    "legendgroup": "sensors" if n.startswith("s") or n.startswith("v") else "thrusters" if n.startswith("t") else "neurons"
+                }
+            )
         return traces
 
 
@@ -251,4 +270,13 @@ class Run():
         stat: RunStats|None = self.get_stats_from_racer(racer_id)
         if stat is not None:
             return stat.generate_progress_traces()
+        return []
+    
+    def generate_racer_eeg_traces(
+            self,
+            racer_id: str,
+        ) -> list[dict]:
+        stat: RunStats|None = self.get_stats_from_racer(racer_id)
+        if stat is not None:
+            return stat.generate_eeg_traces()
         return []

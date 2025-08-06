@@ -91,7 +91,7 @@ func _on_post_responded(
 	if result != HTTPRequest.RESULT_SUCCESS:
 		push_error("Falha ao carregar recurso")
 	var parsed_body: Variant = JSON.parse_string(body.get_string_from_utf8())
-	# print(parsed_body)
+	print(parsed_body)
 	if parsed_body != null:
 		disconnect_all()
 		post_responded.emit(parsed_body)

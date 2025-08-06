@@ -52,6 +52,7 @@ func _ready() -> void:
 	running = false
 	if not data.setup.setups.is_empty():
 		load_track(data.setup.setups[0].track_id)
+	label_info["Versão"] = "v%s" % ProjectSettings.get_setting("application/config/version")
 
 func _process(_delta: float) -> void:
 	if all_loaded and all_saved and not finished:
@@ -63,8 +64,8 @@ func _process(_delta: float) -> void:
 			run_iteration()
 
 func run_iteration() -> void:
-	label_info["Iteration"] = data.iteration
-	label_info["Elapsed time"] = "%.0fs" % data.elapsed_time
+	label_info["Iteração"] = data.iteration + 1
+	label_info["Tempo decorrido"] = "%.0fs" % data.elapsed_time
 	update_label()
 	create_neighbors()
 	start_runs()
@@ -98,7 +99,10 @@ func start_runs() -> void:
 	for i in data.setup.setups.size():
 		var run_data: RunData = runs_data[i].clone()
 		run_data.run_id = "%s_run%d_it%02d" % [data.training_id, i, data.iteration]
-		run_data.racers_data = neighbors
+		var duplicated_clones: Array[RacerData] = []
+		for n in neighbors:
+			duplicated_clones.append(n.clone())
+		run_data.racers_data = duplicated_clones
 		var run = Run.create(run_data)
 		run.run_finished.connect(_on_run_finished)
 		runs_vp[i].add_child(run)

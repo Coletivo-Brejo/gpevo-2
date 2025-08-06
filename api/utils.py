@@ -98,3 +98,11 @@ def get_next_id(id_name: str, id_format: str = "{id}") -> str:
 def now() -> datetime:
     brtz: tzinfo = pytz.timezone("America/Sao_Paulo")
     return datetime.now(brtz)
+
+def delete_resource(dir: str, resource_id: str) -> bool:
+    resource_file = f"{dir}/{resource_id}.json"
+    try:
+        os.remove(resource_file)
+        return True
+    except FileNotFoundError:
+        return False

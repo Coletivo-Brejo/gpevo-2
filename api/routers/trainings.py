@@ -1,11 +1,12 @@
 from datetime import datetime
-from dotenv import load_dotenv
 from fastapi import APIRouter, Query
 from fastapi.responses import JSONResponse
 import os
 
+from .runs import RUNS_PATH
 from models.training import Training, TrainingEntry, TrainingSetup
 from utils import (
+    delete_resource,
     get_all_resources,
     get_next_id,
     get_resource,
@@ -16,7 +17,6 @@ from utils import (
 )
 
 
-load_dotenv()
 TRAININGS_PATH = "{data_path}/trainings".format(
     data_path = os.environ.get("DATA_PATH")
 )
@@ -110,3 +110,32 @@ def read_training(
         fields: list[str] = Query(None),
     ) -> JSONResponse:
     return read_resource(TRAININGS_PATH, training_id, fields)
+
+@router.delete("/trainings/{training_id}")
+def delete_training(
+        training_id: str,
+    ) -> JSONResponse:
+    run_ids: list[str] = []
+    training_dict: dict|None = get_resource(TRAININGS_PATH, training_id, ["run_id_history"])
+    if training_dict is not None:
+        for it in training_dict["run_id_history"]:
+            for run_id in it:
+                run_ids.append(run_id)
+    runs_deleted: int = 0
+    runs_not_deleted: int = 0
+    for run_id in run_ids:
+        run_deleted: bool = delete_resource(RUNS_PATH, run_id)
+        if run_deleted:
+            runs_deleted += 1
+        else:
+            runs_not_deleted += 1
+    entry_deleted: bool = delete_resource(TRAINING_ENTRIES_PATH, training_id)
+    training_deleted: bool = delete_resource(TRAININGS_PATH, training_id)
+    return JSONResponse(
+        {
+            "Training deleted": training_deleted,
+            "Entry deleted": entry_deleted,
+            "Runs deleted": runs_deleted,
+            "Runs not deleted": runs_not_deleted,
+        }
+    )

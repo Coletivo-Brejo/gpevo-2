@@ -7,8 +7,7 @@ import os
 
 from models.brain import Brain, MutationSetup
 from models.models import Racer, Ship, Track
-from models.run import Run
-from routers import trainings
+from routers import runs, trainings
 from utils import (
     get_next_id,
     read_resource,
@@ -24,10 +23,10 @@ DATA_PATH = os.environ.get("DATA_PATH")
 TRACKS_PATH = f"{DATA_PATH}/tracks"
 SHIPS_PATH = f"{DATA_PATH}/ships"
 RACERS_PATH = f"{DATA_PATH}/racers"
-RUNS_PATH = f"{DATA_PATH}/runs"
 
 app = FastAPI()
 app.include_router(trainings.router)
+app.include_router(runs.router)
 origins = [
     "http://localhost:8501",
     "http://localhost:5000",
@@ -95,30 +94,6 @@ def read_racer(racer_id: str):
 @app.put("/racers/{racer_id}")
 def update_racer(racer_id: str, racer: Racer):
     return update_resource(RACERS_PATH, racer_id, racer)
-
-@app.get("/runs")
-def read_runs(
-        fields: list[str] = Query(None),
-    ) -> JSONResponse:
-    return read_all_resources(RUNS_PATH, fields)
-
-@app.post("/runs")
-def save_runs(runs: list[Run]) -> JSONResponse:
-    for run in runs:
-        run_id: str = run.run_id
-        update_resource(RUNS_PATH, run_id, run)
-    return JSONResponse({"Sucesso": "Runs salvas"})
-
-@app.get("/runs/{run_id}")
-def read_run(
-        run_id: str,
-        fields: list[str] = Query(None),
-    ) -> JSONResponse:
-    return read_resource(RUNS_PATH, run_id, fields)
-
-@app.put("/runs/{run_id}")
-def update_run(run_id: str, run: Run):
-    return update_resource(RUNS_PATH, run_id, run)
 
 @app.post("/mutate")
 def mutate_brain(

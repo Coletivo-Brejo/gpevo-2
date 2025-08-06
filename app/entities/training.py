@@ -1,10 +1,25 @@
 from __future__ import annotations
 from datetime import datetime
 import numpy as np
+import streamlit as st
 
 from .brain import Brain, MutationSetup
 from .run import Run, RunSetup, RunStats
 from .track import Track
+from utils.proxy import load_resource_dict
+
+
+# @st.cache_data
+def load_training(
+        training_id: str,
+        fields: list[str]|None = None,
+    ) -> Training|None:
+    training_dict: dict|None = load_resource_dict("/trainings", training_id, fields)
+    if training_dict is not None:
+        training: Training = Training.from_dict(training_dict)
+        return training
+    else:
+        return None
 
 
 class TrainingRunSetup():
@@ -119,17 +134,25 @@ class Training():
 
     training_id: str
     setup: TrainingSetup
-    run_history: list[list[Run]]
+    iteration: int
+    convergence_iteration: int
+    temperature: float
+    run_id_history: list[list[str]]
     clone_history: list[str]
     brain_history: list[Brain]
     elapsed_time: float
     end_reason: str
 
+    run_history: list[list[Run]]
+
     def __init__(
             self,
             _training_id: str,
             _setup: TrainingSetup,
-            _run_history: list[list[Run]],
+            _iteration: int,
+            _convergence_iteration: int,
+            _temperature: float,
+            _run_id_history: list[list[str]],
             _clone_history: list[str],
             _brain_history: list[Brain],
             _elapsed_time: float,
@@ -137,23 +160,46 @@ class Training():
         ) -> None:
         self.training_id = _training_id
         self.setup = _setup
-        self.run_history = _run_history
+        self.iteration = _iteration
+        self.convergence_iteration = _convergence_iteration
+        self.temperature = _temperature
+        self.run_id_history = _run_id_history
         self.clone_history = _clone_history
         self.brain_history = _brain_history
         self.elapsed_time = _elapsed_time
         self.end_reason = _end_reason
+        self.load_run_history()
     
     @staticmethod
     def from_dict(_dict: dict) -> Training:
         return Training(
             _dict["training_id"],
             TrainingSetup.from_dict(_dict["setup"]),
-            [[Run.from_dict(r) for r in it] for it in _dict["run_history"]],
+            _dict["iteration"],
+            _dict["convergence_iteration"],
+            _dict["temperature"],
+            _dict["run_id_history"],
             _dict["clone_history"],
             [Brain.from_dict(b) for b in _dict["brain_history"]],
             _dict["elapsed_time"],
             _dict["end_reason"],
         )
+    
+    @staticmethod
+    def load(
+            training_id: str,
+            fields: list[str]|None = None,
+        ) -> Training|None:
+        return load_training(training_id, fields)
+
+    def load_run_history(self) -> None:
+        self.run_history = []
+        for it in self.run_id_history:
+            self.run_history.append([])
+            for run_id in it:
+                run: Run|None = Run.load(run_id)
+                if run is not None:
+                    self.run_history[-1].append(run)
 
     def get_setup_stat_history(
             self,

@@ -2,7 +2,8 @@ import streamlit as st
 import streamlit.components.v1 as components
 from typing import TypedDict
 
-from entities.training import TrainingEntry
+from entities.training import Training, TrainingEntry
+from screens.training_card import draw as draw_training
 from screens.training_editor_card import draw as draw_editor
 from utils.proxy import load_all_resources, load_resource_dict
 
@@ -84,7 +85,7 @@ def draw_entry_line(entry: TrainingEntry) -> None:
     with status_col:
         st.write(entry.status)
     with iteration_col:
-        st.write(f"{info['iteration']}/{info['n_iterations']}")
+        st.write(f"{info['iteration']+1}/{info['n_iterations']}")
     with finished_col:
         if entry.finished_at is not None:
             st.write(entry.finished_at.strftime("%Y-%m-%d"))
@@ -101,14 +102,14 @@ def draw_entry_line(entry: TrainingEntry) -> None:
                 })
     with results_col:
         if entry.status in {"running", "finished", "interrupted"}:
-            if st.button("Resultados", key = f"results_bt_{entry.training_id}"):
-                pass
+            if st.button("Resultado", key = f"results_bt_{entry.training_id}"):
+                show_results(entry.training_id)
 
 @st.dialog("Novo treinamento", width = "large")
 def draw_new_training_dialog() -> None:
     draw_editor()
 
-@st.dialog("Treinamento", width="large")
+@st.dialog("Treinamento", width = "large")
 def run_training(params: dict = {}) -> None:
     query_string: str = "&".join([f"{k}={v}" for k, v in params.items()])
     game_url: str = f"http://localhost:5000?{query_string}"
@@ -125,6 +126,12 @@ def run_training(params: dict = {}) -> None:
     )
     if st.button("Fechar e atualizar"):
         st.rerun()
+
+@st.dialog("Resultado", width = "large")
+def show_results(training_id: str) -> None:
+    training: Training|None = Training.load(training_id)
+    if training is not None:
+        draw_training(training)
 
 st.write("## Treinamentos")
 

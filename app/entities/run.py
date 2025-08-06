@@ -1,8 +1,23 @@
 from __future__ import annotations
 import numpy as np
+import streamlit as st
 
 from .point import PointList
 from .track import Track
+from utils.proxy import load_resource_dict
+
+
+@st.cache_data
+def load_run(
+        run_id: str,
+        fields: list[str]|None = None,
+    ) -> Run|None:
+    run_dict: dict|None = load_resource_dict("/runs", run_id, fields)
+    if run_dict is not None:
+        run: Run = Run.from_dict(run_dict)
+        return run
+    else:
+        return None
 
 
 class RunStats():
@@ -200,6 +215,13 @@ class Run():
             [RunStats.from_dict(s) for s in _dict["stats"]],
             _track,
         )
+    
+    @staticmethod
+    def load(
+            run_id: str,
+            fields: list[str]|None = None,
+        ) -> Run|None:
+        return load_run(run_id, fields)
     
     def get_stats_from_racer(
             self,

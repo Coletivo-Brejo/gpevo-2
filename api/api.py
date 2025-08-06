@@ -97,8 +97,10 @@ def update_racer(racer_id: str, racer: Racer):
     return update_resource(RACERS_PATH, racer_id, racer)
 
 @app.get("/runs")
-def read_runs():
-    return read_all_resources(RUNS_PATH)
+def read_runs(
+        fields: list[str] = Query(None),
+    ) -> JSONResponse:
+    return read_all_resources(RUNS_PATH, fields)
 
 @app.post("/runs")
 def save_runs(runs: list[Run]) -> JSONResponse:
@@ -108,8 +110,11 @@ def save_runs(runs: list[Run]) -> JSONResponse:
     return JSONResponse({"Sucesso": "Runs salvas"})
 
 @app.get("/runs/{run_id}")
-def read_run(run_id: str):
-    return read_resource(RUNS_PATH, run_id)
+def read_run(
+        run_id: str,
+        fields: list[str] = Query(None),
+    ) -> JSONResponse:
+    return read_resource(RUNS_PATH, run_id, fields)
 
 @app.put("/runs/{run_id}")
 def update_run(run_id: str, run: Run):

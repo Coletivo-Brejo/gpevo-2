@@ -23,7 +23,10 @@ def create_brain_layout(annotations: list[dict]) -> dict:
     }
     return layout
 
-def draw(racer: Racer) -> None:
+def draw(
+        racer: Racer,
+        brain_plot_key: str|None = None
+    ) -> None:
 
     st.write(f"### {racer.name}")
-    draw_brain(racer.brain)
+    draw_brain(racer.brain, brain_plot_key)

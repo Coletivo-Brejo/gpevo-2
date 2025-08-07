@@ -87,8 +87,11 @@ def create_training(
     )
     post("/trainings/new", setup.to_dict())
 
-def draw() -> None:
-        
+@st.dialog("Novo treinamento", width = "large")
+def draw_new_training_dialog(
+        racer_id: str = "",
+    ) -> None:
+
     st.markdown("### Geral")
 
     n_iterations: int = st.slider(
@@ -116,13 +119,15 @@ def draw() -> None:
 
     st.markdown("### Corredor")
 
-    allowed_racers: list[dict] = load_headers("/racers", ["racer_id", "name"])
-    racer_name: str = st.selectbox("Corredor", (r["name"] for r in allowed_racers))
-    racer_id: str = next((r["racer_id"] for r in allowed_racers if r["name"] == racer_name), "")
+    if racer_id == "":
+        allowed_racers: list[dict] = load_headers("/racers", ["racer_id", "name"])
+        racer_name: str = st.selectbox("Corredor", (r["name"] for r in allowed_racers))
+        racer_id = next((r["racer_id"] for r in allowed_racers if r["name"] == racer_name), "")
+    
     racer: Racer|None = Racer.load(racer_id)
 
     if racer is not None:
-        draw_racer(racer)
+        draw_racer(racer, "training_editor_brain")
 
     st.markdown("### Mutação")
 
@@ -255,3 +260,9 @@ def draw() -> None:
             max_connections
         )
         st.rerun()
+
+def draw(
+        racer_id: str = "",
+    ) -> None:
+    if st.button("Novo treinamento"):
+        draw_new_training_dialog(racer_id)

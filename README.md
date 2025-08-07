@@ -80,8 +80,9 @@ $PYTHON -m http.server 5000
 - [x] Rota para deletar treinamentos (treinamento + entry + runs) [2025-08-06]
 - [x] Visualização do histórico de ativações dos neurônios ao longo de uma corrida (eletroencefalograma) [2025-08-06]
 - [X] [B] Os neurônios do treino normal e espelhado estão com o mesmo padrão de ativação, provavelmente por algum compartilhamento de dados e recursos entre os cérebros do mesmo clone. Definir cada NeuronData como `local_to_scene` não resolveu o problema, assim como clonar o cérebro também não. [2025-08-06]
-- [ ] *Página de corredor na aplicação
-- [ ] *Remoção manual de neurônios e conexões
+- [x] Página de corredor na aplicação [2025-08-07]
+- [x] Remoção manual de neurônios e conexões [2025-08-07]
+- [ ] Aviso de treinamento encerrado/interrompido no jogo
 - [ ] Perfis de acesso (sem login, público, gestor de equipe, administrador)
 - [ ] Decals para naves
 - [ ] Linha de partida e de chegada

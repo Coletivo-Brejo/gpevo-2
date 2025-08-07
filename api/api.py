@@ -8,8 +8,10 @@ import os
 from models.brain import Brain, MutationSetup
 from models.models import Racer, Ship, Track
 from routers import runs, trainings
+from routers.trainings import invalidate_entries
 from utils import (
     get_next_id,
+    get_resource,
     read_resource,
     read_all_resources,
     update_resource,
@@ -94,6 +96,37 @@ def read_racer(racer_id: str):
 @app.put("/racers/{racer_id}")
 def update_racer(racer_id: str, racer: Racer):
     return update_resource(RACERS_PATH, racer_id, racer)
+
+@app.get("/racers/{racer_id}/lobotomize")
+def lobotomize(
+        racer_id: str,
+        neurons: list[str] = Query(None),
+    ) -> JSONResponse:
+    racer_dict: dict|None = get_resource(RACERS_PATH, racer_id)
+    deleted_neurons: list[str] = []
+    removed_connections: list[str] = []
+    reset_weights: list[str] = []
+    if racer_dict is not None:
+        racer: Racer = Racer(**racer_dict)
+        for neuron in racer.brain.get_hidden_neurons():
+            if neurons is None or neuron.neuron_id in neurons:
+                deleted_neurons.append(neuron.neuron_id)
+                racer.brain.delete_neuron(neuron)
+        for neuron in racer.brain.get_thruster_neurons():
+            if neurons is None or neuron.neuron_id in neurons:
+                if len(neuron.input_ids) > 0:
+                    removed_connections.append(neuron.neuron_id)
+                    racer.brain.remove_all_inputs_from_neuron(neuron, True)
+                reset_weights.append(neuron.neuron_id)
+                racer.brain.reset_weights_from_neuron(neuron)
+        update_resource(RACERS_PATH, racer_id, racer)
+        invalidate_entries(racer_id)
+        return JSONResponse({
+            "Neurônios excluídos": deleted_neurons,
+            "Conexões removidas": removed_connections,
+            "Parâmetros zerados": reset_weights,
+        })
+    return JSONResponse({"Status": "Erro"})
 
 @app.post("/mutate")
 def mutate_brain(

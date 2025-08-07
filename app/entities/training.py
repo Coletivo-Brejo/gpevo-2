@@ -327,3 +327,56 @@ class TrainingEntry():
             datetime.strptime(_dict["created_at"], "%Y-%m-%dT%H:%M:%S.%f%z"),
             _finished_at,
         )
+    
+
+class TrainingInfo():
+
+    training_id: str
+    entry: TrainingEntry
+    racer_id: str
+    racer_name: str
+    track_id: str
+    track_name: str
+    iteration: int
+    n_iterations: int
+    laps: int
+    final_progress: float
+
+    def __init__(
+            self,
+            _training_id: str,
+            _entry: TrainingEntry,
+            _racer_id: str,
+            _racer_name: str,
+            _track_id: str,
+            _track_name: str,
+            _iteration: int,
+            _n_iterations: int,
+            _laps: int,
+            _final_progress: float,
+        ) -> None:
+        self.training_id = _training_id
+        self.entry = _entry
+        self.racer_id = _racer_id
+        self.racer_name = _racer_name
+        self.track_id = _track_id
+        self.track_name = _track_name
+        self.iteration = _iteration
+        self.n_iterations = _n_iterations
+        self.laps = _laps
+        self.final_progress = _final_progress
+    
+    @staticmethod
+    def from_dict(_dict: dict) -> TrainingInfo:
+        return TrainingInfo(
+            _dict["training_id"],
+            TrainingEntry.from_dict(_dict["entry"]),
+            _dict["racer_id"],
+            _dict["racer_name"],
+            _dict["track_id"],
+            _dict["track_name"],
+            _dict["iteration"],
+            _dict["n_iterations"],
+            _dict["laps"],
+            _dict["final_progress"],
+        )

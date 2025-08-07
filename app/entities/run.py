@@ -113,7 +113,9 @@ class RunStats():
                     "name": n,
                     "x": self.time_history,
                     "y": values,
-                    "legendgroup": "sensors" if n.startswith("s") or n.startswith("v") else "thrusters" if n.startswith("t") else "neurons"
+                    "legendgroup": "sensors" if n.startswith("s") or n.startswith("v") else "thrusters" if n.startswith("t") else "neurons",
+                    "legendgrouptitle_text": "sensors" if n.startswith("s") or n.startswith("v") else "thrusters" if n.startswith("t") else "neurons",
+                    # "showlegend": False,
                 }
             )
         return traces

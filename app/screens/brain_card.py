@@ -23,11 +23,14 @@ def create_brain_layout(annotations: list[dict]) -> dict:
     }
     return layout
 
-def draw(brain: Brain) -> None:
+def draw(
+        brain: Brain,
+        plot_key: str|None = None,
+    ) -> None:
     traces, annotations = brain.generate_traces_and_annotations()
     layout = create_brain_layout(annotations)
     brain_fig: go.Figure = go.Figure(
         data = traces,
         layout = layout,
     )
-    st.plotly_chart(brain_fig)
+    st.plotly_chart(brain_fig, key = plot_key)

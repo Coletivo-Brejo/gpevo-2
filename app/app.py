@@ -9,12 +9,13 @@ if not st.user.is_logged_in:
 
 st.button("Log out", on_click=st.logout)
 st.markdown(f"Welcome! {st.user.name}")
-st.write(st.user)
+# st.write(st.user)
 
 
 pages: list = [
-    st.Page("pages/playground.py", title = "Playground"),
-    st.Page("pages/training_manager.py", title = "Treinamentos")
+    # st.Page("pages/playground.py", title = "Playground"),
+    st.Page("pages/racer_manager.py", title = "Corredores"),
+    st.Page("pages/training_manager.py", title = "Treinamentos"),
 ]
 pg = st.navigation(pages)
 pg.run()

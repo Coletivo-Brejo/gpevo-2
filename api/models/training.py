@@ -42,3 +42,15 @@ class TrainingEntry(BaseModel):
     status: str
     created_at: datetime
     finished_at: Optional[datetime] = None
+
+class TrainingInfo(BaseModel):
+    training_id: str
+    entry: TrainingEntry
+    racer_id: str
+    racer_name: str
+    track_id: str
+    track_name: str
+    iteration: int
+    n_iterations: int
+    laps: int
+    final_progress: float

@@ -12,11 +12,17 @@ def create_progress_layout(
         percentage: bool = False,
         show_legend: bool = False,
         xaxis_title: str = "Iteração",
+        height: int|None = None,
     ) -> dict:
     layout: dict = {
         "title": title,
+        "height": height,
         "showlegend": show_legend,
-        "legend_orientation": "h",
+        "legend": {
+            "orientation": "h",
+            "yanchor": "top",
+            "y": -.2,
+        },
         "xaxis": {
             "title": xaxis_title,
             "showgrid": False,
@@ -50,10 +56,10 @@ def draw(training: Training) -> None:
     st.plotly_chart(time_evolution_fig)
 
     iterations: int = len(training.run_history)
-    it: int = st.slider("Iteração", 0, iterations)
+    it: int = st.slider("Iteração", 0, iterations, iterations)
 
     brain: Brain = training.brain_history[it]
-    draw_brain(brain)
+    draw_brain(brain, "training_brain")
 
     cols = st.columns(len(training.setup.setups))
 
@@ -77,6 +83,8 @@ def draw(training: Training) -> None:
                 layout = create_progress_layout(
                     "Ativação neuronal",
                     show_legend = True,
-                    xaxis_title = "Tempo"),
+                    xaxis_title = "Tempo",
+                    height = 600,
+                ),
             )
             st.plotly_chart(eeg_fig, key=f"{setup_idx}_run_eeg")

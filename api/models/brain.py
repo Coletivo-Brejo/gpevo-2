@@ -159,6 +159,20 @@ class Brain(BaseModel):
         self.neurons.append(neuron)
         return neuron
     
+    def reset_weights_from_neuron(
+            self,
+            neuron: Neuron,
+        ) -> None:
+        logging.debug(f"Resetting weights of {neuron.neuron_id}")
+        lin_op: Operation|None = None
+        for op in neuron.operations:
+            if op.type == "linear_combination":
+                lin_op = op
+        if lin_op is not None:
+            for i in range(len(lin_op.params)):
+                lin_op.params[i] = 0.
+                logging.debug(f"Reset weight {i} to 0.00")
+    
     def mutate(
             self,
             setup: MutationSetup,
@@ -294,6 +308,14 @@ class Brain(BaseModel):
                 i,
                 delete_if_isolated = True,
             )
+    
+    def remove_all_inputs_from_neuron(
+            self,
+            neuron: Neuron,
+            delete_if_isolated: bool = False,
+        ) -> None:
+        while len(neuron.input_ids) > 0:
+            self.remove_input_from_neuron(neuron, 0, delete_if_isolated)
 
     def remove_input_from_neuron(
             self,

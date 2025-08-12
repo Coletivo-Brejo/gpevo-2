@@ -89,7 +89,7 @@ func _on_post_responded(
 		body: PackedByteArray,
 	) -> void:
 	if result != HTTPRequest.RESULT_SUCCESS:
-		push_error("Falha ao carregar recurso")
+		push_error("Falha na requisção")
 	var parsed_body: Variant = JSON.parse_string(body.get_string_from_utf8())
 	print(parsed_body)
 	if parsed_body != null:

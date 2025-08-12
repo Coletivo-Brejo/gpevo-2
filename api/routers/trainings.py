@@ -5,7 +5,9 @@ from fastapi.responses import JSONResponse
 import os
 
 from .runs import RUNS_PATH
-from models.training import Training, TrainingEntry, TrainingInfo, TrainingSetup
+from data_manager import update_brain
+from models.training import IterationUpdate, Training, TrainingEntry, TrainingInfo, TrainingSetup
+from routers.runs import save_runs
 from utils import (
     delete_resource,
     get_all_resources,
@@ -217,3 +219,20 @@ def delete_training(
             "Runs not deleted": runs_not_deleted,
         }
     )
+
+@router.post("/trainings/{training_id}/save_iteration")
+def save_training_iteration(
+        training_id: str,
+        iteration_data: IterationUpdate,
+    ) -> JSONResponse:
+    response: JSONResponse = save_training(iteration_data.training)
+    if response.status_code == 200:
+        save_runs(iteration_data.runs)
+        racer_id: str = iteration_data.training.setup.racer_id
+        racer_response:JSONResponse = update_brain(racer_id, iteration_data.brain)
+        if racer_response.status_code == 200:
+            return JSONResponse({"Sucesso": "Treinamento atualizado"})
+        else:
+            return racer_response
+    else:
+        return response

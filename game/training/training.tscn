@@ -1,7 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://ctc2bx7y34dii"]
+[gd_scene load_steps=4 format=3 uid="uid://ctc2bx7y34dii"]
 
 [ext_resource type="Script" uid="uid://b1xpqmbitwr7v" path="res://training/training.gd" id="1_g86yt"]
 [ext_resource type="Script" uid="uid://dbcj37ky1n81f" path="res://utils/api.gd" id="5_emg05"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_bntwg"]
+font_size = 36
 
 [node name="Training" type="Node2D"]
 script = ExtResource("1_g86yt")
@@ -27,3 +30,24 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="GameOver" type="ColorRect" parent="CanvasLayer"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.392157)
+
+[node name="GameOverLb" type="Label" parent="CanvasLayer/GameOver"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "TREINAMENTO FINALIZADO"
+label_settings = SubResource("LabelSettings_bntwg")
+horizontal_alignment = 1
+vertical_alignment = 1

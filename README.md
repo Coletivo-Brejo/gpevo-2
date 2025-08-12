@@ -82,7 +82,13 @@ $PYTHON -m http.server 5000
 - [X] [B] Os neurônios do treino normal e espelhado estão com o mesmo padrão de ativação, provavelmente por algum compartilhamento de dados e recursos entre os cérebros do mesmo clone. Definir cada NeuronData como `local_to_scene` não resolveu o problema, assim como clonar o cérebro também não. [2025-08-06]
 - [x] Página de corredor na aplicação [2025-08-07]
 - [x] Remoção manual de neurônios e conexões [2025-08-07]
-- [ ] Aviso de treinamento encerrado/interrompido no jogo
+- [x] Atualização indepotente do treinamento [2025-08-12]
+- [x] Aviso de treinamento encerrado/interrompido no jogo [2025-08-12]
+- [ ] *Registro de "versão" do cérebro do corredor
+- [ ] *Continuação do treinamento até a conclusão de todos os clones sem alterar a lógica de aprendizado
+- [ ] *Corrida de sondagem
+- [ ] *Leaderboard das pistas
+- [ ] *Visualização do corredor com indicação de propulsores e sensores
 - [ ] Perfis de acesso (sem login, público, gestor de equipe, administrador)
 - [ ] Decals para naves
 - [ ] Linha de partida e de chegada
@@ -92,7 +98,6 @@ $PYTHON -m http.server 5000
 - [ ] Fantasmas durante uma execução
 - [ ] Equipamentos embaralhadores de sinal
 - [ ] Visualização do histórico de colisões ao longo de uma corrida
-- [ ] Visualização do corredor com indicação de propulsores e sensores
 - [ ] [D] O editor de naves reprocessa tudo a cada frame. Cabe uma detecção menos burra de quando há mudanças para processar.
 - [ ] [D] O z-index das partes da nave está todo desordenado, com os thrusters aparecendo por trás de outras naves e as partículas aparecendo por cima do thruster.
 - [ ] [D] Em curvas acentuadas e arrastando na parede, as partículas dos thrusters parecem sair em uma direção totalmente errada.

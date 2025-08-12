@@ -1,13 +1,16 @@
 extends Node2D
 class_name Training
 
-signal training_finished
+signal training_finished(reason: String)
+signal training_interrupted(reason: String)
 
 const scene_path: String = "res://training/training.tscn"
 
 @onready var api: API = $API
 @onready var run_container: Control = $CanvasLayer/Runs
 @onready var label: Label = $CanvasLayer/Label
+@onready var game_over: Control = find_child("GameOver")
+@onready var game_over_lb: Label = find_child("GameOverLb")
 
 @export var data: TrainingData
 var runs_data: Array[RunData]
@@ -53,6 +56,8 @@ func _ready() -> void:
 	if not data.setup.setups.is_empty():
 		load_track(data.setup.setups[0].track_id)
 	label_info["Versão"] = "v%s" % ProjectSettings.get_setting("application/config/version")
+	training_interrupted.connect(show_game_over)
+	training_finished.connect(show_game_over)
 
 func _process(_delta: float) -> void:
 	if all_loaded and all_saved and not finished:
@@ -237,42 +242,58 @@ func end_training(reason: String) -> void:
 		finish_training()
 
 func finish_training() -> void:
-	training_finished.emit()
+	training_finished.emit(data.end_reason)
 
 func save_results() -> void:
 	print("Salvando treinamento")
 	all_saved = false
 	running = false
-	api.put_responded.connect(_on_results_saved)
-	api.put("/trainings", data.to_dict())
-
-func _on_results_saved(_body: Variant) -> void:
-	api.put_responded.disconnect(_on_results_saved)
-	save_runs()
-
-func save_runs() -> void:
-	print("Salvando runs")
-	api.post_responded.connect(_on_runs_saved)
-	var runs_dict: Array[Dictionary] = []
+	var update_body: Dictionary = {}
+	update_body["training"] = data.to_dict()
+	update_body["runs"] = []
 	for run in runs:
-		runs_dict.append(run.data.to_dict())
-	api.post("/runs", runs_dict)
+		update_body["runs"].append(run.data.to_dict())
+	update_body["brain"] = current_racer.brain.to_dict()
+	api.post_responded.connect(_on_results_saved)
+	api.post("/trainings/%s/save_iteration" % data.training_id, update_body)
 
-func _on_runs_saved(_body: Variant) -> void:
-	api.post_responded.disconnect(_on_runs_saved)
-	update_racer()
+func _on_results_saved(body: Variant) -> void:
+	api.post_responded.disconnect(_on_results_saved)
+	if "Erro" in body:
+		training_interrupted.emit(body["Erro"])
+	else:
+		all_saved = true
+	# save_runs()
 
-func update_racer() -> void:
-	print("Salvando corredor")
-	api.resource_saved.connect(_on_racer_updated)
-	api.save("/racers", data.setup.racer_id, current_racer)
+# func save_runs() -> void:
+# 	print("Salvando runs")
+# 	api.post_responded.connect(_on_runs_saved)
+# 	var runs_dict: Array[Dictionary] = []
+# 	for run in runs:
+# 		runs_dict.append(run.data.to_dict())
+# 	api.post("/runs", runs_dict)
 
-func _on_racer_updated() -> void:
-	api.resource_saved.disconnect(_on_racer_updated)
-	all_saved = true
+# func _on_runs_saved(_body: Variant) -> void:
+# 	api.post_responded.disconnect(_on_runs_saved)
+# 	update_racer()
+
+# func update_racer() -> void:
+# 	print("Salvando corredor")
+# 	api.resource_saved.connect(_on_racer_updated)
+# 	api.save("/racers", data.setup.racer_id, current_racer)
+
+# func _on_racer_updated() -> void:
+# 	api.resource_saved.disconnect(_on_racer_updated)
+# 	all_saved = true
 
 func update_label() -> void:
 	var label_text: String = ""
 	for info in label_info:
 		label_text += "%s: %s\n" % [info, label_info[info]]
 	label.set_text(label_text)
+
+func show_game_over(reason: String) -> void:
+	var text: String = game_over_lb.text
+	text += "\n%s" % reason
+	game_over_lb.set_text(text)
+	game_over.set_visible(true)

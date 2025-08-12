@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from typing import Optional
 
 from .brain import Brain, MutationSetup
-from .run import RunSetup
+from .run import Run, RunSetup
 
 
 class TrainingRunSetup(BaseModel):
@@ -54,3 +54,8 @@ class TrainingInfo(BaseModel):
     n_iterations: int
     laps: int
     final_progress: float
+
+class IterationUpdate(BaseModel):
+    training: Training
+    runs: list[Run]
+    brain: Brain

@@ -3,6 +3,7 @@ class_name Run
 
 signal run_ended()
 signal run_finished()
+signal first_finished()
 
 const scene_path: String = "res://race/run.tscn"
 
@@ -18,6 +19,7 @@ var track: Track
 var racers: Array[Racer]
 var stats: Array[RunStats]
 var running: bool
+var first_finish_emmited: bool
 
 
 static func create(
@@ -31,6 +33,7 @@ static func create(
 func _ready() -> void:
 	data.elapsed_time = 0.
 	running = false
+	first_finish_emmited = false
 	track = Track.create(data.track_data)
 	if data.setup.mirrored:
 		track.set_scale(Vector2(-1., 1.))
@@ -85,6 +88,9 @@ func _process(delta: float) -> void:
 			if not stat.stuck and not stat.finished and stat.progress > max_progress:
 				first_place = stat.racer
 				max_progress = stat.progress
+		if any_finished and not first_finish_emmited:
+			first_finished.emit()
+			first_finish_emmited = true
 		if any_finished and data.setup.end_on_first_finish:
 			end_run("first finished")
 		elif all_finished:

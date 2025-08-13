@@ -46,7 +46,7 @@ def create_training(
         TrainingRunSetup(
             track_id,
             RunSetup(
-                0., 0., stuck_timeout, run_timeout, True, True, 1., mirrored, laps,
+                0., 0., stuck_timeout, run_timeout, True, False, 1., mirrored, laps,
             )
         )
     )
@@ -56,7 +56,7 @@ def create_training(
             TrainingRunSetup(
                 track_id,
                 RunSetup(
-                    0., 0., stuck_timeout, run_timeout, True, True, 1., not mirrored, laps,
+                    0., 0., stuck_timeout, run_timeout, True, False, 1., not mirrored, laps,
                 )
             )
         )

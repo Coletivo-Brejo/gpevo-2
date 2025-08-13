@@ -17,6 +17,7 @@ var runs_data: Array[RunData]
 var runs: Array[Run]
 var runs_vp: Array[SubViewport]
 var runs_finished: Array[bool]
+var frozen_progress: Dictionary
 var current_racer: RacerData
 var current_clone_id: String
 var neighbors: Array[RacerData]
@@ -110,6 +111,7 @@ func start_runs() -> void:
 		run_data.racers_data = duplicated_clones
 		var run = Run.create(run_data)
 		run.run_finished.connect(_on_run_finished)
+		run.first_finished.connect(_on_first_finished.bind(run_data.run_id))
 		runs_vp[i].add_child(run)
 		runs.append(run)
 
@@ -147,6 +149,9 @@ func _on_run_finished() -> void:
 	for run in runs:
 		if not run.data.finished:
 			return
+	for run in runs:
+		if not run.data.run_id in frozen_progress:
+			freeze_progress(run)
 	var run_times: Array[float] = []
 	for run in runs:
 		run_times.append(run.data.elapsed_time)
@@ -173,11 +178,28 @@ func _on_run_finished() -> void:
 		else:
 			run_iteration()
 
+func _on_first_finished(run_id: String) -> void:
+	var run: Run = null
+	for r in runs:
+		if r.data.run_id == run_id:
+			run = r
+			break
+	if run != null:
+		freeze_progress(run)
+
+func freeze_progress(run: Run) -> void:
+	var progress_dict: Dictionary = {}
+	for stat in run.data.stats:
+		progress_dict[stat.racer_data.racer_id] = stat.progress
+	frozen_progress[run.data.run_id] = progress_dict
+
 func get_result_for_racer(racer_id: String) -> float:
 	var result: float = 99999999.
-	for run in runs:
-		var stat: RunStats = run.data.get_racer_stats(racer_id)
-		result = min(stat.progress, result)
+	for run_id in frozen_progress:
+		result = minf(frozen_progress[run_id][racer_id], result)
+	# for run in runs:
+	# 	var stat: RunStats = run.data.get_racer_stats(racer_id)
+	# 	result = min(stat.progress, result)
 	return result
 
 func evaluate_and_select() -> void:
@@ -263,28 +285,6 @@ func _on_results_saved(body: Variant) -> void:
 		training_interrupted.emit(body["Erro"])
 	else:
 		all_saved = true
-	# save_runs()
-
-# func save_runs() -> void:
-# 	print("Salvando runs")
-# 	api.post_responded.connect(_on_runs_saved)
-# 	var runs_dict: Array[Dictionary] = []
-# 	for run in runs:
-# 		runs_dict.append(run.data.to_dict())
-# 	api.post("/runs", runs_dict)
-
-# func _on_runs_saved(_body: Variant) -> void:
-# 	api.post_responded.disconnect(_on_runs_saved)
-# 	update_racer()
-
-# func update_racer() -> void:
-# 	print("Salvando corredor")
-# 	api.resource_saved.connect(_on_racer_updated)
-# 	api.save("/racers", data.setup.racer_id, current_racer)
-
-# func _on_racer_updated() -> void:
-# 	api.resource_saved.disconnect(_on_racer_updated)
-# 	all_saved = true
 
 func update_label() -> void:
 	var label_text: String = ""

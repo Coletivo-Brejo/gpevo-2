@@ -84,8 +84,8 @@ $PYTHON -m http.server 5000
 - [x] Remoção manual de neurônios e conexões [2025-08-07]
 - [x] Atualização indepotente do treinamento [2025-08-12]
 - [x] Aviso de treinamento encerrado/interrompido no jogo [2025-08-12]
-- [x] Registro de "versão" do cérebro do corredor
-- [ ] *Continuação do treinamento até a conclusão de todos os clones sem alterar a lógica de aprendizado
+- [x] Registro de "versão" do cérebro do corredor [2025-08-13]
+- [x] Continuação do treinamento até a conclusão de todos os clones sem alterar a lógica de aprendizado [2025-08-13]
 - [ ] *Corrida de sondagem
 - [ ] *Leaderboard das pistas
 - [ ] *Visualização do corredor com indicação de propulsores e sensores
@@ -98,6 +98,7 @@ $PYTHON -m http.server 5000
 - [ ] Fantasmas durante uma execução
 - [ ] Equipamentos embaralhadores de sinal
 - [ ] Visualização do histórico de colisões ao longo de uma corrida
+- [ ] Pistas com sobreposição de caminhos
 - [ ] [D] O editor de naves reprocessa tudo a cada frame. Cabe uma detecção menos burra de quando há mudanças para processar.
 - [ ] [D] O z-index das partes da nave está todo desordenado, com os thrusters aparecendo por trás de outras naves e as partículas aparecendo por cima do thruster.
 - [ ] [D] Em curvas acentuadas e arrastando na parede, as partículas dos thrusters parecem sair em uma direção totalmente errada.

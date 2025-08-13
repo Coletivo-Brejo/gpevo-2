@@ -2,10 +2,9 @@ from fastapi import APIRouter, Query
 from fastapi.responses import JSONResponse
 import os
 
-from data_manager import update_brain
+from data_manager import invalidate_entries, update_brain
 from models.brain import Brain
-from models.models import Racer
-from routers.trainings import invalidate_entries
+from models.racer import Racer
 from utils import (
     get_resource,
     read_resource,
@@ -60,7 +59,7 @@ def lobotomize(
                     racer.brain.remove_all_inputs_from_neuron(neuron, True)
                 reset_weights.append(neuron.neuron_id)
                 racer.brain.reset_weights_from_neuron(neuron)
-        update_resource(RACERS_PATH, racer_id, racer)
+        update_brain(racer_id, racer.brain)
         invalidate_entries(racer_id)
         return JSONResponse({
             "Neurônios excluídos": deleted_neurons,

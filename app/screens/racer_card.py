@@ -29,4 +29,5 @@ def draw(
     ) -> None:
 
     st.write(f"### {racer.name}")
+    st.markdown(f"Versão do cérebro: {racer.brain_version}")
     draw_brain(racer.brain, brain_plot_key)

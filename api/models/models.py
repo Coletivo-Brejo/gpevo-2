@@ -1,7 +1,5 @@
 from pydantic import BaseModel
 
-from .brain import Brain
-
 
 class Point(BaseModel):
     x: float
@@ -47,9 +45,3 @@ class Ship(BaseModel):
     chassis_collision: list[Point]
     thrusters: list[Thruster]
     sensors: list[SensorSet]
-
-class Racer(BaseModel):
-    racer_id: str
-    name: str
-    brain: Brain
-    ship: Ship

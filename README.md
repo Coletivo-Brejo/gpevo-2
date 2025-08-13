@@ -84,7 +84,7 @@ $PYTHON -m http.server 5000
 - [x] Remoção manual de neurônios e conexões [2025-08-07]
 - [x] Atualização indepotente do treinamento [2025-08-12]
 - [x] Aviso de treinamento encerrado/interrompido no jogo [2025-08-12]
-- [ ] *Registro de "versão" do cérebro do corredor
+- [x] Registro de "versão" do cérebro do corredor
 - [ ] *Continuação do treinamento até a conclusão de todos os clones sem alterar a lógica de aprendizado
 - [ ] *Corrida de sondagem
 - [ ] *Leaderboard das pistas

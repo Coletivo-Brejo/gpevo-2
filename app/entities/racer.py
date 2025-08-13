@@ -11,6 +11,7 @@ class Racer():
     name: str
     brain: Brain
     ship: Ship
+    brain_version: int
 
     def __init__(
             self,
@@ -18,11 +19,13 @@ class Racer():
             _name: str,
             _brain: Brain,
             _ship: Ship,
+            _brain_version: int,
         ) -> None:
         self.racer_id = _racer_id
         self.name = _name
         self.brain = _brain
         self.ship = _ship
+        self.brain_version = _brain_version
     
     @staticmethod
     def from_dict(_dict: dict) -> Racer:
@@ -31,6 +34,7 @@ class Racer():
             _dict["name"],
             Brain.from_dict(_dict["brain"]),
             Ship.from_dict(_dict["ship"]),
+            _dict["brain_version"],
         )
 
     @staticmethod

@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 import json
 import os
 import requests
+import streamlit as st
 
 
 load_dotenv()
@@ -62,5 +63,51 @@ def post(
     if response.ok:
         print(response.json())
         return response.json()
+    else:
+        return None
+
+def load_headers(route: str, fields: list[str]) -> list[dict]:
+    dict_list: list[dict]|None = load_all_resources(
+        route,
+        fields = fields,
+    )
+    if dict_list is not None:
+        return dict_list
+    else:
+        return []
+
+@st.cache_data
+def get_racer_name(racer_id: str) -> str|None:
+    racer_dict: dict|None = load_resource_dict(
+        "/racers",
+        racer_id,
+        fields = ["name"],
+    )
+    if racer_dict is not None:
+        return racer_dict["name"]
+    else:
+        return None
+
+@st.cache_data
+def get_track_name(track_id: str) -> str|None:
+    track_dict: dict|None = load_resource_dict(
+        "/tracks",
+        track_id,
+        fields = ["name"],
+    )
+    if track_dict is not None:
+        return track_dict["name"]
+    else:
+        return None
+
+@st.cache_data
+def get_track_length(track_id: str) -> float|None:
+    track_dict: dict|None = load_resource_dict(
+        "/tracks",
+        track_id,
+        fields = ["length"],
+    )
+    if track_dict is not None:
+        return track_dict["length"]
     else:
         return None

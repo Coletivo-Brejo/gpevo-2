@@ -1,4 +1,5 @@
 from __future__ import annotations
+from datetime import datetime
 import numpy as np
 import streamlit as st
 
@@ -119,3 +120,79 @@ class Track():
                 },
             )
         return traces
+
+
+class LeaderboardEntry():
+    track_id: str
+    racer_id: str
+    brain_version: int
+    run_id: str
+    ran_at: datetime
+    mirrored: bool
+    laps: int
+    progress: float
+    time: float
+    finished: bool
+
+    def __init__(
+            self,
+            _track_id: str,
+            _racer_id: str,
+            _brain_version: int,
+            _run_id: str,
+            _ran_at: datetime,
+            _mirrored: bool,
+            _laps: int,
+            _progress: float,
+            _time: float,
+            _finished: bool,
+        ) -> None:
+        self.track_id = _track_id
+        self.racer_id = _racer_id
+        self.brain_version = _brain_version
+        self.run_id = _run_id
+        self.ran_at = _ran_at
+        self.mirrored = _mirrored
+        self.laps = _laps
+        self.progress = _progress
+        self.time = _time
+        self.finished = _finished
+    
+    @staticmethod
+    def from_dict(_dict: dict) -> LeaderboardEntry:
+        return LeaderboardEntry(
+            _dict["track_id"],
+            _dict["racer_id"],
+            _dict["brain_version"],
+            _dict["run_id"],
+            datetime.strptime(_dict["ran_at"], "%Y-%m-%dT%H:%M:%S.%f%z"),
+            _dict["mirrored"],
+            _dict["laps"],
+            _dict["progress"],
+            _dict["time"],
+            _dict["finished"],
+        )
+
+
+class TrackLeaderboard():
+    track_id: str
+    latest_entries: list[LeaderboardEntry]
+    best_entries: list[LeaderboardEntry]
+
+    def __init__(
+            self,
+            _track_id: str,
+            _latest_entries: list[LeaderboardEntry],
+            _best_entries: list[LeaderboardEntry],
+        ) -> None:
+        self.track_id = _track_id
+        self.latest_entries = _latest_entries
+        self.best_entries = _best_entries
+    
+    @staticmethod
+    def from_dict(_dict: dict) -> TrackLeaderboard:
+        return TrackLeaderboard(
+            _dict["track_id"],
+            [LeaderboardEntry.from_dict(e) for e in _dict["latest_entries"]],
+            [LeaderboardEntry.from_dict(e) for e in _dict["best_entries"]],
+        )

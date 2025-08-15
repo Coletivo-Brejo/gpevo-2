@@ -8,6 +8,7 @@ from .runs import RUNS_PATH
 from data_manager import (
     get_training_info_with_filters,
     invalidate_entries,
+    save_training_leaderboards,
     update_brain,
     update_training,
     update_training_entry,
@@ -140,9 +141,13 @@ def save_training_iteration(
     if response.status_code == 200:
         save_runs(iteration_data.runs)
         racer_id: str = iteration_data.training.setup.racer_id
-        racer_response:JSONResponse = update_brain(racer_id, iteration_data.brain)
+        racer_response: JSONResponse = update_brain(racer_id, iteration_data.brain)
         if racer_response.status_code == 200:
-            return JSONResponse({"Sucesso": "Treinamento atualizado"})
+            leaderboard_results: dict = save_training_leaderboards(training_id)
+            return JSONResponse({
+                "Sucesso": "Treinamento atualizado",
+                "Resultados": leaderboard_results,
+            })
         else:
             return racer_response
     else:

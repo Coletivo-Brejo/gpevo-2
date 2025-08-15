@@ -42,7 +42,7 @@ status_translation: dict = {
     "finished": "Concluído",
 }
 
-def draw_field(info: TrainingInfo, field: str):
+def draw_field(info: TrainingInfo, field: str) -> None:
     if field == "created_at":
         st.markdown(info.entry.created_at.strftime("%Y-%m-%d"))
     elif field == "finished_at":

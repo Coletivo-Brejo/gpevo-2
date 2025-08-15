@@ -3,6 +3,8 @@ import os
 
 from models.brain import Brain
 from models.racer import Racer
+from models.run import Run, RunStats
+from models.track import LeaderboardEntry, TrackLeaderboard
 from models.training import Training, TrainingEntry, TrainingInfo
 from utils import get_all_resources, get_resource, now, update_resource
 
@@ -16,6 +18,7 @@ RUNS_PATH = "{data_path}/runs".format(
 TRACKS_PATH = "{data_path}/tracks".format(
     data_path = os.environ.get("DATA_PATH")
 )
+LEADERBOARDS_PATH = f"{TRACKS_PATH}/leaderboards"
 TRAININGS_PATH = "{data_path}/trainings".format(
     data_path = os.environ.get("DATA_PATH")
 )
@@ -124,3 +127,126 @@ def invalidate_entries(racer_id: str) -> None:
                         entry.status = "interrupted"
                         entry.finished_at = now()
                         update_training_entry(entry)
+
+def get_training(
+        training_id: str,
+    ) -> Training|None:
+    training_dict: dict|None = get_resource(TRAININGS_PATH, training_id)
+    if training_dict is not None:
+        training: Training = Training(**training_dict)
+        return training
+    else:
+        return None
+
+def get_racer(
+        racer_id: str,
+    ) -> Racer|None:
+    racer_dict: dict|None = get_resource(RACERS_PATH, racer_id)
+    if racer_dict is not None:
+        racer: Racer = Racer(**racer_dict)
+        return racer
+    else:
+        return None
+
+def get_run(
+        run_id: str,
+    ) -> Run|None:
+    run_dict: dict|None = get_resource(RUNS_PATH, run_id)
+    if run_dict is not None:
+        run: Run = Run(**run_dict)
+        return run
+    else:
+        return None
+
+def get_leaderboard(
+        track_id: str,
+    ) -> TrackLeaderboard:
+    leaderboard_dict: dict|None = get_resource(LEADERBOARDS_PATH, track_id)
+    leaderboard: TrackLeaderboard
+    if leaderboard_dict is not None:
+        leaderboard = TrackLeaderboard(**leaderboard_dict)
+    else:
+        leaderboard = TrackLeaderboard(
+            track_id = track_id,
+            latest_entries = [],
+            best_entries = [],
+        )
+    return leaderboard
+
+def add_leaderboard_entry(
+        entry: LeaderboardEntry,
+    ) -> dict:
+    track_id = entry.track_id
+    leaderboard: TrackLeaderboard = get_leaderboard(track_id)
+    pb: bool = True
+    wr: bool = True
+    for e in leaderboard.latest_entries:
+        if e.racer_id == entry.racer_id and e.is_comparable(entry):
+            leaderboard.latest_entries.remove(e)
+            break
+    leaderboard.latest_entries.append(entry)
+    entry_found: bool = False
+    for e in leaderboard.best_entries:
+        if e.is_comparable(entry):
+            if e.performed_better(entry):
+                wr = False
+            if e.racer_id == entry.racer_id:
+                if e.performed_better(entry):
+                    pb = False
+                else:
+                    leaderboard.best_entries.remove(e)
+                    leaderboard.best_entries.append(entry)
+                entry_found = True
+    if not entry_found:
+        leaderboard.best_entries.append(entry)
+    update_resource(LEADERBOARDS_PATH, track_id, leaderboard)
+    return {"PB": pb, "WR": wr}
+
+def extract_leaderboard_entry_from_training_setup(
+        training: Training,
+        setup_idx: int,
+    ) -> LeaderboardEntry|None:
+    track_id: str = training.setup.setups[setup_idx].track_id
+    mirrored: bool = training.setup.setups[setup_idx].run_setup.mirrored
+    laps: int = training.setup.setups[setup_idx].run_setup.laps
+    iteration: int = training.iteration
+    run_id: str = training.run_id_history[iteration-1][setup_idx]
+    run: Run|None = get_run(run_id)
+    if run is not None:
+        clone_id: str = training.clone_history[iteration-1]
+        stats: RunStats|None = run.get_racer_stats(clone_id)
+        if stats is not None:
+            finished: bool = stats.finished
+            progress: float = stats.max_progress
+            time: float = stats.time
+            racer_id: str = training.setup.racer_id
+            racer: Racer|None = get_racer(racer_id)
+            if racer is not None:
+                _version: int|None = racer.brain_version
+                brain_version: int = _version if _version is not None else 0
+                entry: LeaderboardEntry = LeaderboardEntry(
+                    track_id = track_id,
+                    racer_id = racer_id,
+                    brain_version = brain_version,
+                    run_id = run_id,
+                    ran_at = now(),
+                    mirrored = mirrored,
+                    laps = laps,
+                    progress = progress,
+                    time = time,
+                    finished = finished,
+                )
+                return entry
+    return None
+
+def save_training_leaderboards(
+        training_id: str,
+    ) -> dict:
+    results: dict = {}
+    training: Training|None = get_training(training_id)
+    if training is not None:
+        for i in range(len(training.setup.setups)):
+            entry: LeaderboardEntry|None = extract_leaderboard_entry_from_training_setup(training, i)
+            if entry is not None:
+                results[i] = add_leaderboard_entry(entry)
+    return results

@@ -35,3 +35,9 @@ class Run(BaseModel):
     elapsed_time: float
     end_reason: str
     stats: list[RunStats]
+
+    def get_racer_stats(self, racer_id: str) -> RunStats|None:
+        for s in self.stats:
+            if s.racer_id == racer_id:
+                return s
+        return None

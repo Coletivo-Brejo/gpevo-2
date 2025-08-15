@@ -7,18 +7,8 @@ from entities.track import Track
 from entities.training import TrainingRunSetup, TrainingSetup
 from screens.racer_card import draw as draw_racer
 from screens.track_card import draw as draw_track
-from utils.proxy import load_all_resources, post
+from utils.proxy import load_headers, post
 
-
-def load_headers(route: str, fields: list[str]) -> list[dict]:
-    dict_list: list[dict]|None = load_all_resources(
-        route,
-        fields = fields,
-    )
-    if dict_list is not None:
-        return dict_list
-    else:
-        return []
 
 def create_training(
         racer_id: str,
@@ -200,7 +190,7 @@ def draw_new_training_dialog(
     st.markdown("### Pista")
 
     allowed_tracks: list[dict] = load_headers("/tracks", ["track_id", "name"])
-    track_name: str = st.selectbox("Pista", (t["name"] for t in allowed_tracks))
+    track_name: str = st.selectbox("Pista", (t["name"] for t in allowed_tracks), key = "training_editor_track_picker")
     track_id: str = next((t["track_id"] for t in allowed_tracks if t["name"] == track_name), "")
     track: Track|None = Track.load(track_id)
 

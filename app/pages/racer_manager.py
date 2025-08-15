@@ -2,10 +2,11 @@ import streamlit as st
 
 from entities.racer import Racer
 from entities.training import TrainingInfo
+from screens.leaderboard import draw as draw_leaderboard
 from screens.racer_card import draw as draw_racer
 from screens.training_editor import draw as draw_training_editor
 from screens.training_list import draw as draw_info_list
-from utils.proxy import get, load_all_resources
+from utils.proxy import get, load_all_resources, load_headers
 
 
 @st.dialog("Tem certeza?")
@@ -68,6 +69,13 @@ if racer is not None:
                     show_lobotomy_warning(racer_id, neurons)
         if st.button("Realizar lobotomia completa"):
             show_lobotomy_warning(racer_id)
+    
+    st.markdown("## Resultados")
+    allowed_tracks: list[dict] = load_headers("/tracks", ["track_id", "name"])
+    track_name: str = st.selectbox("Pista", (t["name"] for t in allowed_tracks), key = "racer_manager_track_picker")
+    track_id: str = next((t["track_id"] for t in allowed_tracks if t["name"] == track_name), "")
+    if track_id != "":
+        draw_leaderboard(track_id)
 
     st.markdown("## Treinos")
     draw_training_editor(racer_id)

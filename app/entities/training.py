@@ -1,7 +1,6 @@
 from __future__ import annotations
 from datetime import datetime
 import numpy as np
-import streamlit as st
 
 from .brain import Brain, MutationSetup
 from .run import Run, RunSetup, RunStats

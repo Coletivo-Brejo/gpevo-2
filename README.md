@@ -87,9 +87,9 @@ $PYTHON -m http.server 5000
 - [x] Registro de "versão" do cérebro do corredor [2025-08-13]
 - [x] Continuação do treinamento até a conclusão de todos os clones sem alterar a lógica de aprendizado [2025-08-13]
 - [x] Leaderboard das pistas [2025-08-14]
+- [x] Trocar naves por micróbios [2025-08-20]
 - [ ] *Replay determinístico de corridas
 - [ ] *Corrida de sondagem
-- [ ] *Trocar naves por micróbios
 - [ ] *Visualização do corredor com indicação de propulsores e sensores
 - [ ] Permitir mutações com maior variabilidade
 - [ ] Perfis de acesso (sem login, público, gestor de equipe, administrador)

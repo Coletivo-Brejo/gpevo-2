@@ -1,6 +1,11 @@
-[gd_scene load_steps=2 format=3 uid="uid://cy2ry4e8ya1j"]
+[gd_scene load_steps=4 format=3 uid="uid://cy2ry4e8ya1j"]
 
 [ext_resource type="Script" uid="uid://dl37a350up1hv" path="res://racer/racer.gd" id="1_7in7g"]
+[ext_resource type="PackedScene" uid="uid://dlq7xpvk2upsh" path="res://ship/masked_capsule.tscn" id="2_02jsv"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_f5emf"]
+radius = 32.0
+height = 128.0
 
 [node name="Racer" type="CharacterBody2D"]
 collision_layer = 2
@@ -8,4 +13,7 @@ motion_mode = 1
 slide_on_ceiling = false
 script = ExtResource("1_7in7g")
 
-[node name="Collision" type="CollisionPolygon2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_f5emf")
+
+[node name="MaskedCapsule" parent="." instance=ExtResource("2_02jsv")]

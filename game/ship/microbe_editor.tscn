@@ -1,0 +1,66 @@
+[gd_scene load_steps=14 format=3 uid="uid://dy7o13wyi1oiq"]
+
+[ext_resource type="Script" uid="uid://e2g687wpq1xw" path="res://microbe_editor.gd" id="1_k8606"]
+[ext_resource type="Texture2D" uid="uid://ct1ovkahe8kdj" path="res://ship/chassis/textures/Texturelabs_InkPaint_392S.jpg" id="2_d4c85"]
+[ext_resource type="Script" uid="uid://dbcj37ky1n81f" path="res://utils/api.gd" id="2_j4oki"]
+[ext_resource type="Script" uid="uid://dn10k375jpym7" path="res://ship/ship_data.gd" id="3_d4c85"]
+[ext_resource type="Script" uid="uid://cwdn7evjl16fj" path="res://ship/sensor_set_data.gd" id="4_b6rle"]
+[ext_resource type="Texture2D" uid="uid://cgyuj8plxf4xv" path="res://ship/thruster/flagella.png" id="5_1tiue"]
+[ext_resource type="Script" uid="uid://bh6pj46y84upq" path="res://ship/thruster_data.gd" id="5_3t0sm"]
+[ext_resource type="PackedScene" uid="uid://dlq7xpvk2upsh" path="res://ship/masked_capsule.tscn" id="7_ew4wj"]
+
+[sub_resource type="Resource" id="Resource_d4c85"]
+script = ExtResource("4_b6rle")
+amount = 2
+aperture = 0.523599
+reach = 300.0
+position = Vector2(-15, -30)
+rotation = -0.523599
+metadata/_custom_type_script = "uid://cwdn7evjl16fj"
+
+[sub_resource type="Resource" id="Resource_b6rle"]
+script = ExtResource("4_b6rle")
+amount = 2
+aperture = 0.523599
+reach = 300.0
+position = Vector2(15, -30)
+rotation = 0.523599
+metadata/_custom_type_script = "uid://cwdn7evjl16fj"
+
+[sub_resource type="Resource" id="Resource_3t0sm"]
+script = ExtResource("5_3t0sm")
+power = 10.0
+texture = ExtResource("5_1tiue")
+position = Vector2(25, 50)
+rotation = 0.174533
+metadata/_custom_type_script = "uid://bh6pj46y84upq"
+
+[sub_resource type="Resource" id="Resource_ew4wj"]
+script = ExtResource("5_3t0sm")
+power = 10.0
+texture = ExtResource("5_1tiue")
+position = Vector2(-25, 50)
+rotation = -0.174533
+metadata/_custom_type_script = "uid://bh6pj46y84upq"
+
+[sub_resource type="Resource" id="Resource_rqrf5"]
+script = ExtResource("3_d4c85")
+ship_id = "protocobio"
+name = "Protocóbio"
+mass = 20.0
+chassis_texture = ExtResource("2_d4c85")
+chassis_collision = PackedVector2Array()
+thrusters = Array[ExtResource("5_3t0sm")]([SubResource("Resource_3t0sm"), SubResource("Resource_ew4wj")])
+sensors = Array[ExtResource("4_b6rle")]([SubResource("Resource_d4c85"), SubResource("Resource_b6rle")])
+metadata/_custom_type_script = "uid://dn10k375jpym7"
+
+[node name="MicrobeEditor" type="Node2D"]
+script = ExtResource("1_k8606")
+ship = SubResource("Resource_rqrf5")
+
+[node name="API" type="HTTPRequest" parent="."]
+script = ExtResource("2_j4oki")
+metadata/_custom_type_script = "uid://dbcj37ky1n81f"
+
+[node name="MaskedCapsule" parent="." instance=ExtResource("7_ew4wj")]
+texture = ExtResource("2_d4c85")

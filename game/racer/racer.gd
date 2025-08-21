@@ -7,7 +7,7 @@ const ANGULAR_DAMP: float = .3
 const WALL_FRICTION: float = 1.
 const INERTIA_SCALE: float = .5
 
-@onready var collision: CollisionPolygon2D = $Collision
+@onready var masked_capsule: MaskedCapsule = $MaskedCapsule
 
 @export var data: RacerData
 var paused: bool = false
@@ -27,7 +27,6 @@ static func create(
     return racer
 
 func _ready() -> void:
-    collision.set_polygon(data.ship.chassis_collision)
     calculate_inertia()
     build_ship()
     draw_ship()
@@ -78,24 +77,7 @@ func build_ship() -> void:
                 sensors.append(sensor)
 
 func draw_ship() -> void:
-    var ship_sprite = Sprite2D.new()
-    ship_sprite.set_texture(data.ship.chassis_texture)
-    add_child(ship_sprite)
-    for t in data.ship.thrusters:
-        if t != null:
-            var t_sprite = Sprite2D.new()
-            t_sprite.set_texture(t.texture)
-            t_sprite.set_z_index(-1)
-            ship_sprite.add_child(t_sprite)
-            t_sprite.set_position(t.position)
-            t_sprite.set_rotation(t.rotation)
-    for s in data.ship.sensors:
-        if s != null:
-            var s_sprite = Sprite2D.new()
-            s_sprite.set_texture(s.texture)
-            ship_sprite.add_child(s_sprite)
-            s_sprite.set_position(s.position)
-            s_sprite.set_rotation(s.rotation)
+    masked_capsule.texture = data.ship.chassis_texture
 
 func sense() -> void:
     for i in sensors.size():
